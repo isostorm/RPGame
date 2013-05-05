@@ -1,4 +1,4 @@
-package src.a;
+package a;
 
 public class jhi {
 
