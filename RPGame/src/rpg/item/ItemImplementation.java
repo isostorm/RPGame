@@ -29,6 +29,7 @@ public class ItemImplementation implements Item {
 	 * @effect The holder of this item is set to the given holder
 	 * 		   | setHolder(holder)
 	 */
+	@Raw
 	public ItemImplementation(long id, Weight weight, BackPack backpack, Character holder){
 		setId(id);
 		this.weight = weight;

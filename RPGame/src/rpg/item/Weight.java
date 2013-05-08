@@ -1,14 +1,15 @@
 package rpg.item;
 
+import be.kuleuven.cs.som.annotate.*;
 import rpg.item.WeightUnit;
 
-//totaal
+//TODO totaal
 /**
  * A class of weights involving a numeral and a weight unit.
  * @invar The numeral of each weight must be a valid numeral.
  *        | isValidNumeral(getNumeral())
  * @invar The unit of each weight must be a valid unit.
- *        | TODO aanvullen
+ *        | isValidUnit(getUnit())
  * @author Frederic
  *
  */
@@ -26,6 +27,7 @@ public class Weight implements Comparable<Weight> {
 	 * @post  The unit of this new weight equals the given weight
 	 * 		  | new.getUnit() == unit
 	 */
+	@Raw
 	public Weight(double numeral, WeightUnit unit)
 	{
 		this.numeral = numeral;
@@ -65,7 +67,7 @@ public class Weight implements Comparable<Weight> {
 	 */
 	public static boolean isValidUnit(WeightUnit weightUnit)
 	{
-		return weightUnit!= null;
+		return weightUnit != null;
 	}
 	/**
 	 * Check whether the given numeral is a valid numeral for any weight.
@@ -111,6 +113,71 @@ public class Weight implements Comparable<Weight> {
 	 */
 	public WeightUnit getUnit() {
 		return unit;
+	}
+	
+	/**
+	 * Returns the sum of this weight and another weight, 
+	 * taking weight units into consideration.
+	 * @param other
+	 *        The other weight to add to this weight.
+	 * @return The resulting weight has this weight unit as its weight unit.
+	 *         | result.getUnit() == getUnit()
+	 * @return The numeral of the resulting weight is the sum of this numeral
+	 *         and the numeral of the other weight converted to this weight unit.
+	 * @return If the other weight is not effective this weight is returned.
+	 *         | result == this
+	 */
+	public Weight add(Weight other)
+	{
+		if(other == null)
+			return this;
+		return new Weight(other.toUnit(getUnit()).getNumeral() + getNumeral(), getUnit());
+	}
+	
+	/**
+	 * Returns the hashcode for this weight.
+	 * 
+	 * @see p.290
+	 */
+	@Override
+	public int hashCode() {
+		return new Double(getNumeral()).hashCode() + getUnit().hashCode();
+	}
+	
+	/**
+	 * Returns the textual representation of this weight.
+	 *
+	 * @return A string consisting of the textual representation of the numeral
+	 *         followed by the textual representation of this weight unit separated by a space.
+	 *         | result.equals( getNumeral() + " " + getUnit().toString() )
+	 */
+	@Override
+	public String toString() {
+		return getNumeral() + " " + getUnit().toString();
+	}
+	
+	/**
+	 * Check whether this weight is equal to the given object.
+	 * 
+	 * @return True if and only if the given object is effective,
+	 *         if this weight and the given object belong to the
+	 *         same class and if this weight and other object 
+	 *         interpreted as a weight have equal numerals and equal weight units.
+	 *         | result == ( (other != null) 
+	 *                       && (this.getClass() == other.getClass()) 
+	 *                       && this.getNumeral() == ((Weight)other).getNumeral() 
+	 *                       && this.getUnit() == ((Weight)other).getUnit() )
+	 *
+	 *@see p.289 equality
+	 */
+	@Override
+	public boolean equals(Object other) {
+		if(other == null)
+			return false;
+		if( this.getClass() != other.getClass())
+			return false;
+		Weight otherWeight = (Weight)other;
+		return ( this.getNumeral() == otherWeight.getNumeral() && this.getUnit() == otherWeight.getUnit());
 	}
 	
 }

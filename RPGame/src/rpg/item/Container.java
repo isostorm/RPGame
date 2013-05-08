@@ -2,7 +2,8 @@ package rpg.item;
 
 import java.util.*;
 
-import exception.NoSuchItemException;
+import rpg.exception.NoSuchItemException;
+
 
 /**
  * An abstract class of containers.
@@ -28,7 +29,7 @@ public abstract class Container extends ItemImplementation{
 	 * @effect The capacity of this container is set to the given capacity
 	 * 		   | setCapacity(capacity)
 	 */
-	public Container(long id, Weight weight, BackPack backpack, Character holder, Weight capacity) {
+	public Container(long id, Weight weight, BackPack backpack, Creature holder, Weight capacity) {
 		super(id, weight, backpack, holder);
 		setCapacity(capacity);
 		content = new HashMap<Long, ArrayList<Item> >();
@@ -55,12 +56,26 @@ public abstract class Container extends ItemImplementation{
 	
 	//TODO
 	public Weight getTotalWeight(){
-		return;
+		Weight resultWeight = new Weight(0, WeightUnit.KG);
+		Enumeration<Item> itemEnumeration = getItems();
+		while(getItems().hasMoreElements())
+		{
+			Item item = itemEnumeration.nextElement();
+			resultWeight.add(item.getWeight());
+		}
+		return resultWeight;
 	}
 	
 	//TODO
 	public int getTotalValue(){
-		return;
+		int totalValue = 0;
+		Enumeration<Item> itemEnumeration = getItems();
+		while(getItems().hasMoreElements())
+		{
+			Item item = itemEnumeration.nextElement();
+			totalValue += item.getValue();
+		}
+		return totalValue;
 	}
 	
 	private HashMap<Long, ArrayList<Item> > content ;
@@ -69,9 +84,8 @@ public abstract class Container extends ItemImplementation{
 	 * Add the given item to the content of this container
 	 * @param item
 	 * 		  The item to add
-	 * @post  The list stored under the key of the given item in the content of this container,
-	 * 		  contains the given item
-	 *        | content.get(item.getId()).contains(item)
+	 * @post  The content of this container contains the given item 
+	 *        | contains(item)
 	 */
 	public void addItem(Item item){
 		if(content.containsKey(item.getId())){
@@ -95,8 +109,8 @@ public abstract class Container extends ItemImplementation{
 	 *         | result == content.containsKey(item.getId()) ||
 	 *         | 	content.get(item.getId()).contains(item)
 	 */
-	public boolean exists(Item item){
-		if(content.containsKey(item.getId()) || content.get(item.getId()).contains(item))
+	public boolean contains(Item item){
+		if(content.containsKey(item.getId()) && content.get(item.getId()).contains(item))
 			return true;
 		
 		return false;
@@ -107,9 +121,8 @@ public abstract class Container extends ItemImplementation{
 	 * 
 	 * @param  item
 	 * 		   The item to remove from the content of this container
-	 * @posts  The list stored under the key of the given item in the content of this container,
-	 * 		   doesn't contain the given item anymore
-	 * 		   | !content.get(item.getId()).contains(item)
+	 * @post   The content of this container doesn't contain the given item anymore
+	 * 		   | !contains(item)
 	 * @throws NoSuchItemException
 	 * 		   This container doesn't contain the given item
 	 * 		   | !content.containsKey(item.getId()) ||
@@ -128,12 +141,68 @@ public abstract class Container extends ItemImplementation{
 		
 		content.get(item.getId()).remove(item);
 	}
-	
-	/*
-	 * Return the number of items in this container
-	 */
-	public int getNbItems(){
-		return content.size();
+	//TODO commentaar? zie mail
+	public ArrayList<Item> getDirectItems()
+	{
+		ArrayList<Item> retValue = new ArrayList<Item>();
+		for(ArrayList<Item> itemList : content.values())
+			retValue.addAll(itemList);
+		return retValue;
 	}
-	
+	public Enumeration<Item> getItems()
+	{
+		return new Enumeration<Item>() {
+			private int curIndex;
+			private ArrayList<Item> items;
+			
+			{
+				items = generateItemlist();
+				curIndex = -1;
+			}
+			private ArrayList<Item> generateItemlist()
+			{
+				return generateItemListRecursive(getDirectItems());
+			}
+			/**
+			 * Generates a list of items in 
+			 * 
+			 * @param items
+			 *        The list of items to explore.
+			 * @return The items 
+			 */
+			private ArrayList<Item> generateItemListRecursive(ArrayList<Item> items)
+			{
+				ArrayList<Item> retList = new ArrayList<Item>();
+				for(Item item: items)
+				{
+					if(item instanceof Container)
+						retList.addAll( generateItemListRecursive( ((Container)item).getDirectItems() ) );
+					retList.add(item);
+				}
+				return retList;
+			}
+			/**
+			 * Checks whether this iterator has more elements.
+			 * 
+			 * @return True if and only if the current index is strictly 
+			 *         less than the total number of items in the list minus one.
+			 *         | result == ( items.size() - 1 > curIndex )
+			 */
+			@Override
+			public boolean hasMoreElements() {
+				
+				return items.size() - 1 > curIndex;
+			}
+			
+			/**
+			 * Returns the next item in this iterator.
+			 * 
+			 * @see Enumeration
+			 */
+			@Override
+			public Item nextElement() throws NoSuchElementException {
+				return items.get(++curIndex);
+			}
+		};
+	}
 }

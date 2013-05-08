@@ -18,7 +18,7 @@ public class Purse extends Container{
 	 * 		   the given a generated id, weight, backpack, holder and capacity
 	 * 		   | super(generateId(), weight, backpack, holder, capacity)
 	 */
-	public Purse(Weight weight, BackPack backpack, Character holder,
+	public Purse(Weight weight, BackPack backpack, Creature holder,
 			Weight capacity) {
 		super(id, weight, backpack, holder, capacity);
 		
