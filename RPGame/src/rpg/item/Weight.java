@@ -1,4 +1,7 @@
 package rpg.item;
+
+import rpg.item.WeightUnit;
+
 //totaal
 /**
  * A class of weights involving a numeral and a weight unit.
@@ -10,7 +13,24 @@ package rpg.item;
  *
  */
 public class Weight implements Comparable<Weight> {
-
+	
+	/**
+	 * Initialize a new weight with the given numeral and unit
+	 * 
+	 * @param numeral
+	 *        The numeral 
+	 * @param unit
+	 *        The unit
+	 * @post  The numeral of this new weight equals the given numeral
+	 * 		  | new.getNumeral() == numeral
+	 * @post  The unit of this new weight equals the given weight
+	 * 		  | new.getUnit() == unit
+	 */
+	public Weight(double numeral, WeightUnit unit)
+	{
+		this.numeral = numeral;
+		this.unit = unit;
+	}
 	private final double numeral;
 	private final WeightUnit unit;
 	/**
@@ -78,23 +98,7 @@ public class Weight implements Comparable<Weight> {
 		double conversionRate = this.getUnit().toUnit(unit);
 		return new Weight(getNumeral()*conversionRate, unit);
 	}
-	/**
-	 * Initialize a new weight with the given numeral and unit
-	 * 
-	 * @param numeral
-	 *        The numeral 
-	 * @param unit
-	 *        The unit
-	 * @post  The numeral of this new weight equals the given numeral
-	 * 		  | new.getNumeral() == numeral
-	 * @post  The unit of this new weight equals the given weight
-	 * 		  | new.getUnit() == unit
-	 */
-	public Weight(double numeral, WeightUnit unit)
-	{
-		this.numeral = numeral;
-		this.unit = unit;
-	}
+
 	/**
 	 * Return the numeral of this weight.
 	 */
