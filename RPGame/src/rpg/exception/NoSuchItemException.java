@@ -1,4 +1,4 @@
-package exception;
+package rpg.exception;
 
 import rpg.item.Item;
 
