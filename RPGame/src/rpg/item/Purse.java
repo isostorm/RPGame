@@ -1,4 +1,7 @@
 package rpg.item;
+
+import rpg.creature.Creature;
+
 /**
  * A class of purses.
  * a purse is a container that only contains dukats
@@ -20,12 +23,26 @@ public class Purse extends Container{
 	 */
 	public Purse(Weight weight, BackPack backpack, Creature holder,
 			Weight capacity) {
-		super(id, weight, backpack, holder, capacity);
+		super(generateId(), weight, backpack, holder, capacity);
 		
 	}
 	
-	public static long generateId(){
+	//TODO
+	private static long generateId(){
+		return 0;
 		
+	}
+	
+	/**
+	 * Add the given dukat to this purse
+	 * 
+	 * @param  dukat
+	 * 		   The dukat to add to this purse
+	 * @effect The dukat is added to the enclosing container of this purse
+	 * 		   | super.addItem(dukat)
+	 */
+	public void addDukat(Dukat dukat){
+		super.addItem(dukat);
 	}
 	
 }

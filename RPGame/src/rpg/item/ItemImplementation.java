@@ -1,5 +1,6 @@
 package rpg.item;
 
+import rpg.creature.Creature;
 import be.kuleuven.cs.som.annotate.*;
 /**
  * A class, involving an id, a weight, a backpack, a holder
@@ -30,7 +31,7 @@ public class ItemImplementation implements Item {
 	 * 		   | setHolder(holder)
 	 */
 	@Raw
-	public ItemImplementation(long id, Weight weight, BackPack backpack, Character holder){
+	public ItemImplementation(long id, Weight weight, BackPack backpack, Creature holder){
 		setId(id);
 		this.weight = weight;
 		setBackPack(backpack);
@@ -90,7 +91,7 @@ public class ItemImplementation implements Item {
 		return id;
 	}
 	
-	private Character holder;
+	private Creature holder;
 	
 	/**
 	 * Set the holder of this item to the given holder
@@ -100,7 +101,7 @@ public class ItemImplementation implements Item {
 	 * @post  The holder of this item equals the given holder
 	 * 		  | new.getHolder() == holder
 	 */
-	public void setHolder(Character holder){
+	public void setHolder(Creature holder){
 		this.holder = holder;
 	}
 	
@@ -108,7 +109,7 @@ public class ItemImplementation implements Item {
 	 * Return the holder of this item
 	 */
 	@Basic
-	public Character getHolder(){
+	public Creature getHolder(){
 		return holder;
 	}
 	

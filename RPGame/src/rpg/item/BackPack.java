@@ -1,5 +1,6 @@
 package rpg.item;
 
+import rpg.creature.Creature;
 import be.kuleuven.cs.som.annotate.*;
 
 /**
@@ -54,6 +55,16 @@ public class BackPack extends Container{
 		return result;
 	}
 	
+	/**
+	 * Add an item to this backpack
+	 * 
+	 * @effect Add an item to the enclosing container of this backpack
+	 * 		   | super.addItem(item)
+	 */
+	@Override
+	public void addItem(Item item){
+		super.addItem(item);
+	}
 	
 	
 }

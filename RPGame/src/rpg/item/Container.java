@@ -2,6 +2,7 @@ package rpg.item;
 
 import java.util.*;
 
+import rpg.creature.Creature;
 import rpg.exception.NoSuchItemException;
 
 
@@ -45,6 +46,8 @@ public abstract class Container extends ItemImplementation{
 	}
 
 	/**
+	 * Set the capacity of this container to the given capacity
+	 * 
 	 * @param capacity 
 	 * 		  The capacity to set
 	 * @post  The new capacity of this container equals the given capacity
@@ -87,7 +90,7 @@ public abstract class Container extends ItemImplementation{
 	 * @post  The content of this container contains the given item 
 	 *        | contains(item)
 	 */
-	public void addItem(Item item){
+	protected void addItem(Item item){
 		if(content.containsKey(item.getId())){
 			ArrayList <Item> items = new ArrayList<Item>();
 			items.add(item);
@@ -125,8 +128,7 @@ public abstract class Container extends ItemImplementation{
 	 * 		   | !contains(item)
 	 * @throws NoSuchItemException
 	 * 		   This container doesn't contain the given item
-	 * 		   | !content.containsKey(item.getId()) ||
-	 * 		   |	!content.get(item.getId()).contains(item)
+	 * 		   | !contains(item)
 	 * @throws IllegalArgumentException
 	 * 		   The given item is not effective
 	 * 		   | item == null
@@ -136,38 +138,44 @@ public abstract class Container extends ItemImplementation{
 		if(item == null)
 			throw new IllegalArgumentException();
 		
-		if(!content.containsKey(item.getId()) || !content.get(item.getId()).contains(item))
+		if(!contains(item))
 			throw new NoSuchItemException(item);
 		
 		content.get(item.getId()).remove(item);
 	}
+	
 	//TODO commentaar? zie mail
 	public ArrayList<Item> getDirectItems()
 	{
 		ArrayList<Item> retValue = new ArrayList<Item>();
+		
 		for(ArrayList<Item> itemList : content.values())
 			retValue.addAll(itemList);
 		return retValue;
 	}
+	
 	public Enumeration<Item> getItems()
 	{
 		return new Enumeration<Item>() {
 			private int curIndex;
+			
 			private ArrayList<Item> items;
 			
 			{
 				items = generateItemlist();
 				curIndex = -1;
 			}
+			
 			private ArrayList<Item> generateItemlist()
 			{
 				return generateItemListRecursive(getDirectItems());
 			}
+			
 			/**
 			 * Generates a list of items in 
 			 * 
-			 * @param items
-			 *        The list of items to explore.
+			 * @param  items
+			 *         The list of items to explore.
 			 * @return The items 
 			 */
 			private ArrayList<Item> generateItemListRecursive(ArrayList<Item> items)
