@@ -18,6 +18,13 @@ public interface Item {
 	public long getId();
 	
 	/**
+	 * Checks whether or this item can have the given id as its id.
+	 * 
+	 * @return True if and only if the given id is positive.
+	 *         | result == (id >= 0)
+	 */
+	public boolean canHaveAsId(long id);
+	/**
 	 * Return the value of this item
 	 */
 	@Basic

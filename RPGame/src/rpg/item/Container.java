@@ -91,7 +91,7 @@ public abstract class Container extends ItemImplementation{
 	 *        | contains(item)
 	 */
 	protected void addItem(Item item){
-		if(content.containsKey(item.getId())){
+		if(!content.containsKey(item.getId())){
 			ArrayList <Item> items = new ArrayList<Item>();
 			items.add(item);
 			content.put(item.getId(), items);
@@ -162,14 +162,10 @@ public abstract class Container extends ItemImplementation{
 			private ArrayList<Item> items;
 			
 			{
-				items = generateItemlist();
+				items = generateItemList(getDirectItems());
 				curIndex = -1;
 			}
 			
-			private ArrayList<Item> generateItemlist()
-			{
-				return generateItemListRecursive(getDirectItems());
-			}
 			
 			/**
 			 * Generates a list of items in 
@@ -178,13 +174,13 @@ public abstract class Container extends ItemImplementation{
 			 *         The list of items to explore.
 			 * @return The items 
 			 */
-			private ArrayList<Item> generateItemListRecursive(ArrayList<Item> items)
+			private ArrayList<Item> generateItemList(ArrayList<Item> items)
 			{
 				ArrayList<Item> retList = new ArrayList<Item>();
 				for(Item item: items)
 				{
 					if(item instanceof Container)
-						retList.addAll( generateItemListRecursive( ((Container)item).getDirectItems() ) );
+						retList.addAll( generateItemList( ((Container)item).getDirectItems() ) );
 					retList.add(item);
 				}
 				return retList;

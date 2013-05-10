@@ -31,5 +31,9 @@ public class Dukat implements Item{
 	public Weight getWeight() {
 		return new Weight(50, WeightUnit.G);
 	}
+	@Override
+	public boolean canHaveAsId(long id) {
+		return id == 0;
+	}
 	
 }

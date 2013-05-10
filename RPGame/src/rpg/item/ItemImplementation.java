@@ -8,8 +8,10 @@ import be.kuleuven.cs.som.annotate.*;
  * 
  * @author Mathias, Frederic
  *
+ * @invar Each ItemImplementation has a valid id.
+ *        | canHaveAsId(getId())
  */
-public class ItemImplementation implements Item {
+public abstract class ItemImplementation implements Item {
 	/**
 	 * Initialize this new item with the given id, weight, backpack and holder
 	 * 
@@ -23,8 +25,8 @@ public class ItemImplementation implements Item {
 	 * 		   The holder of this item
 	 * @post   The weight of this item equals the given weight
 	 * 		   | new.getWeight() == weight
-	 * @effect The id of this item is set to the given id
-	 * 		   | setId(id)
+	 * @post   The id of this item is set to the given id
+	 * 		   | new.getId() == id
 	 * @effect The backpack of this item is set to the given backpack
 	 * 		   | setBackPack(backpack)
 	 * @effect The holder of this item is set to the given holder
@@ -32,7 +34,7 @@ public class ItemImplementation implements Item {
 	 */
 	@Raw
 	public ItemImplementation(long id, Weight weight, BackPack backpack, Creature holder){
-		setId(id);
+		this.id = id;
 		this.weight = weight;
 		setBackPack(backpack);
 		setHolder(holder);
@@ -70,25 +72,23 @@ public class ItemImplementation implements Item {
 		return weight;
 	}
 	
-	private long id;
+	private final long id;
+	
 	/**
-	 * Set the id of this item to the given id
-	 * 
-	 * @param id
-	 * 		  The new id for this item
-	 * @post  The id of this item equals the given id
-	 * 		  | new.getId() == id
+	 * @see Interface Item
 	 */
-	protected void setId(long id){
-		this.id = id;
+	@Override @Basic @Immutable
+	public long getId() {
+		return id;
 	}
 	
 	/**
 	 * @see Interface Item
 	 */
-	@Override @Basic
-	public long getId() {
-		return id;
+	@Override
+	public boolean canHaveAsId(long id)
+	{
+		return getId() >= 0;
 	}
 	
 	private Creature holder;

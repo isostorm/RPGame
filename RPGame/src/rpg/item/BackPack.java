@@ -21,7 +21,7 @@ public class BackPack extends Container{
 	 * 		   the given a generated weight, backpack, holder and capacity
 	 * 		   | super(generateId(), weight, backpack, holder, capacity)
 	 * @post   The number of backpacks is increased by one
-	 * 		   | nbOfBackPacks++
+	 * 		   | new.getNbOfBackPacks() == old.getNbOfBackPacks() + 1
 	 */
 	@Raw
 	public BackPack(Weight weight, BackPack backpack,
@@ -34,7 +34,14 @@ public class BackPack extends Container{
 	 * A variable storing the total number of created backpacks.
 	 */
 	private static int nbOfBackPacks = 0;
-	
+	/**
+	 * Returns the number of backpacks that have been created.
+	 */
+	@Model
+	private static int getNbOfBackPacks()
+	{
+		return nbOfBackPacks;
+	}
 	
 	/**
 	 * Generates the id for the n-th backpack.
@@ -43,15 +50,15 @@ public class BackPack extends Container{
 	 *         | let
 	 *         |    returnValue = 1
 	 *         | in
-	 *         |    for each I in 1..nbOfBackPacks:
-	 *         |       returnValue *= (nbOfBackPacks-I)/(I+1)
+	 *         |    for each I in 1..getNbOfBackPacks():
+	 *         |       returnValue *= (getNbOfBackPacks()-I)/(I+1)
 	 * 		   |    result == returnValue
 	 */
 	@Model
 	private static long generateId(){
 		long result = 1; // 0 nCr n = 1
-		for(int i = 1; i <= nbOfBackPacks; i++)
-			result *= (nbOfBackPacks-i)/(i+1);
+		for(int i = 1; i <= getNbOfBackPacks(); i++)
+			result *= (getNbOfBackPacks()-i)/(i+1);
 		return result;
 	}
 	
