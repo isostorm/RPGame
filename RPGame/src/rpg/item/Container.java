@@ -12,6 +12,9 @@ import rpg.exception.NoSuchItemException;
  * 
  * @author Mathias, Frederic
  *
+ * @invar The content list is effective.
+ *        | content != null
+ * @see p.417 invariant for private variable
  */
 public abstract class Container extends ItemImplementation{
 	
@@ -81,7 +84,7 @@ public abstract class Container extends ItemImplementation{
 		return totalValue;
 	}
 	
-	private HashMap<Long, ArrayList<Item> > content ;
+	private final HashMap<Long, ArrayList<Item> > content;
 	
 	/**
 	 * Add the given item to the content of this container

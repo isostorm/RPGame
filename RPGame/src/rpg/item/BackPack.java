@@ -73,6 +73,26 @@ public class BackPack extends Container{
 		super.addItem(item);
 	}
 	
+	/**
+	 * 
+	 */
+	@Override
+	public void setValue(int value)
+	{
+		
+	}
+	
+	/**
+	 * Checks whether this backpack can have the given value as its value.
+	 * 
+	 * @return True if and only if the given value is less than or equal 
+	 *         to 500 and greater than or equal to 0.
+	 *         | result == ( (value <= 500) && (value >= 0) )
+	 */
+	public boolean canHaveAsValue(int value)
+	{
+		return value <= 500 && value >= 0;
+	}
 	
 }
 

@@ -1,13 +1,13 @@
 package rpg.item;
 
-public class main {
+import be.kuleuven.cs.som.annotate.Model;
 
+public class main {
 	public static void main(String[] args) {
-		String name = "Abc: a'";
-		
-		
-		System.out.println(name);
-		System.out.println(Character.toString('a'));
+		for(int i = 0; i <= 1000; i++)
+		{
+			System.out.println("test" + new Weapon(null, null, null).getId());
+		}
 	}
 
 }

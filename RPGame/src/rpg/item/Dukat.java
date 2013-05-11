@@ -24,16 +24,59 @@ public class Dukat implements Item{
 		return 1;
 	}
 	
+	private static final Weight WEIGHT = new Weight(50, WeightUnit.G);
+	
 	/**
 	 * Return the weight of this dukat which is always 50 gram
 	 */
 	@Override @Basic @Immutable
 	public Weight getWeight() {
-		return new Weight(50, WeightUnit.G);
+		return WEIGHT;
 	}
+	
+	/**
+	 * Checks whether this dukat can have the given id as its id.
+	 * 
+	 * @return True if and only if the given id is equal to 0.
+	 *         | result == ( id == 0 )
+	 */
 	@Override
 	public boolean canHaveAsId(long id) {
 		return id == 0;
+	}
+	
+	/**
+	 * Checks whether this dukat has a valid id.
+	 * 
+	 * @return True if and only if this dukat can have its id as its id.
+	 *         | result == canHaveAsId( getId() )
+	 * 
+	 */
+	@Override
+	public boolean hasValidId() {
+		return canHaveAsId(getId());
+	}
+	
+	/**
+	 * Checks whether this dukat has a valid value.
+	 * 
+	 * @return True if and only if this dukat can have its value as its value.
+	 *         | result == canHaveAsValue(getValue())
+	 */
+	@Override
+	public boolean hasValidValue() {
+		return canHaveAsValue(getValue());
+	}
+	
+	/**
+	 * Checks whether this dukat can have the given value as its value.
+	 * 
+	 * @return True if and only if the given value is equal to 1.
+	 *         | result == (value == 1)
+	 */
+	@Override
+	public boolean canHaveAsValue(int value) {
+		return value == 1;
 	}
 	
 }

@@ -135,6 +135,22 @@ public class Weight implements Comparable<Weight> {
 	}
 	
 	/**
+	 * Returns this weight multiplied with the given multiplier.
+	 * 
+	 * @param  multiplier
+	 *         The number to multiply this weight with.
+	 * @return The resulting weight has this weight unit as its weight unit.
+	 *         | result.getUnit() == getUnit()
+	 * @return The numeral of the resulting weight is the numeral of this
+	 *         weight multiplied with the given multiplier.
+	 *         | result.getNumeral() = getNumeral()*multiplier
+	 */
+	public Weight multiply(double multiplier)
+	{
+		return new Weight(getNumeral()*multiplier, getUnit());
+	}
+	
+	/**
 	 * Returns the hashcode for this weight.
 	 * 
 	 * @see p.290

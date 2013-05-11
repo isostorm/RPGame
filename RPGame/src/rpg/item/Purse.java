@@ -7,6 +7,9 @@ import rpg.creature.Creature;
  * A class of purses.
  * a purse is a container that only contains dukats
  * @author Mathias, Frederic
+ * 
+ * @invar The capacity of this purse is a valid capacity.
+ *        | hasValidCapacity()
  *
  */
 public class Purse extends Container{
@@ -28,9 +31,55 @@ public class Purse extends Container{
 			Weight capacity) {
 		super(generateId(), weight, backpack, holder, capacity);
 		shiftFibonacciNumbers();
-		
+	}
+	/**
+	 * A variable storing the maximum capacity a purse can accept.
+	 */
+	public static final Weight MAX_CAPACITY = new Weight(5, WeightUnit.KG);
+	
+	/**
+	 * Checks whether this purse can have the given capacity as its capacity.
+	 * 
+	 * @param  capacity
+	 *         The capacity to check.
+	 * @return True if and only if the given capacity is less than or equal to the maximum capacity.
+	 *         | result == ( capacity.compareTo(MAX_CAPACITY) <= 0 )
+	 */
+	public boolean canHaveAsCapacity(Weight capacity)
+	{
+		return capacity.compareTo(MAX_CAPACITY) <= 0;
 	}
 	
+	/**
+	 * Checks whether this purse has a valid capacity.
+	 * 
+	 * @return True if this purse can have its capacity as its capacity.
+	 *         | result == canHaveAsCapacity(getCapacity())
+	 */
+	public boolean hasValidCapacity()
+	{
+		return canHaveAsCapacity(getCapacity());
+	}
+	/**
+	 * Sets the capacity of this purse.
+	 * 
+	 * @param capacity
+	 *        The capacity to set.
+	 * @post  If this purse can't have the given capacity as its capacity,
+	 *        the capacity is equal to the maximum capacity.
+	 *        | if(!canHaveAsCapacity(capacity)) then
+			  |    new.getCapacity() == MAX_CAPACITY
+			  Otherwise the capacity is equal to the given capacity.
+			  | else then
+			  |    new.getCapacity() == capacity
+	 */
+	@Override
+	public void setCapacity(Weight capacity) {
+		if(!canHaveAsCapacity(capacity))
+			super.setCapacity(MAX_CAPACITY);
+		super.setCapacity(capacity);
+			
+	}
 	/**
 	 * Proceed in the row of fibonacci.
 	 * 
@@ -66,7 +115,6 @@ public class Purse extends Container{
 	}
 	
 	/**
-	 * Generates the nth fibonacci number 
 	 * Generates the next fibonacci number based on the last two ids.
 	 * 
 	 * @return One if the sum of the secondLastId plus the lastId is less than or equal to one.
@@ -114,7 +162,7 @@ public class Purse extends Container{
 			return false;
 	}
 	
-	/**
+	/** TODO scheuren van purse
 	 * Add the given dukat to this purse
 	 * 
 	 * @param  dukat
