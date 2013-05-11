@@ -16,21 +16,40 @@ import rpg.creature.Creature;
 public class Weapon extends ItemImplementation {
 
 	/**
+	 * Initializes this weapon with the given weight, backpack, holder and value.
 	 * @param  weight
 	 * 		   The weight of this weapon
 	 * @param  backpack
-	 * 		   The enclosing backpack of this purse
+	 * 		   The enclosing backpack of this weapon
 	 * @param  holder
-	 * 		   The holder of this purse
+	 * 		   The holder of this weapon
+	 * @param  value
+	 *         The value of this weapon.
 	 * @effect A new container is initialized with 
 	 * 		   the given a generated id, weight, backpack, holder and capacity
 	 * 		   | super(generateId(), weight, backpack, holder, capacity)
 	 * @effect The fibonacci numbers are shifted.
 	 *         | shiftFibonacciNumbers()
 	 */
-	public Weapon(Weight weight, BackPack backpack, Creature holder) {
-		super(generateId(), weight, backpack, holder);
+	public Weapon(Weight weight, BackPack backpack, Creature holder, int value) {
+		super(generateId(), weight, backpack, holder, value);
 		shiftId();
+	}
+	
+	/**
+	 * Initializes this weapon with the given weight, backpack, holder and value set to 1.
+	 * @param  weight
+	 * 		   The weight of this weapon
+	 * @param  backpack
+	 * 		   The enclosing backpack of this purse
+	 * @param  holder
+	 * 		   The holder of this purse
+	 * @effect A new weapon is initialized with the given weight, backpack and holder and 1 as its value.
+	 *         | this(weight, backpack, holder, 1)
+	 */
+	public Weapon(Weight weight, BackPack backpack, Creature holder)
+	{
+		this(weight, backpack, holder, 1);
 	}
 	private static long lastId = 0;
 	/**
@@ -239,12 +258,12 @@ public class Weapon extends ItemImplementation {
 	 /**
 	  * Checks whether the given value is a valid value for this weapon.
 	  * 
-	  * @return True if and only if the given value is between 1 and 500.
-	  *         | result == ( (value >= 1) && (value <= 500) )
+	  * @return True if and only if the given value is between 1 and 200.
+	  *         | result == ( (value >= 1) && (value <= 200) )
 	  */
 	 @Override
 	 public boolean canHaveAsValue(int value)
 	 {
-		 return value >= 1 && value <= 500;
+		 return value >= 1 && value <= 200;
 	 }
 }
