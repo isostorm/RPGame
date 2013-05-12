@@ -16,6 +16,8 @@ import rpg.creature.Creature;
  * 	      | hasValidMaxValue()
  * @invar Each armor has a valid maximum protection
  * 	      | hasValidMaxProtection()
+ * @invar Each armor must have a valid protection
+ * 		  | hasValidProtection()
  *
  */
 public class Armor extends ItemImplementation{
@@ -65,11 +67,16 @@ public class Armor extends ItemImplementation{
 	 }
 	 
 	 /**
+	  * Return the value of this armor
 	  * 
+	  * @return The result is the product of the maximum value 
+	  * 		of this armor and the quotient of the maximum protection factor
+	  * 		and the actual protection factor
+	  * 		| result == getMaxValue() * (getProtection()/getMaxProtection())
 	  */
 	 @Override
 	 public int getValue(){
-		return maxValue;
+		return getMaxValue() * (getProtection()/getMaxProtection());
 		 
 	 }
 	 
@@ -107,6 +114,8 @@ public class Armor extends ItemImplementation{
 			return isValidMaxProtection(getMaxProtection()); 
 		 }
 		 
+		 private int protection;
+		 
 		 /**
 		 * Return the protection factor of this armor
 		 */
@@ -125,9 +134,30 @@ public class Armor extends ItemImplementation{
 		public void setProtection(int protection) {
 			this.protection = protection;
 		}
-
 		
-
-		private int protection;
+		/**
+		 * Check whether this armor can have the given protection as its protection
+		 * 
+		 * @param  protection
+		 * 		   The protection to check
+		 * @return True if and only if the given protection is positive
+		 * 		   and less than or equal to the maximum protection
+		 * 		   | result == ( ( protection >= 0) && (protection <= getMaxProtection() ) )
+		 */
+		public boolean canHaveAsProtection(int protection){
+			return protection >= 0 && protection <= getMaxProtection();
+		}
+		
+		/**
+		 * Check whether this armor can has a valid protection
+		 * 
+		 * @return True if and only if this armor can have its protection as its protection
+		 * 		   | result == canHaveAsProtection(getProtection())
+		 */
+		public boolean hasValidProtection(){
+			return canHaveAsProtection(getProtection());
+		}
+		
+		
 		 
 }
