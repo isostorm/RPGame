@@ -38,6 +38,25 @@ public abstract class ItemImplementation implements Item, Parent {
 		setValue(value);
 	}
 	
+	/**
+	 * Initialize this new item with the given id, weight, backpack and holder
+	 * 
+	 * @param  id
+	 * 		   The id for this item
+	 * @param  weight
+	 * 		   The weight of this item
+	 * @param  backpack
+	 * 		   The enclosing backpack of this item
+	 * @param  holder
+	 * 		   The holder of this item
+	 * @effect Initialize this item implementation with the given weight, backpack and holder
+	 * 		   and 0 as its value and its id
+	 *         | this(0, weight, backpack, holder, 0)
+	 */
+	@Raw
+	public ItemImplementation(Weight weight, Parent parent){
+		this(0, weight, parent, 0);
+	}
 	
 	private int value;
 	/**
