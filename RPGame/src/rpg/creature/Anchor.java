@@ -40,9 +40,13 @@ public class Anchor implements Parent {
 		setItem(item);
 		holder.addAnchor(this);
 	}
+	
 	/**
 	 * Initialize a new anchor with the given holder and name
-	 * 
+	 * @param holder
+	 *        The holder of this new anchor
+	 * @param name
+	 *        The name of this new anchor
 	 * @effect This new anchor is initialized with the given holder as its holder,
 	 *         the given name as its name and null as its item
 	 *         | this(holder, name, null)
@@ -51,6 +55,19 @@ public class Anchor implements Parent {
 		this(holder, name, null);
 	}
 	
+	/**
+	 * Initialize a new anchor with the given holder.
+	 * 
+	 * @param  holder
+	 *         The holder of this new anchor
+	 * @effect This new anchor is initialized with the given holder as its holder,
+	 *         the given item as its object andnull as its name.
+	 *         | this(holder, null, item)
+	 */
+	public Anchor(Creature holder, Object item) {
+		this(holder, null, item);
+	}
+
 	private final Creature holder;
 	
 	/**
@@ -84,9 +101,9 @@ public class Anchor implements Parent {
 	 * @param item
 	 *        The new item to be set
 	 * @post  If the given item is an instance of ItemImplementation,
-	 *        the holder of the item is equal to the holder of this anchor.
+	 *        the parent of this item is equal to this anchor.
 	 *        | if(item instanceof ItemImplementation) then
-	 *        |    ((ItemImplementation)item).getholder() == getHolder()
+	 *        |    ((ItemImplementation)item).getParent() == this
 	 * @post  The item of this anchor equals the given item.
 	 *        | new.getItem() == item
 	 */
@@ -94,7 +111,7 @@ public class Anchor implements Parent {
 		removeItem();
 		setItem(item);
 		if(item instanceof ItemImplementation)
-			((ItemImplementation)item).setHolder(getHolder());
+			((ItemImplementation)item).setParent(this);
 	}
 	/**
 	 * Sets the given item as this anchors item.
@@ -114,16 +131,16 @@ public class Anchor implements Parent {
 	 * Removes the item this anchor holds.
 	 * 
 	 * @post If the item this anchor is an instance of ItemImplementation,
-	 *       the holder of the item is equal to null.
+	 *       the parent of the item is equal to null.
 	 *       | if(getItem() instanceof ItemImplementation) then
-	 *		 |    ((ItemImplementation)getItem()).getHolder() == null;
+	 *		 |    ((ItemImplementation)getItem()).getParent() == null;
 	 * @post The item this anchor holds is null.
 	 *       | getItem() == null
 	 */
 	public void removeItem()
 	{
 		if(getItem() instanceof ItemImplementation)
-			((ItemImplementation)getItem()).setHolder(null);
+			((ItemImplementation)getItem()).setParent(null);
 		this.item = null;
 	}
 

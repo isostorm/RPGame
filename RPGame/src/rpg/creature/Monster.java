@@ -2,18 +2,57 @@ package rpg.creature;
 
 import java.util.ArrayList;
 
+import be.kuleuven.cs.som.annotate.Raw;
+
 import rpg.item.Armor;
 import rpg.item.Weight;
 import rpg.item.WeightUnit;
 
 public class Monster extends Creature {
 
-	public Monster(double strength, String name, int maximumHitpoints,
-			ArrayList<Anchor> anchors, int protection) {
-		super(strength, name, maximumHitpoints, anchors);
-		skin = new Armor(3, new Weight(0, WeightUnit.KG), , maxProtection)
+	/**
+	 * Initializes a new monster with the given name, maximum hitpoints,
+	 * protection and a variable amount of objects.
+	 * 
+	 * @param name
+	 *        The name of this monster.
+	 * @param maximumHitpoints
+	 *        The maximum hitpoints of this monster.
+	 * @param protection
+	 *        The protection factor of this monster.
+	 * @param objects
+	 *        The objects this monster carries.
+	 *        
+
+	 * @post   Each anchor of this monster contains one of the given objects.
+	 *         | for each object in objects:
+	 *         |    for some anchor in getAnchors():
+	 *         |       anchor.getItem() == object
+	 * @post   The monster is initialized with an anchor called "body" that contains an armor
+	 *         which functions as its skin with 0KG as its weight, 3 as its id, the given protection
+	 *         as its protection and maximum protection.
+	 *         | new.getAnchor("body") == Armor(3, new Weight(0, WeightUnit.KG), body, 0, protection, protection)
+	 * @effect This monster is initialized as a new creature with the given 
+	 *         name and maximumHitpoints.
+	 *         | super(name, maximumhitpoints)
+	 * @effect   The strength of this monster is set to a strength capable of carrying all the given objects.
+	 *         | setStrength( getTotalWeight().getNumeral()/9 + 1 )
+	 */
+	@Raw
+	public Monster(String name, int maximumHitpoints, int protection, Object ... objects) {
+		super(name, maximumHitpoints);
 		
+		for(Object obj: objects)
+			addAnchor(new Anchor(this, obj));
+		
+		Anchor body = new Anchor(this, "body");
+		new Armor(3, new Weight(0, WeightUnit.KG), body, 0, protection, protection);
+		addAnchor(body);
+		
+		// plus one to make sure the capacity is big enough in case of loss of precision
+		setStrength(getTotalWeight().getNumeral()/9 + 1); 
 	}
+	
 	private static final ArrayList<Character> allowedCharacters = new ArrayList<Character>();
 	
 	/**

@@ -6,8 +6,7 @@ import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;
 import be.kuleuven.cs.som.annotate.Raw;
 import rpg.exception.IllegalNameException;
-import rpg.item.Parent;
-import rpg.item.Weight;
+import rpg.item.*;
 /**
  * A class of creatures involving a name, hitpoints,
  * strength, protection, capacity anda list of anchorpoints.
@@ -37,8 +36,6 @@ public abstract class Creature implements Parent{
 	 *         The name of this creature.
 	 * @param  maximumHitpoints
 	 *         The maximum hitpoints of this creature.
-	 * @param  anchors
-	 *         The list of anchors.
 	 * @effect The strength of this creature is set to the given strength.
 	 *         | setStrength(strength)
 	 * @effect The name of this creature is set to the given name.
@@ -47,18 +44,30 @@ public abstract class Creature implements Parent{
 	 *         | sethitpoints(maximumHitpoints)
 	 * @effect The maximum hitpoints of this creature is set to the given maximum hitpoints.
 	 *         | setMaximumHitpoints(strength)
-	 * @post   The list of anchors of this creature is equal to the given list of anchors.
-	 *         | new.getAnchors() == anchors
 	 *        
 	 */
 	@Raw
-	public Creature(double strength, String name,
-		int maximumHitpoints, ArrayList<Anchor> anchors) {
+	public Creature(double strength, String name, int maximumHitpoints) {
 		setStrength(strength);
 		setName(name);
 		setMaximumHitpoints(maximumHitpoints);
 		setHitpoints(maximumHitpoints);
-		this.anchors = new ArrayList<Anchor>(anchors);
+		this.anchors = new ArrayList<Anchor>();
+	}
+	
+	/**
+	 * Initializes a new creature with the given name and maximum hitpoints.
+	 * 
+	 * @param  name
+	 *         The name of this creature.
+	 * @param  maximumHitpoints
+	 *         The maximum hitpoints of this creature.
+	 * @effect This creature is initialized with 0 as its strength and the given name and maximum hitpoints.
+	 *         | this(0, name, maximumHitpoints)
+	 */
+	public Creature(String name, int maximumHitpoints)
+	{
+		this(0, name, maximumHitpoints);
 	}
 	
 	/**
@@ -154,7 +163,7 @@ public abstract class Creature implements Parent{
 	 * @param strength
 	 *        The new strength of this creature.
 	 */
-	private void setStrength(double strength)
+	protected void setStrength(double strength)
 	{
 		this.strength = strength;
 	}
@@ -191,6 +200,36 @@ public abstract class Creature implements Parent{
 	}
 	
 	public abstract Weight getCapacity();
+	
+	/**
+	 * Returns the total weight of all the items in the anchors of this creature.
+	 * 
+	 * @return The sum of all the total weights of the elements in the anchorpoints.
+	 *         | let
+	 *         |    retWeight = new Weight(0, WeightUnit.KG)
+	 *         | in
+	 *         |    for each anchor in getAnchors():
+	 *         |       if( anchor.getItem() instanceof Container ) then
+	 *         |          retWeight.add( ((Container)object).getTotalWeight() )
+	 *         |       else if (object instanceof Item) then
+	 *         |          retWeight.add( ((Container)object).getWeight() )
+	 *         |    result == retWeight
+	 * @return The weight unit of the resulting weight is KG.
+	 *         | result.getUnit() == WeightUnit.KG
+	 */
+	public Weight getTotalWeight()
+	{
+		Weight retWeight = new Weight(0, WeightUnit.KG);
+		for(Anchor anchor : getAnchors())
+		{
+			Object object = anchor.getItem();
+			if(object instanceof Container)
+				retWeight.add( ((Container)object).getTotalWeight() );
+			else if (object instanceof Item)
+				retWeight.add( ((Container)object).getWeight() );
+		}
+		return retWeight;
+	}
 	
 	public abstract int getProtection();
 	
@@ -412,6 +451,7 @@ public abstract class Creature implements Parent{
 	 *       | canHaveAsAnchor( anchor )
 	 * @post The given anchor
 	 */
+	@Raw
 	void addAnchor(Anchor anchor)
 	{
 		anchors.add(anchor);
