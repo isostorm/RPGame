@@ -170,11 +170,5 @@ public class Purse extends Container{
 	public void addDukat(Dukat dukat){
 		super.addItem(dukat);
 	}
-
-	@Override
-	public boolean canHaveAsValue(int value) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 	
 }

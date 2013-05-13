@@ -60,27 +60,59 @@ public abstract class Container extends ItemImplementation{
 		this.capacity = capacity;
 	}
 	
-	//TODO
+	/**
+	 * Gets the total weight of this container
+	 * 
+	 * @return The sum of the weight of this container the
+	 *         weights of all the direct or indirect items in this container.
+	 *         | let
+	 *         |    resultWeight = new Weight(0, WeightUnit.KG)
+	 *         |    itemEnumeration = getItems()
+	 *         | in
+	 *         |    for each item in itemEnumeration:
+	 *         |       resultWeight.add(item.getWeight())
+	 *         |    resultWeight.add(getWeight())
+	 *         |    result == resultWeight
+	 * @return The unit of the resulting weight is KG.
+	 *         | result.getUnit() == WeightUnit.KG
+	 */
 	public Weight getTotalWeight(){
 		Weight resultWeight = new Weight(0, WeightUnit.KG);
 		Enumeration<Item> itemEnumeration = getItems();
-		while(getItems().hasMoreElements())
+		while(itemEnumeration.hasMoreElements())
 		{
 			Item item = itemEnumeration.nextElement();
 			resultWeight.add(item.getWeight());
 		}
+		resultWeight.add(getWeight());
 		return resultWeight;
 	}
 	
-	//TODO
+	/**
+	 * Gets the total value of this container.
+	 * 
+	 * @return The sum of the value of this container and the value
+	 *         of all the direct or indirect items which are not purses in this container.
+	 *         | let
+	 *         |    totalValue = 0
+	 *         |    itemEnumeration = getItems()
+	 *         | in
+	 *         |    for each item in itemEnumeration:
+	 *         |       if ( ! (item instanceof Purse) ) then
+	 *         |          totalValue += item.getValue
+	 *         |    result == ( totalValue + getValue() )
+	 * 
+	 */
 	public int getTotalValue(){
 		int totalValue = 0;
 		Enumeration<Item> itemEnumeration = getItems();
-		while(getItems().hasMoreElements())
+		while(itemEnumeration.hasMoreElements())
 		{
 			Item item = itemEnumeration.nextElement();
-			totalValue += item.getValue();
+			if(! (item instanceof Purse) ) // otherwise the value of each dukat inside a purse is counted twice
+				totalValue += item.getValue();
 		}
+		totalValue += getValue();
 		return totalValue;
 	}
 	

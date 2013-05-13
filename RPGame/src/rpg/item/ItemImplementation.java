@@ -1,5 +1,7 @@
 package rpg.item;
 
+import java.util.Enumeration;
+
 import rpg.creature.Creature;
 import be.kuleuven.cs.som.annotate.*;
 /**
@@ -94,13 +96,6 @@ public abstract class ItemImplementation implements Item, Parent {
 		return value;
 	}
 	
-	/**
-	 * @see Interface Item
-	 */
-	public boolean hasValidValue()
-	{
-		return canHaveAsValue(getValue());
-	}
 	
 	private final Weight weight;
 	

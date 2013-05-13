@@ -11,21 +11,47 @@ import rpg.item.Weight;
  * A class of creatures involving a name, hitpoints,
  * strength, protection, capacity anda list of anchorpoints.
  * 
- *@invar Each creature has a valid maximum number of hitpoints.
+ * @invar Each creature has a valid maximum number of hitpoints.
  *       | hasValidMaximumHitpoints()
- *@invar Each creature has a valid name.
+ * @invar Each creature has a valid name.
  *       | hasValidName()
- *@invar Each creature has a valid number of hitpoints.
+ * @invar Each creature has a valid number of hitpoints.
  *       | hasValidHitpoints()
- *@invar The strength precision for each creature is a positive number.
+ * @invar The strength precision for each creature is a positive number.
  *       | getStrengthPrecision() >= 0
- *@invar Each creatures precision of its strength is equal to the strength precision.
+ * @invar Each creatures precision of its strength is equal to the strength precision.
  *       | Math.Round(getStrength()*Math.pow(10,getStrengthPrecision())) ==
  *       | getStrength()*Math.pow(10,getStrengthPrecision())
- *@invar Each creature has proper anchors associated with it.
+ * @invar Each creature has proper anchors associated with it.
  *       | hasProperAnchors()
  */
 public abstract class Creature implements Parent{
+	
+	/**
+	 * Initializes a new creature with the given strength, name, maximum hitpoints and the list of anchors.
+	 * 
+	 * @param strength
+	 *        The strength of this creature.
+	 * @param name
+	 *        The name of this creature.
+	 * @param maximumHitpoints
+	 *        The maximum hitpoints of this creature.
+	 * @param anchors
+	 *        
+	 */
+	public Creature(double strength, String name,
+			int maximumHitpoints, ArrayList<Anchor> anchors, Object ... object) {
+		setStrength(strength);
+		setName(name);
+		setHitpoints(maximumHitpoints);
+		setMaximumHitpoints(maximumHitpoints);
+		for(Object obj : object)
+		{
+			
+		}
+		this.anchors = anchors;
+		this.anchors = anchors;
+	}
 	private static int strengthPrecision = 2;
 	/**
 	 * Sets the precision of the strength to the given number for each creature.

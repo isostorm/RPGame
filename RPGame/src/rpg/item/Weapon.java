@@ -6,12 +6,14 @@ import rpg.creature.Creature;
  * A Weapon is a special type of ItemImplementation involving additionally a damage
  * @author Frederic
  *
- *@invar The maximum damage for all weapons is a valid maximum damage.
- *       | hasValidMaxDamage()
- *@invar The damage of this weapon is a valid damage.
- *       | hasValidDamage()
- *@invar The damage value factor of this weapon is strictly positive.
- *       | getDamageValueFactor() > 0
+ * @invar The maximum damage for all weapons is a valid maximum damage.
+ *        | hasValidMaxDamage()
+ * @invar The damage of this weapon is a valid damage.
+ *        | hasValidDamage()
+ * @invar The damage value factor of this weapon is strictly positive.
+ *        | getDamageValueFactor() > 0
+ * @invar Each weapon has a valid value.
+ *        | hasValidValue()
  */
 public class Weapon extends ItemImplementation {
 
@@ -254,12 +256,21 @@ public class Weapon extends ItemImplementation {
 	 /**
 	  * Checks whether the given value is a valid value for this weapon.
 	  * 
-	  * @return True if and only if the given value is between 1 and 200.
-	  *         | result == ( (value >= 1) && (value <= 200) )
+	  * @return True if and only if the given value is between 1 and 200 or a formula is used to calculate the value.
+	  *         | result == ( getUseFormula() || ( (value >= 1) && (value <= 200) ) )
 	  */
-	 @Override
 	 public boolean canHaveAsValue(int value)
 	 {
-		 return value >= 1 && value <= 200;
+		 return getUseFormula() || (value >= 1 && value <= 200);
 	 }
+	/**
+	 * Checks whether this weapon has a valid value.
+	 * 
+	 * @return True if and only if this weapon can have its value as its value.
+	 *         | result == canHaveAsValue( getValue() )
+	 */
+	public boolean hasValidValue()
+	{
+		return canHaveAsValue(getValue());
+	}
 }

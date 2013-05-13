@@ -9,8 +9,6 @@ import be.kuleuven.cs.som.annotate.*;
  * 
  * @invar Each ItemImplementation has a valid id.
  *        | hasValidId()
- * @invar Each ItemImplementation has a valid value.
- *        | hasValidValue()
  *        
  */
 public interface Item {
@@ -42,21 +40,6 @@ public interface Item {
 	@Basic
 	public int getValue();
 	
-	/**
-	 * Checks whether this ItemImplementation has a valid value.
-	 * 
-	 * @return True if and only if this item can have the value it has, as its value.
-	 *         | result == canHaveAsValue( getValue() )
-	 */
-	public boolean hasValidValue();
-	
-	/**
-	 * Checks whether or not this ItemImplementation can have the given value as its value.
-	 * 
-	 * @param  value
-	 *         The value to check.
-	 */
-	public boolean canHaveAsValue(int value);
 	
 	/**
 	 * Return the weight of this item
