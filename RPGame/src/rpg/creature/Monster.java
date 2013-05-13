@@ -2,15 +2,18 @@ package rpg.creature;
 
 import java.util.ArrayList;
 
+import rpg.item.Armor;
 import rpg.item.Weight;
 import rpg.item.WeightUnit;
 
 public class Monster extends Creature {
 
-	public Monster() {
-		// TODO Auto-generated constructor stub
+	public Monster(double strength, String name, int maximumHitpoints,
+			ArrayList<Anchor> anchors, int protection) {
+		super(strength, name, maximumHitpoints, anchors);
+		skin = new Armor(3, new Weight(0, WeightUnit.KG), , maxProtection)
+		
 	}
-	
 	private static final ArrayList<Character> allowedCharacters = new ArrayList<Character>();
 	
 	/**

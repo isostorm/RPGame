@@ -3,6 +3,7 @@ package rpg.creature;
 import java.util.ArrayList;
 
 import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Immutable;
 import be.kuleuven.cs.som.annotate.Raw;
 import rpg.exception.IllegalNameException;
 import rpg.item.Parent;
@@ -30,28 +31,73 @@ public abstract class Creature implements Parent{
 	/**
 	 * Initializes a new creature with the given strength, name, maximum hitpoints and the list of anchors.
 	 * 
-	 * @param strength
-	 *        The strength of this creature.
-	 * @param name
-	 *        The name of this creature.
-	 * @param maximumHitpoints
-	 *        The maximum hitpoints of this creature.
-	 * @param anchors
+	 * @param  strength
+	 *         The strength of this creature.
+	 * @param  name
+	 *         The name of this creature.
+	 * @param  maximumHitpoints
+	 *         The maximum hitpoints of this creature.
+	 * @param  anchors
+	 *         The list of anchors.
+	 * @effect The strength of this creature is set to the given strength.
+	 *         | setStrength(strength)
+	 * @effect The name of this creature is set to the given name.
+	 *         | setName(name)
+	 * @effect The number of hitpoints of this creature is set to the given maximum hitpoints.
+	 *         | sethitpoints(maximumHitpoints)
+	 * @effect The maximum hitpoints of this creature is set to the given maximum hitpoints.
+	 *         | setMaximumHitpoints(strength)
+	 * @post   The list of anchors of this creature is equal to the given list of anchors.
+	 *         | new.getAnchors() == anchors
 	 *        
 	 */
+	@Raw
 	public Creature(double strength, String name,
-			int maximumHitpoints, ArrayList<Anchor> anchors, Object ... object) {
+		int maximumHitpoints, ArrayList<Anchor> anchors) {
 		setStrength(strength);
 		setName(name);
-		setHitpoints(maximumHitpoints);
 		setMaximumHitpoints(maximumHitpoints);
-		for(Object obj : object)
-		{
-			
-		}
-		this.anchors = anchors;
-		this.anchors = anchors;
+		setHitpoints(maximumHitpoints);
+		this.anchors = new ArrayList<Anchor>(anchors);
 	}
+	
+	/**
+	 * Returns all the anchors which belong to this creature.
+	 * @return The length of the resulting arraylist is equal to the 
+	 *         number of anchors that belong to this creature.
+	 *         | result.size() == getNbAnchors()
+	 * @return Each element in the resulting arraylist is equal to 
+	 *         the anchor at the corresponding index.
+	 *         | for each i in 0..(result.size()-1):
+	 *         |    result.get(i).equals(getAnchorAt(i))
+	 */
+	public ArrayList<Anchor> getAnchors() {
+		return new ArrayList<Anchor>(this.anchors);
+	}
+	/**
+	 * Returns the number of anchors of this creature.
+	 */
+	@Basic @Raw @Immutable
+	public int getNbAnchors() {
+		return anchors.size();
+	}
+	
+	/**
+	 * Returns the anchor at the given index.
+	 * 
+	 * @param index
+	 *        The index of the anchor to return.
+	 * @pre The given index must be positive and must be less than
+	 *      the number of anchors of this creature.
+	 *      | index >= 0 && index < getNbAnchors()
+	 */
+	@Basic @Raw
+	public Anchor getAnchorAt(int index)
+	{
+		return anchors.get(index);
+	}
+	
+	
 	private static int strengthPrecision = 2;
 	/**
 	 * Sets the precision of the strength to the given number for each creature.
@@ -77,6 +123,13 @@ public abstract class Creature implements Parent{
 	}
 	
 	private static final double averageStrength = 10.00;
+	
+	/**
+	 * Returns the average strength of a creature.
+	 */
+	private static double getAveragestrength() {
+		return averageStrength;
+	}
 	//protected AnchorPoint body;
 	private double strength;
 	/**
@@ -93,6 +146,8 @@ public abstract class Creature implements Parent{
 				    /Math.pow(10, getStrengthPrecision()));
 	}
 	
+	
+
 	/**
 	 * Sets the strength to the given strength.
 	 * 
@@ -328,23 +383,6 @@ public abstract class Creature implements Parent{
 	}
 	
 	private final ArrayList<Anchor> anchors; // TODO initialize in constructor
-	public int getNBAnchors()
-	{
-		return anchors.size();
-	}
-	/**
-	 * Returns the anchor at the given index.
-	 * 
-	 * @param index
-	 * @pre   The given index must be positive and smaller than
-	 *        the number of anchors.
-	 *        | index >= 0 && index < getNBAnchors()
-	 */
-	@Basic @Raw
-	public Anchor getAnchorAt(int index)
-	{
-		return anchors.get(index);
-	}
 	
 	/**
 	 * Returns the first occurence of an anchor with the given name.

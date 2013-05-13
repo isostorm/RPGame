@@ -35,6 +35,10 @@ public class Armor extends ItemImplementation{
 	 * 		  The maximum value of this armor
 	 * @param maxProtection
 	 * 		  The maximum protection factor of this item
+	 * @pre   The given maximum value must be a valid maximum value.
+	 *        | isValidMaxValue(value)
+	 * @pre   The given maximum protection must be a valid maximum protection.
+	 *        | isValidMaxProtection(maxProtection)
 	 * @post  If this armor can't have the given id as its id, the id is set to 1
 	 * 		  otherwise it is set to the given id
 	 * 		  | if(!canHaveAsId(id) then
@@ -45,7 +49,8 @@ public class Armor extends ItemImplementation{
 	public Armor(long id, Weight weight, Parent holder,
 			int maxValue, int maxProtection) {
 		super(weight, holder);
-
+		
+		
 		this.maxValue = maxValue;
 		this.maxProtection = maxProtection;
 		
