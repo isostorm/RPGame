@@ -147,7 +147,14 @@ public abstract class Container extends ItemImplementation{
 		content.get(item.getId()).remove(item);
 	}
 	
-	//TODO commentaar? zie mail
+	/**
+	 * Returns the direct items of this container.
+	 * 
+	 * @return A list of all the direct items in the content.
+	 *         | for each list in content.values():
+	 *         |    for each item in list:
+	 *         |       result.contains(item)
+	 */
 	public ArrayList<Item> getDirectItems()
 	{
 		ArrayList<Item> retValue = new ArrayList<Item>();
@@ -156,7 +163,14 @@ public abstract class Container extends ItemImplementation{
 			retValue.addAll(itemList);
 		return retValue;
 	}
-	
+	/**
+	 * Returns a Enumeration of type Item.
+	 * 
+	 * 
+	 * @return The resulting directory enumerator will effective.
+	 *         | result != null
+	 * @return All the items in this enumeration are direct or indirect items of this container.
+	 */
 	public Enumeration<Item> getItems()
 	{
 		return new Enumeration<Item>() {
@@ -164,6 +178,13 @@ public abstract class Container extends ItemImplementation{
 			
 			private ArrayList<Item> items;
 			
+			/**
+			 * Instantiates the items and the current index.
+			 * @post Items is a list containing all the direct or indirect items of this container.
+			 *       | items == generateItemList(getDirectItems())
+			 * @post The current index is equal to -1.
+			 *       | curIndex == -1
+			 */
 			{
 				items = generateItemList(getDirectItems());
 				curIndex = -1;
@@ -171,11 +192,16 @@ public abstract class Container extends ItemImplementation{
 			
 			
 			/**
-			 * Generates a list of items in 
+			 * Generates a list of all the the items and their direct or indirect sub items.
 			 * 
 			 * @param  items
 			 *         The list of items to explore.
-			 * @return The items 
+			 * @return A list of all the the items and their direct or indirect sub items
+			 *         | 
+			 *         | for each item in items:
+			 *         |    if (item instanceof Container) then
+			 *         |       result.containsAll( generateItemList( ((Container)item).getDirectItems() ) )
+			 *         |    result.contains( item )
 			 */
 			private ArrayList<Item> generateItemList(ArrayList<Item> items)
 			{
@@ -208,6 +234,8 @@ public abstract class Container extends ItemImplementation{
 			 */
 			@Override
 			public Item nextElement() throws NoSuchElementException {
+				if(!hasMoreElements())
+					throw new NoSuchElementException();
 				return items.get(++curIndex);
 			}
 		};

@@ -63,7 +63,7 @@ public class BackPack extends Container{
 	}
 	
 	/**
-	 * Add an item to this backpack
+	 * Add an item to this backpack TODO niet af
 	 * 
 	 * @effect Add an item to the enclosing container of this backpack
 	 * 		   | super.addItem(item)
@@ -73,14 +73,6 @@ public class BackPack extends Container{
 		super.addItem(item);
 	}
 	
-	/**
-	 * 
-	 */
-	@Override
-	public void setValue(int value)
-	{
-		
-	}
 	
 	/**
 	 * Checks whether this backpack can have the given value as its value.
