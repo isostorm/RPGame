@@ -4,6 +4,7 @@
 package rpg.item;
 
 import rpg.creature.Creature;
+import src.rpg.creature.Raw;
 
 /**
  * A class of armors
@@ -21,16 +22,49 @@ import rpg.creature.Creature;
  *
  */
 public class Armor extends ItemImplementation{
-
-	public Armor(long id, Weight weight, BackPack backpack, Creature holder,
+	/**
+	 * 
+	 * @param id
+	 * @param weight
+	 * @param holder
+	 * @param maxValue
+	 * @param maxProtection
+	 * @post  If this armor can't have the given id as its id, the id equals 1
+	 * 		  otherwise it equals the given id
+	 * 		  | if(!canHaveAsId(id) then
+	 * 		  |	    getId() == 1
+	 * 		  | else then
+	 * 		  | 	getId() == id
+	 */
+	public Armor(long id, Weight weight, Parent holder,
 			int maxValue, int maxProtection) {
-		super(id, weight, backpack, holder, value);
+		super(id, weight, holder);
 
 		this.maxValue = maxValue;
 		this.maxProtection = maxProtection;
+		
+		if(!canHaveAsId(id))
+			setI)
 	}
 	
-
+	/**
+	 * Checks whether this armor can have the given id as its id
+	 * given number is a prime number.
+	 * 
+	 * @param  id
+	 *         The id to check.
+	 * @return False if and only if there is a divisor of the number between 2 and the number minus one.
+	 *         | result == ( for each integer in 2..(number-1):
+	 *         |				number%integer == 0 )
+	 */
+	@Override
+	private static boolean canHaveAsId(long id)
+	{
+		for(int i = 2; i < id; i++)
+			if(id%i == 0)
+				return false;
+		return true;
+	}
 
 	private final int maxValue;
 	
