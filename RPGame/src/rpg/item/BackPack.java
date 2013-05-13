@@ -25,7 +25,7 @@ public class BackPack extends Container{
 	 */
 	@Raw
 	public BackPack(Weight weight, BackPack backpack,
-			Creature holder, Weight capacity) {
+			Parent parent, Weight capacity) {
 		super(generateId(), weight, backpack, holder, capacity);
 		nbOfBackPacks++;
 	}

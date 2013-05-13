@@ -33,8 +33,8 @@ public abstract class Container extends ItemImplementation{
 	 * @effect The capacity of this container is set to the given capacity
 	 * 		   | setCapacity(capacity)
 	 */
-	public Container(long id, Weight weight, BackPack backpack, Creature holder, Weight capacity) {
-		super(id, weight, backpack, holder);
+	public Container(long id, Weight weight, Holder holder, Weight capacity) {
+		super(id, weight, holder);
 		setCapacity(capacity);
 		content = new HashMap<Long, ArrayList<Item> >();
 	}

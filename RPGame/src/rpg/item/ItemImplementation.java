@@ -3,43 +3,38 @@ package rpg.item;
 import rpg.creature.Creature;
 import be.kuleuven.cs.som.annotate.*;
 /**
- * A class, involving an id, a weight, a backpack, a holder
+ * A class, involving an id, a weight, a backpack, a parent
  * and a value
  * 
  * @author Mathias, Frederic
  *
  */
-public abstract class ItemImplementation implements Item {
+public abstract class ItemImplementation implements Item, Parent {
 	/**
-	 * Initialize this new item with the given id, weight, backpack and holder
+	 * Initialize this new item with the given id, weight, backpack and parent
 	 * 
 	 * @param  id
 	 * 		   The id for this item
 	 * @param  weight
 	 * 		   The weight of this item
-	 * @param  backpack
-	 * 		   The enclosing backpack of this item
-	 * @param  holder
-	 * 		   The holder of this item
+	 * @param  parent
+	 * 		   The parent of this item
 	 * @param  value
 	 * 			The value of this item
 	 * @post   The weight of this item equals the given weight
 	 * 		   | new.getWeight() == weight
 	 * @post   The id of this item is set to the given id
 	 * 		   | new.getId() == id
-	 * @effect The backpack of this item is set to the given backpack
-	 * 		   | setBackPack(backpack)
-	 * @effect The holder of this item is set to the given holder
-	 * 		   | setHolder(holder)
+	 * @effect The parent of this item is set to the given parent
+	 * 		   | setParent(parent)
 	 * @effect The value of this item is set to the given value.
 	 *         | setValue(value)
 	 */
 	@Raw
-	public ItemImplementation(long id, Weight weight, BackPack backpack, Creature holder, int value){
+	public ItemImplementation(long id, Weight weight, Parent parent, int value){
 		this.id = id;
 		this.weight = weight;
-		setBackPack(backpack);
-		setHolder(holder);
+		setParent(parent);
 		setValue(value);
 	}
 	
@@ -83,7 +78,7 @@ public abstract class ItemImplementation implements Item {
 		return weight;
 	}
 	
-	private final long id;
+	protected final long id;
 	
 	/**
 	 * @see Interface Item
@@ -111,49 +106,39 @@ public abstract class ItemImplementation implements Item {
 		return canHaveAsId(getId());
 	}
 	
-	private Creature holder;
+	private Parent parent;
 	
 	/**
-	 * Set the holder of this item to the given holder
+	 * Set the parent of this item to the given parent
 	 * 
-	 * @param holder
-	 * 		  The new holder for this item
-	 * @post  The holder of this item equals the given holder
-	 * 		  | new.getHolder() == holder
+	 * @param parent
+	 * 		  The new parent for this item
+	 * @post  The parent of this item equals the given parent
+	 * 		  | new.getParent() == parent
 	 */
-	public void setHolder(Creature holder){
-		this.holder = holder;
+	public void setParent(Parent parent){
+		this.parent = parent;
 	}
 	
 	/**
-	 * Return the holder of this item
+	 * Return the parent of this item
 	 */
 	@Basic
-	public Creature getHolder(){
-		return holder;
-	}
-	
-	private BackPack backPack;
-	
-	/**
-	 * Set the backpack which contains this item to the given backpack
-	 * 
-	 * @param backPack
-	 * 		  The backpack that contains this item
-	 * @post  The backpack of this item equals the given backpack
-	 * 		  | new.getBackPack == backPack
-	 * 
-	 */
-	public void setBackPack(BackPack backPack){
-		this.backPack = backPack;
+	public Parent getParent(){
+		return parent;
 	}
 	
 	/**
-	 * Return the enclosing backpack of this item
+	 * Returns the holder of this item implementation.
+	 * 
+	 * @return The holder of the parent of this item implementation.
+	 *         | result == getParent().getHolder()
 	 */
-	@Basic
-	public BackPack getBackPack(){
-		return backPack;
+	public Creature getHolder()
+	{
+		if(getParent() == null)
+			return null;
+		return getParent().getHolder();
 	}
 
 }
