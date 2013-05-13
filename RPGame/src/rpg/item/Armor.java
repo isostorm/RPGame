@@ -23,14 +23,20 @@ import src.rpg.creature.Raw;
  */
 public class Armor extends ItemImplementation{
 	/**
+	 * Initialize this armor with the given id, weight and parent
 	 * 
 	 * @param id
+	 * 		  The id of this new armor
 	 * @param weight
-	 * @param holder
+	 * 		  The weight of this armor
+	 * @param parent
+	 * 		  The parent of this armor
 	 * @param maxValue
+	 * 		  The maximum value of this armor
 	 * @param maxProtection
-	 * @post  If this armor can't have the given id as its id, the id equals 1
-	 * 		  otherwise it equals the given id
+	 * 		  The maximum protection factor of this item
+	 * @post  If this armor can't have the given id as its id, the id is set to 1
+	 * 		  otherwise it is set to the given id
 	 * 		  | if(!canHaveAsId(id) then
 	 * 		  |	    getId() == 1
 	 * 		  | else then
@@ -38,13 +44,16 @@ public class Armor extends ItemImplementation{
 	 */
 	public Armor(long id, Weight weight, Parent holder,
 			int maxValue, int maxProtection) {
-		super(id, weight, holder);
+		super(weight, holder);
 
 		this.maxValue = maxValue;
 		this.maxProtection = maxProtection;
 		
 		if(!canHaveAsId(id))
-			this.id = 1;
+			setId(1);
+		else
+			setId(id);
+		
 	}
 	
 	/**
@@ -58,7 +67,7 @@ public class Armor extends ItemImplementation{
 	 *         |				number%integer == 0 )
 	 */
 	@Override
-	private static boolean canHaveAsId(long id)
+	public boolean canHaveAsId(long id)
 	{
 		for(int i = 2; i < id; i++)
 			if(id%i == 0)
