@@ -44,7 +44,7 @@ public class Armor extends ItemImplementation{
 		this.maxProtection = maxProtection;
 		
 		if(!canHaveAsId(id))
-			setI)
+			this.id = 1;
 	}
 	
 	/**
