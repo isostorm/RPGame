@@ -24,9 +24,8 @@ public class BackPack extends Container{
 	 * 		   | new.getNbOfBackPacks() == old.getNbOfBackPacks() + 1
 	 */
 	@Raw
-	public BackPack(Weight weight, BackPack backpack,
-			Parent parent, Weight capacity) {
-		super(generateId(), weight, backpack, holder, capacity);
+	public BackPack(Weight weight, Parent parent, Weight capacity) {
+		super(generateId(), weight, parent, capacity);
 		nbOfBackPacks++;
 	}
 	
@@ -63,7 +62,7 @@ public class BackPack extends Container{
 	}
 	
 	/**
-	 * Add an item to this backpack TODO niet af
+	 * Add an item to this backpack
 	 * 
 	 * @effect Add an item to the enclosing container of this backpack
 	 * 		   | super.addItem(item)

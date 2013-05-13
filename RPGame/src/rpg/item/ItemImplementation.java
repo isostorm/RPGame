@@ -23,8 +23,8 @@ public abstract class ItemImplementation implements Item, Parent {
 	 * 			The value of this item
 	 * @post   The weight of this item equals the given weight
 	 * 		   | new.getWeight() == weight
-	 * @post   The id of this item is set to the given id
-	 * 		   | new.getId() == id
+	 * @effect The id of this item is set to the given id
+	 * 		   | setId(id)
 	 * @effect The parent of this item is set to the given parent
 	 * 		   | setParent(parent)
 	 * @effect The value of this item is set to the given value.
@@ -32,7 +32,7 @@ public abstract class ItemImplementation implements Item, Parent {
 	 */
 	@Raw
 	public ItemImplementation(long id, Weight weight, Parent parent, int value){
-		this.id = id;
+		setId(id);
 		this.weight = weight;
 		setParent(parent);
 		setValue(value);
@@ -78,7 +78,7 @@ public abstract class ItemImplementation implements Item, Parent {
 		return weight;
 	}
 	
-	protected final long id;
+	protected long id;
 	
 	/**
 	 * @see Interface Item
@@ -86,6 +86,19 @@ public abstract class ItemImplementation implements Item, Parent {
 	@Override @Basic @Immutable
 	public long getId() {
 		return id;
+	}
+	
+	/**
+	 * Sets the id of this item implementation to the given id
+	 * 
+	 * @param id
+	 *        The id to be set.
+	 * @post The id of this item implementation is equal to the given id.
+	 *       | getId() == id
+	 */
+	protected void setId(long id)
+	{
+		this.id = id;
 	}
 	
 	/**
