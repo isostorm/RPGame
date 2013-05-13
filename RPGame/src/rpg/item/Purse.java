@@ -29,7 +29,7 @@ public class Purse extends Container{
 	 */
 	public Purse(Weight weight, BackPack backpack, Creature holder,
 			Weight capacity) {
-		super(generateId(), weight, backpack, holder, capacity);
+		super(generateId(), weight, holder, capacity);
 		shiftFibonacciNumbers();
 	}
 	/**

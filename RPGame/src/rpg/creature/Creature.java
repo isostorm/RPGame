@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Raw;
 import rpg.exception.IllegalNameException;
+import rpg.item.Parent;
 import rpg.item.Weight;
 /**
  * A class of creatures involving a name, hitpoints,
@@ -24,7 +25,7 @@ import rpg.item.Weight;
  *@invar Each creature has proper anchors associated with it.
  *       | hasProperAnchors()
  */
-public abstract class Creature {
+public abstract class Creature implements Parent{
 	private static int strengthPrecision = 2;
 	/**
 	 * Sets the precision of the strength to the given number for each creature.
@@ -379,5 +380,14 @@ public abstract class Creature {
 			if( !canHaveAsAnchor(anchor) )
 				return false;
 		return true;
+	}
+	
+	/**
+	 * TODO comment
+	 */
+	@Override
+	public Creature getHolder()
+	{
+		return this;
 	}
 }

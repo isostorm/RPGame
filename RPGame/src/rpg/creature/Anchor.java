@@ -1,6 +1,7 @@
 package rpg.creature;
 
 import rpg.item.ItemImplementation;
+import rpg.item.Parent;
 import be.kuleuven.cs.som.annotate.Immutable;
 import be.kuleuven.cs.som.annotate.Model;
 
@@ -12,7 +13,7 @@ import be.kuleuven.cs.som.annotate.Model;
  * @invar The holder is an effective creature.
  *        | getHolder() != null
  */
-public class Anchor {
+public class Anchor implements Parent {
 	
 	/**
 	 * Initializes a new anchor with the given holder, name and item
@@ -125,7 +126,6 @@ public class Anchor {
 			((ItemImplementation)getItem()).setHolder(null);
 		this.item = null;
 	}
-	
 
 
 }
