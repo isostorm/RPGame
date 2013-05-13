@@ -15,11 +15,11 @@ public class BackPack extends Container{
 	 * 		   The weight of this backpack
 	 * @param  backpack
 	 * 		   The enclosing backpack of this backpack
-	 * @param  holder
-	 * 		   The holder of this backpack
+	 * @param  parent
+	 * 		   The parent of this backpack
 	 * @effect A new container is initialized with 
-	 * 		   the given a generated weight, backpack, holder and capacity
-	 * 		   | super(generateId(), weight, backpack, holder, capacity)
+	 * 		   the given a generated weight, parent and capacity
+	 * 		   | super(generateId(), weight, parent, capacity)
 	 * @post   The number of backpacks is increased by one
 	 * 		   | new.getNbOfBackPacks() == old.getNbOfBackPacks() + 1
 	 */

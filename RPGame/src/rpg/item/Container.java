@@ -25,11 +25,11 @@ public abstract class Container extends ItemImplementation{
 	 * 		   The weight of this container
 	 * @param  backpack
 	 * 		   The enclosing backpack of this container
-	 * @param  holder
-	 * 		   The holder of this container
+	 * @param  parent
+	 * 		   The parent of this container
 	 * @effect A new item implementation is initialized with 
-	 * 		   the given id, weight, backpack and holder
-	 * 		   | super(id, weight, backpack, holder)
+	 * 		   the given id, weight, parent
+	 * 		   | super(id, weight, parent)
 	 * @effect The capacity of this container is set to the given capacity
 	 * 		   | setCapacity(capacity)
 	 */

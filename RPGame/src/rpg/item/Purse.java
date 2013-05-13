@@ -17,19 +17,16 @@ public class Purse extends Container{
 	/**
 	 * @param  weight
 	 * 		   The weight of this purse
-	 * @param  backpack
-	 * 		   The enclosing backpack of this purse
-	 * @param  holder
-	 * 		   The holder of this purse
+	 * @param  parent
+	 * 		   The parent of this purse
 	 * @effect A new container is initialized with 
-	 * 		   the given a generated id, weight, backpack, holder and capacity
-	 * 		   | super(generateId(), weight, backpack, holder, capacity)
+	 * 		   the generated id and the given weight, parent and capacity
+	 * 		   | super(generateId(), weight, parent, capacity)
 	 * @effect The fibonacci numbers are shifted.
 	 *         | shiftFibonacciNumbers()
 	 */
-	public Purse(Weight weight, BackPack backpack, Creature holder,
-			Weight capacity) {
-		super(generateId(), weight, holder, capacity);
+	public Purse(Weight weight, Parent parent, Weight capacity) {
+		super(generateId(), weight, parent, capacity);
 		shiftFibonacciNumbers();
 	}
 	/**
@@ -172,6 +169,12 @@ public class Purse extends Container{
 	 */
 	public void addDukat(Dukat dukat){
 		super.addItem(dukat);
+	}
+
+	@Override
+	public boolean canHaveAsValue(int value) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 }

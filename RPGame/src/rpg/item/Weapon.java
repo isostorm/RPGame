@@ -16,40 +16,36 @@ import rpg.creature.Creature;
 public class Weapon extends ItemImplementation {
 
 	/**
-	 * Initializes this weapon with the given weight, backpack, holder and value.
+	 * Initializes this weapon with the given weight, parent and value.
 	 * @param  weight
 	 * 		   The weight of this weapon
-	 * @param  backpack
-	 * 		   The enclosing backpack of this weapon
-	 * @param  holder
-	 * 		   The holder of this weapon
+	 * @param  parent
+	 *         The parent of this weapon
 	 * @param  value
 	 *         The value of this weapon.
 	 * @effect A new container is initialized with 
-	 * 		   the given a generated id, weight, backpack, holder and capacity
-	 * 		   | super(generateId(), weight, backpack, holder, capacity)
-	 * @effect The fibonacci numbers are shifted.
-	 *         | shiftFibonacciNumbers()
+	 * 		   the generated id and the given weight, parent and value
+	 * 		   | super(generateId(), weight, parent, value)
+	 * @effect The id is shifted.
+	 *         | shiftId()
 	 */
-	public Weapon(Weight weight, BackPack backpack, Creature holder, int value) {
-		super(generateId(), weight, backpack, holder, value);
+	public Weapon(Weight weight, Parent parent, int value) {
+		super(generateId(), weight, parent, value);
 		shiftId();
 	}
 	
 	/**
-	 * Initializes this weapon with the given weight, backpack, holder and value set to 1.
+	 * Initializes this weapon with the given weight, parent and value set to 1.
 	 * @param  weight
 	 * 		   The weight of this weapon
-	 * @param  backpack
-	 * 		   The enclosing backpack of this purse
-	 * @param  holder
-	 * 		   The holder of this purse
-	 * @effect A new weapon is initialized with the given weight, backpack and holder and 1 as its value.
-	 *         | this(weight, backpack, holder, 1)
+	 * @param  parent
+	 *         The parent of this weapon
+	 * @effect A new weapon is initialized with the given weight, parent and 1 as its value.
+	 *         | this(weight, parent, 1)
 	 */
-	public Weapon(Weight weight, BackPack backpack, Creature holder)
+	public Weapon(Weight weight, Parent parent)
 	{
-		this(weight, backpack, holder, 1);
+		this(weight, parent, 1);
 	}
 	private static long lastId = 0;
 	/**
