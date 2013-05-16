@@ -3,14 +3,14 @@ package rpg.exception;
 import rpg.item.Item;
 
 /**
- * A class of exceptions, signaling the non-existence of an 
- * item in the enclosing container
+ * A class of exceptions, signaling the non-existence of
+ * the parent of an item in the enclosing container
  * 
  * @author Mathias, Frederic
  *
  */
-public class NoSuchItemException extends RuntimeException{
-	
+public class NoParentException extends RuntimeException{
+
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -24,7 +24,7 @@ public class NoSuchItemException extends RuntimeException{
 	 * @post  The item of this exception equals the given item
 	 * 		  | new.getItem() == item
 	 */
-	public NoSuchItemException(Item item){
+	public NoParentException(Item item){
 		this.item = item;
 	}
 	
@@ -32,6 +32,7 @@ public class NoSuchItemException extends RuntimeException{
 	 * Return the item involved in this exception
 	 */
 	public Item getItem(){
-		return item;
+		return this.item;
 	}
+
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import be.kuleuven.cs.som.annotate.Raw;
 
 import rpg.item.Armor;
+import rpg.item.Item;
 import rpg.item.Weight;
 import rpg.item.WeightUnit;
 
@@ -39,10 +40,10 @@ public class Monster extends Creature {
 	 *         | setStrength( getTotalWeight().getNumeral()/9 + 1 )
 	 */
 	@Raw
-	public Monster(String name, int maximumHitpoints, int protection, Object ... objects) {
+	public Monster(String name, int maximumHitpoints, int protection, Item ... items) {
 		super(name, maximumHitpoints);
 		
-		for(Object obj: objects)
+		for(Item obj: items)
 			addAnchor(new Anchor(this, obj));
 		
 		Anchor body = new Anchor(this, "body");

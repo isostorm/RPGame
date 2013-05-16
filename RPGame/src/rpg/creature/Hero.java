@@ -5,9 +5,14 @@ package rpg.creature;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 import be.kuleuven.cs.som.annotate.Model;
+import be.kuleuven.cs.som.annotate.Raw;
 
+import rpg.item.Armor;
+import rpg.item.Item;
+import rpg.item.Purse;
 import rpg.item.Weight;
 import rpg.item.WeightUnit;
 
@@ -18,11 +23,59 @@ import rpg.item.WeightUnit;
 public class Hero extends Creature {
 
 	/**
+	 * Initializes a new hero with the given name, maximum hitpoints,
+	 * protection and a variable amount of objects.
 	 * 
+	 * @param name
+	 *        The name of this monster.
+	 * @param maximumHitpoints
+	 *        The maximum hitpoints of this monster.
+	 * @param protection
+	 *        The protection factor of this monster.
+	 * @param objects
+	 *        The objects this monster carries.
+	 *        
+
+	 * @post   Each anchor of this monster contains one of the given objects.
+	 *         | for each object in objects:
+	 *         |    for some anchor in getAnchors():
+	 *         |       anchor.getItem() == object
+	 * @post   The monster is initialized with an anchor called "body" that contains an armor
+	 *         which functions as its skin with 0KG as its weight, 3 as its id, the given protection
+	 *         as its protection and maximum protection.
+	 *         | new.getAnchor("body") == Armor(3, new Weight(0, WeightUnit.KG), body, 0, protection, protection)
+	 * @effect This monster is initialized as a new creature with the given 
+	 *         name and maximumHitpoints.
+	 *         | super(name, maximumhitpoints)
+	 * @effect   The strength of this monster is set to a strength capable of carrying all the given objects.
+	 *         | setStrength( getTotalWeight().getNumeral()/9 + 1 )
 	 */
-	public Hero() {
+	@Raw
+	public Hero(String name, int maximumHitpoints, int protection, Item ... items) {
+		super(name, maximumHitpoints);
+
+		Armor armor = new Armor(2, new Weight(30, WeightUnit.KG), 500, 30, 40);
+		new Anchor(this, "body", armor);
+		Purse purse = new Purse(new Weight(5, WeightUnit.G), new Weight(550, WeightUnit.G), new Random().nextInt(101));
+		new Anchor(this, "belt", purse);
+		new Anchor(this, "leftHand");
+		new Anchor(this, "rightHand");
+		new Anchor(this, "back");
 		
+		for(Item item: items)
+			for(Anchor anchor: getAnchors())
+				if(anchor.canAddItem(item))
+				{
+					anchor.addItem(item);
+					break;
+				}
 		
+		Anchor body = new Anchor(this, "body");
+		new Armor(3, new Weight(0, WeightUnit.KG), body, 0, protection, protection);
+		addAnchor(body);
+		
+		// plus one to make sure the capacity is big enough in case of loss of precision
+		setStrength(getTotalWeight().getNumeral()/9 + 1); 
 	}
 
 	@Override

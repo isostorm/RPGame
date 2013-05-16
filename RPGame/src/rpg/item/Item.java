@@ -53,7 +53,7 @@ public interface Item {
 	 * @return True if the given weight is effective.
 	 *         | getWeight() != null
 	 */
-	public static boolean isValidWeight();
+	public boolean isValidWeight();
 	
 	public boolean hasValidWeight();
 

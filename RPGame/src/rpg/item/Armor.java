@@ -3,8 +3,8 @@
  */
 package rpg.item;
 
+import be.kuleuven.cs.som.annotate.Raw;
 import rpg.creature.Creature;
-import src.rpg.creature.Raw;
 
 /**
  * A class of armors
@@ -29,8 +29,6 @@ public class Armor extends ItemImplementation{
 	 * 		  The id of this new armor
 	 * @param weight
 	 * 		  The weight of this armor
-	 * @param parent
-	 * 		  The parent of this armor
 	 * @param maxValue
 	 * 		  The maximum value of this armor
 	 * @param protection
@@ -43,16 +41,17 @@ public class Armor extends ItemImplementation{
 	 *        | isValidMaxProtection(maxProtection)
 	 * @pre   The given protection must be a valid protection
 	 *        | isValidProtection(protection)
-	 * @post  If this armor can't have the given id as its id, the id is set to 1
+	 * @post  If this armor can't have the given id as its id, the id is set to 2
 	 * 		  otherwise it is set to the given id
 	 * 		  | if(!canHaveAsId(id) then
-	 * 		  |	    getId() == 1
+	 * 		  |	    getId() == 2
 	 * 		  | else then
 	 * 		  | 	getId() == id
 	 */
-	public Armor(long id, Weight weight, Parent holder,
+	@Raw
+	public Armor(long id, Weight weight,
 			int maxValue, int protection, int maxProtection) {
-		super(weight, holder);
+		super(weight);
 		
 		
 		this.maxValue = maxValue;
@@ -60,8 +59,8 @@ public class Armor extends ItemImplementation{
 		this.maxProtection = maxProtection;
 		setProtection(protection);
 		
-		if(!canHaveAsId(id))
-			setId(1);
+		if(!canHaveAsId(id)) // TODO dit in setter
+			setId(2);
 		else
 			setId(id);
 		

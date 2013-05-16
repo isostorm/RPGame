@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Immutable;
+import be.kuleuven.cs.som.annotate.Model;
 import be.kuleuven.cs.som.annotate.Raw;
 import rpg.exception.IllegalNameException;
 import rpg.item.*;
@@ -25,7 +26,7 @@ import rpg.item.*;
  * @invar Each creature has proper anchors associated with it.
  *       | hasProperAnchors()
  */
-public abstract class Creature implements Parent{
+public abstract class Creature{
 	
 	/**
 	 * Initializes a new creature with the given strength, name, maximum hitpoints and the list of anchors.
@@ -250,7 +251,7 @@ public abstract class Creature implements Parent{
 	 *        The new name of this creature.
 	 * @post The new name of this creature is equal to the given name.
 	 *       | getName() == name
-	 * @throws IllegalNameException(name, this)
+	 * @throws IllegalNameException(name, this) [must]
 	 *         This creature cannot set its name to the given name
 	 *         because the given name is invalid.
 	 *         | ! isValidName(name)
@@ -456,7 +457,19 @@ public abstract class Creature implements Parent{
 	{
 		anchors.add(anchor);
 	}
-	
+	/**
+	 * Checks whether the given item can be added to this creature.
+	 * 
+	 * @param  item
+	 *         The item to check
+	 * @return True if and only if the sum of the total weight of this
+	 *         creature and the weight of the given item is less than or equal to the capacity of this creature.
+	 *         | result == ( getTotalWeight().add(item.getWeight()).compareTo(getCapacity()) <= 0 )
+	 */
+	public boolean canAddItem(Item item)
+	{
+		return getTotalWeight().add(item.getWeight()).compareTo(getCapacity()) <= 0;
+	}
 	
 	/**
 	 * Checks whether this creature can have the given anchor as an anchor.
@@ -487,11 +500,56 @@ public abstract class Creature implements Parent{
 	}
 	
 	/**
-	 * TODO comment
+	 * Remove the given anchor as an anchor for this creature.
+	 * 
+	 * @param  anchor
+	 *         The anchor to be removed.
+	 * @pre    This creature contains the given anchor.
+	 *         | hasAsAnchor(anchor)
+	 * @post   This creature doesn't have the given anchor as an anchor anymore.
+	 *         | !hasAsAnchor(anchor)
+	 * @effect The given anchor is terminated.
+	 *         | anchor.terminate()
+	 * @see p.409
 	 */
-	@Override
-	public Creature getHolder()
+	void removeAnchor(Anchor anchor)
 	{
-		return this;
+		anchors.remove(anchor);
+	}
+	
+	/**
+	 * Check whether this creature has the given anchor as one of its anchors.
+	 * 
+	 * @param anchor
+	 *        The anchor to check
+	 * @return True if and only if this creature has the given anchor as one of its anchors at some index.
+	 *         | result == for some I in 1..getNbAnchors():
+	 *         |              ( getAnchorAt(I) == anchor )
+	 */
+	public boolean hasAsAnchor(Anchor anchor)
+	{
+		return anchors.contains(anchor);
+	}
+	
+	private boolean isTerminated = false;
+	
+	/**
+	 * Check whether this creature is terminated.
+	 */
+	@Basic @Raw
+	public boolean isTerminated()
+	{
+		return isTerminated;
+	}
+	
+	/**
+	 * Terminate this creature and its anchors.
+	 * TODO commentaar?
+	 */
+	public void terminate()
+	{
+		for(Anchor anchor: new ArrayList<Anchor>(anchors))
+			anchor.terminate();
+		isTerminated = true;
 	}
 }

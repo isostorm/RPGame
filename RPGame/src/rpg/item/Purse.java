@@ -17,17 +17,36 @@ public class Purse extends Container{
 	/**
 	 * @param  weight
 	 * 		   The weight of this purse
-	 * @param  parent
-	 * 		   The parent of this purse
+	 * @param  amountOfDukats
+	 *         The amount of dukats to be added to this purse.
 	 * @effect A new container is initialized with 
 	 * 		   the generated id and the given weight, parent and capacity
 	 * 		   | super(generateId(), weight, parent, capacity)
+	 * @effect The given amount of dukats are added to this purse.
+	 *         | addDukats(amountOfDukats)
 	 * @effect The fibonacci numbers are shifted.
 	 *         | shiftFibonacciNumbers()
+	 * @post   The purse contains the given
 	 */
-	public Purse(Weight weight, Parent parent, Weight capacity) {
-		super(generateId(), weight, parent, capacity);
+	public Purse(Weight weight, Weight capacity, int amountOfDukats) {
+		super(generateId(), weight, capacity);
+		addDukats(amountOfDukats);
 		shiftFibonacciNumbers();
+	}
+	/**
+	 * Adds the given amount of dukats to this purse.
+	 * 
+	 * @param amountOfDukats
+	 *        The amount of dukats to add to this purse.
+	 * @post  The number of dukats in this purse equals the sum of the given amount
+	 *        of dukats and the dukats which were already in this purse.
+	 *        | new.getDirectItems().size() == amountOfDukats + old.getDirectItems().size()
+	 */
+	@Model
+	private void addDukats(int amountOfDukats)
+	{
+		for(int i = 0; i < amountOfDukats; i++)
+			addDukat(new Dukat());
 	}
 	/**
 	 * A variable storing the maximum capacity a purse can accept.
@@ -168,6 +187,8 @@ public class Purse extends Container{
 	 * 		   | super.addItem(dukat)
 	 */
 	public void addDukat(Dukat dukat){
+		if(!canAddItem(dukat))
+			terminate();
 		super.addItem(dukat);
 	}
 	
