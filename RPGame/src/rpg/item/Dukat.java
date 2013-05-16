@@ -56,6 +56,27 @@ public class Dukat implements Item{
 	public boolean hasValidId() {
 		return canHaveAsId(getId());
 	}
+	/**
+	 * Check whether this dukat has a valid value
+	 * 
+	 * @return True if and only if the given id is equal to 1
+	 * 		   | result == (value == 1)
+	 */
+	@Override
+	public boolean canHaveAsValue(int value) {
+		return value == 1 ;
+	}
+	
+	/**
+	 * Checks whether this dukat has a valid value.
+	 * 
+	 * @return True if and only if this dukat can have its value as its value.
+	 *         | result == canHaveAsValue( getValue() )
+	 */
+	@Override
+	public boolean hasValidValue() {
+		return false;
+	}
 
 	
 }

@@ -1,11 +1,11 @@
 package rpg.item;
-
-import rpg.creature.Creature;
 import be.kuleuven.cs.som.annotate.*;
 
 /**
  * A class of backpacks
- * @author Mathias
+ * A backpack is a special type of container
+ * 
+ * @author Mathias, Frederic
  *
  */
 public class BackPack extends Container{
@@ -13,19 +13,17 @@ public class BackPack extends Container{
 	/**
 	 * @param  weight
 	 * 		   The weight of this backpack
-	 * @param  backpack
-	 * 		   The enclosing backpack of this backpack
-	 * @param  parent
-	 * 		   The parent of this backpack
+	 * @param  capacity
+	 * 		   The capacity of this backpack
 	 * @effect A new container is initialized with 
-	 * 		   the given a generated weight, parent and capacity
-	 * 		   | super(generateId(), weight, parent, capacity)
+	 * 		   the given a generated id and the given weight and capacity
+	 * 		   | super(generateId(), weight, capacity)
 	 * @post   The number of backpacks is increased by one
 	 * 		   | new.getNbOfBackPacks() == old.getNbOfBackPacks() + 1
 	 */
 	@Raw
-	public BackPack(Weight weight, Parent parent, Weight capacity) {
-		super(generateId(), weight, parent, capacity);
+	public BackPack(Weight weight, Weight capacity) {
+		super(generateId(), weight, capacity);
 		nbOfBackPacks++;
 	}
 	

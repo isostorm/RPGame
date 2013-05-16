@@ -1,8 +1,13 @@
 package rpg.item;
 import rpg.creature.Creature;
-import rpg.exception.IllegalAddItemException;
 import rpg.exception.NoSuchItemException;
-
+/**
+ * A class of parents
+ * A parent can contain one or more items
+ * 
+ * @author Mathias, Frederic
+ *
+ */
 public interface Parent {
 	
 	/**

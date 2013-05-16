@@ -1,7 +1,7 @@
 package rpg.item;
 
 import be.kuleuven.cs.som.annotate.Model;
-import rpg.creature.Creature;
+
 
 /**
  * A class of purses.
@@ -51,6 +51,7 @@ public class Purse extends Container{
 	/**
 	 * A variable storing the maximum capacity a purse can accept.
 	 */
+	// TODO nodig??
 	public static final Weight MAX_CAPACITY = new Weight(5, WeightUnit.KG);
 	
 	/**
@@ -178,18 +179,23 @@ public class Purse extends Container{
 			return false;
 	}
 	
-	/** TODO scheuren van purse
+	/**
 	 * Add the given dukat to this purse
 	 * 
 	 * @param  dukat
 	 * 		   The dukat to add to this purse
-	 * @effect The dukat is added to the enclosing container of this purse
-	 * 		   | super.addItem(dukat)
+	 * @effect If the given dukat can't be added to this purse, this purse is terminated
+	 * 		   | if(!canAddItem(dukat)) then
+	 *	   	   |	terminate()
+	 * 		   Otherwise,The dukat is added to the enclosing container of this purse
+	 * 		   | else
+	 *   	   |	super.addItem(dukat)
 	 */
 	public void addDukat(Dukat dukat){
 		if(!canAddItem(dukat))
 			terminate();
-		super.addItem(dukat);
+		else 
+			super.addItem(dukat);
 	}
 	
 }

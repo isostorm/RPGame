@@ -7,9 +7,12 @@ import be.kuleuven.cs.som.annotate.*;
  * 
  * @author Mathias
  * 
- * @invar Each ItemImplementation has a valid id.
+ * @invar Each Item has a valid id.
  *        | hasValidId()
- *        
+ * @invar Each Item has an effective weight.
+ *        | getWeight() != null 
+ * @invar Each Item has a valid value.
+ *        | hasValidValue()
  */
 public interface Item {
 	
@@ -34,30 +37,33 @@ public interface Item {
 	 *         | result == canHaveAsId( getId() )
 	 */
 	public boolean hasValidId();
+	
 	/**
 	 * Return the value of this item
 	 */
 	@Basic
 	public int getValue();
 	
+	 /**
+	  * Checks whether the given value is a valid value for this weapon.
+	  * 
+	  * @return False if the given value is negative
+	  *         | if(value < 0) then
+	  *         |	result == false
+	  */
+	 public boolean canHaveAsValue(int value);
+	/**
+	 * Checks whether this item has a valid value.
+	 * 
+	 * @return True if and only if this item can have its value as its value.
+	 *         | result == canHaveAsValue( getValue() )
+	 */
+	public boolean hasValidValue();
 	
 	/**
 	 * Return the weight of this item
 	 */
 	@Basic @Immutable
 	public Weight getWeight();
-	
-	/**
-	 * Checks whether the given weight is a valid weight for this item.
-	 * 
-	 * @return True if the given weight is effective.
-	 *         | getWeight() != null
-	 */
-	public boolean isValidWeight();
-	
-	public boolean hasValidWeight();
-
-	
-	
 	
 }

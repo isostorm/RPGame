@@ -1,9 +1,7 @@
 package rpg.item;
 
-import java.util.Enumeration;
 
 import rpg.creature.Creature;
-import rpg.exception.NoParentException;
 import be.kuleuven.cs.som.annotate.*;
 /**
  * A class, involving an id, a weight, a backpack, a parent
@@ -21,9 +19,12 @@ public abstract class ItemImplementation implements Item{
 	 * @param  weight
 	 * 		   The weight of this item
 	 * @param  value
-	 * 			The value of this item
-	 * @post   The weight of this item equals the given weight
+	 * 		   The value of this item
+	 * @post   If the given weight is effective, the weight 
+	 * 		   of this item equals the given weight
 	 * 		   | new.getWeight() == weight
+	 * 		   Otherwise the weight of this item equals a weight of 0 KG
+	 * 		   | new.getWeight() == new Weight(0, WeightUnit.KG)
 	 * @effect The id of this item is set to the given id
 	 * 		   | setId(id)
 	 * @effect The value of this item is set to the given value.
@@ -32,7 +33,10 @@ public abstract class ItemImplementation implements Item{
 	@Raw
 	public ItemImplementation(long id, Weight weight, int value){
 		setId(id);
-		this.weight = weight;
+		if(weight != null)
+			this.weight = weight;
+		else
+			this.weight = new Weight(0, WeightUnit.KG);
 		setValue(value);
 	}
 	
@@ -73,11 +77,13 @@ public abstract class ItemImplementation implements Item{
 	 * 
 	 * @param val
 	 * 		  The value to set
+	 * @pre   This item implementation can have the given value as its value
+	 * 		  | canHaveAsValue(value)
 	 * @post  The new value of this item equals the given value
-	 * 		  | new.getValue() == val	
+	 * 		  | new.getValue() == value	
 	 */
-	protected void setValue(int val){
-		value = val;
+	protected void setValue(int value){
+		this.value = value;
 	}
 	
 	/**
@@ -88,6 +94,26 @@ public abstract class ItemImplementation implements Item{
 		return value;
 	}
 	
+	 /**
+	  * Checks whether the given value is a valid value for this weapon.
+	  * 
+	  * @see interface Item
+	  */
+	@Override
+	 public boolean canHaveAsValue(int value)
+	 {
+		 return(value<0);
+	 }
+	/**
+	 * Checks whether this weapon has a valid value.
+	 * 
+	 * @see interface Item
+	 */
+	@Override
+	public boolean hasValidValue()
+	{
+		return canHaveAsValue(getValue());
+	}
 	
 	private final Weight weight;
 	
@@ -114,12 +140,15 @@ public abstract class ItemImplementation implements Item{
 	 * 
 	 * @param id
 	 *        The id to be set.
-	 * @post The id of this item implementation is equal to the given id.
-	 *       | getId() == id
+	 * @post If this item implementation can have the given id as its id, 
+	 * 	     the id of this item implementation is equal to the given id.
+	 *       | if(canHaveAsId(id)) then
+	 *       |		getId() == id
 	 */
 	protected void setId(long id)
 	{
-		this.id = id;
+		if(canHaveAsId(id))
+			this.id = id;
 	}
 	
 	/**
@@ -228,6 +257,6 @@ public abstract class ItemImplementation implements Item{
 	{
 		return (parent == null) || parent.canAddItem(this);
 	}
-	//TODO isValidWeight enzo hier
+	
 
 }

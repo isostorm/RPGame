@@ -1,7 +1,7 @@
 package rpg.item;
 
 import be.kuleuven.cs.som.annotate.Model;
-import rpg.creature.Creature;
+
 /**
  * A Weapon is a special type of ItemImplementation involving additionally a damage
  * @author Frederic
@@ -12,8 +12,6 @@ import rpg.creature.Creature;
  *        | hasValidDamage()
  * @invar The damage value factor of this weapon is strictly positive.
  *        | getDamageValueFactor() > 0
- * @invar Each weapon has a valid value.
- *        | hasValidValue()
  */
 public class Weapon extends ItemImplementation {
 
@@ -21,8 +19,6 @@ public class Weapon extends ItemImplementation {
 	 * Initializes this weapon with the given weight, parent and value.
 	 * @param  weight
 	 * 		   The weight of this weapon
-	 * @param  parent
-	 *         The parent of this weapon
 	 * @param  value
 	 *         The value of this weapon.
 	 * @effect A new container is initialized with 
@@ -31,25 +27,24 @@ public class Weapon extends ItemImplementation {
 	 * @effect The id is shifted.
 	 *         | shiftId()
 	 */
-	public Weapon(Weight weight, Parent parent, int value) {
-		super(generateId(), weight, parent, value);
+	public Weapon(Weight weight, int value) {
+		super(generateId(), weight, value);
 		shiftId();
 	}
 	
 	/**
-	 * Initializes this weapon with the given weight, parent and value set to 1.
+	 * Initializes this weapon with the given weight.
 	 * @param  weight
 	 * 		   The weight of this weapon
-	 * @param  parent
-	 *         The parent of this weapon
-	 * @effect A new weapon is initialized with the given weight, parent and 1 as its value.
-	 *         | this(weight, parent, 1)
+	 * @effect A new weapon is initialized with the given weight and 1 as its value.
+	 *         | this(weight, 1)
 	 */
-	public Weapon(Weight weight, Parent parent)
+	public Weapon(Weight weight)
 	{
-		this(weight, parent, 1);
+		this(weight, 1);
 	}
 	private static long lastId = 0;
+	
 	/**
 	 * Returns the last id.
 	 */
@@ -256,21 +251,24 @@ public class Weapon extends ItemImplementation {
 	 /**
 	  * Checks whether the given value is a valid value for this weapon.
 	  * 
-	  * @return True if and only if the given value is between 1 and 200 or a formula is used to calculate the value.
-	  *         | result == ( getUseFormula() || ( (value >= 1) && (value <= 200) ) )
+	  * @return True if and only if the given value is between 1 and 200
+	  *         | result == ( (value >= 1) && (value <= 200) )
 	  */
+	 @Override
 	 public boolean canHaveAsValue(int value)
 	 {
-		 return getUseFormula() || (value >= 1 && value <= 200);
+		 return (value >= 1 && value <= 200);
 	 }
-	/**
+	
+	 /**
 	 * Checks whether this weapon has a valid value.
 	 * 
 	 * @return True if and only if this weapon can have its value as its value.
 	 *         | result == canHaveAsValue( getValue() )
 	 */
-	public boolean hasValidValue()
-	{
+	 @Override
+	 public boolean hasValidValue()
+	 {
 		return canHaveAsValue(getValue());
-	}
+	 }
 }

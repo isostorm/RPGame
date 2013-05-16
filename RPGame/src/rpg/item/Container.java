@@ -2,7 +2,6 @@ package rpg.item;
 
 import java.util.*;
 
-import rpg.creature.Creature;
 import rpg.exception.IllegalAddItemException;
 import rpg.exception.NoSuchItemException;
 
@@ -19,16 +18,17 @@ import rpg.exception.NoSuchItemException;
 public abstract class Container extends ItemImplementation implements Parent {
 
 	/**
-	 * @param id
-	 *            The id for this container
-	 * @param weight
-	 *            The weight of this container
-	 * @param backpack
-	 *            The enclosing backpack of this container
+	 * @param  id
+	 *         The id for this container
+	 * @param  weight
+	 *         The weight of this container
+	 * @param  backpack
+	 *         The enclosing backpack of this container
 	 * @effect A new item implementation is initialized with the given id,
-	 *         weight, parent | super(id, weight, parent)
-	 * @effect The capacity of this container is set to the given capacity |
-	 *         setCapacity(capacity)
+	 *         weight, parent 
+	 *         | super(id, weight, parent)
+	 * @effect The capacity of this container is set to the given capacity 
+	 * 		   | setCapacity(capacity)
 	 */
 	public Container(long id, Weight weight, Weight capacity) {
 		super(id, weight);

@@ -1,10 +1,6 @@
-/**
- * 
- */
 package rpg.item;
 
 import be.kuleuven.cs.som.annotate.Raw;
-import rpg.creature.Creature;
 
 /**
  * A class of armors
@@ -25,45 +21,36 @@ public class Armor extends ItemImplementation{
 	/**
 	 * Initialize this armor with the given id, weight and parent
 	 * 
-	 * @param id
-	 * 		  The id of this new armor
-	 * @param weight
-	 * 		  The weight of this armor
-	 * @param maxValue
-	 * 		  The maximum value of this armor
-	 * @param protection
-	 *        The protection of this armor
-	 * @param maxProtection
-	 * 		  The maximum protection factor of this item
-	 * @pre   The given maximum value must be a valid maximum value.
-	 *        | isValidMaxValue(value)
-	 * @pre   The given maximum protection must be a valid maximum protection.
-	 *        | isValidMaxProtection(maxProtection)
-	 * @pre   The given protection must be a valid protection
-	 *        | isValidProtection(protection)
-	 * @post  If this armor can't have the given id as its id, the id is set to 2
-	 * 		  otherwise it is set to the given id
-	 * 		  | if(!canHaveAsId(id) then
-	 * 		  |	    getId() == 2
-	 * 		  | else then
-	 * 		  | 	getId() == id
+	 * @param  id
+	 * 		   The id of this new armor
+	 * @param  weight
+	 * 		   The weight of this armor
+	 * @param  maxValue
+	 * 		   The maximum value of this armor
+	 * @param  protection
+	 *         The protection of this armor
+	 * @param  maxProtection
+	 * 		   The maximum protection factor of this item
+	 * @pre    The given maximum value must be a valid maximum value.
+	 *         | isValidMaxValue(value)
+	 * @pre    The given maximum protection must be a valid maximum protection.
+	 *         | isValidMaxProtection(maxProtection)
+	 * @pre    The given protection must be a valid protection
+	 *         | isValidProtection(protection)
+	 * @effect The id of this armor is set to the given id
+	 * 		   | setId()
 	 */
 	@Raw
 	public Armor(long id, Weight weight,
 			int maxValue, int protection, int maxProtection) {
+		
 		super(weight);
-		
-		
+				
 		this.maxValue = maxValue;
 		
 		this.maxProtection = maxProtection;
 		setProtection(protection);
-		
-		if(!canHaveAsId(id)) // TODO dit in setter
-			setId(2);
-		else
-			setId(id);
-		
+		setId(id);
 	}
 	
 	/**
@@ -83,6 +70,28 @@ public class Armor extends ItemImplementation{
 			if(id%i == 0)
 				return false;
 		return true;
+	}
+	
+	/**
+	 * Set the id of this armor to the given id
+	 * 
+	 * @param id
+	 * 		  The id to set
+	 * @post  If this armor can have the given id as its id, 
+	 * 		  the id of this armor equals the given id
+	 *        | if(canHaveAsId(id)) then
+	 *        |		getId() == id
+	 *        Otherwise the id equals 2
+	 *        | else
+	 *        |		getId() == 2
+	 */
+	@Override
+	public void setId(long id){
+		if(canHaveAsId(id))
+			this.id = id;
+		else
+			this.id = 2;
+		
 	}
 
 	private final int maxValue;
@@ -181,6 +190,8 @@ public class Armor extends ItemImplementation{
 		 * 
 		 * @param protection 
 		 * 		  The protection to set
+		 * @pre	  This armor can have the given protection as its protection
+		 * 		  | canHaveAsProtection(protection)
 		 * @post  The protection factor of this armor equals the given protection
 		 * 		  | new.getProtection() == protection
 		 */
@@ -210,8 +221,4 @@ public class Armor extends ItemImplementation{
 		public boolean hasValidProtection(){
 			return canHaveAsProtection(getProtection());
 		}
-		
-		
-		
-		 
 }
