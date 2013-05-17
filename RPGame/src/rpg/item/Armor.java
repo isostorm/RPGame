@@ -37,8 +37,14 @@ public class Armor extends ItemImplementation{
 	 *         | isValidMaxProtection(maxProtection)
 	 * @pre    The given protection must be a valid protection
 	 *         | isValidProtection(protection)
+	 * @post   The maximum value of this armor equals the given maximum value
+	 * 		   | getMaxValue() == maxValue
+	 * @post   The maximum protection of this armor equals the given maximum protection
+	 * 		   | getMaxProtection() == maxProtection
+	 * @effect The protection factor of this armor is set to the given protection
+	 * 		   | setProtection(protection)
 	 * @effect The id of this armor is set to the given id
-	 * 		   | setId()
+	 * 		   | setId(id)
 	 */
 	@Raw
 	public Armor(long id, Weight weight,

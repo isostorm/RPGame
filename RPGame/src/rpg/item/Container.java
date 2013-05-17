@@ -11,8 +11,11 @@ import rpg.exception.NoSuchItemException;
  * 
  * @author Mathias, Frederic
  * 
+ * @invar Every container has a valid capacity
+ * 		  | hasValidCapacity()
  * @invar The content list is effective.
  *        | content != null
+ * 
  * @see p.417 invariant for private variable
  */
 public abstract class Container extends ItemImplementation implements Parent {
@@ -48,13 +51,42 @@ public abstract class Container extends ItemImplementation implements Parent {
 	/**
 	 * Set the capacity of this container to the given capacity
 	 * 
-	 * @param capacity
-	 *            The capacity to set
-	 * @post The new capacity of this container equals the given capacity |
-	 *       new.getCapacity == capacity
+	 * @param  capacity
+	 *         The capacity to set
+	 * @post   The new capacity of this container equals the given capacity 
+	 * 		   | new.getCapacity == capacity
+	 * @throws IllegalArgumentException
+	 * 		   This container can't have the given capacity as its capacity
+	 * 		   | !canHaveAsCapacity(capacity)
 	 */
-	protected void setCapacity(Weight capacity) {
+	protected void setCapacity(Weight capacity) throws IllegalArgumentException {
+		if(!canHaveAsCapacity(capacity))
+			throw new IllegalArgumentException();
 		this.capacity = capacity;
+	}
+	
+	/**
+	 * Checks whether this purse can have the given capacity as its capacity.
+	 * 
+	 * @param  capacity
+	 *         The capacity to check.
+	 * @return True if and only if the given capacity is effective.
+	 *         | result == ( capacity != null )
+	 */
+	public boolean canHaveAsCapacity(Weight capacity)
+	{
+		return capacity != null;
+	}
+	
+	/**
+	 * Checks whether this purse has a valid capacity.
+	 * 
+	 * @return True if this purse can have its capacity as its capacity.
+	 *         | result == canHaveAsCapacity(getCapacity())
+	 */
+	public boolean hasValidCapacity()
+	{
+		return canHaveAsCapacity(getCapacity());
 	}
 
 	/**
@@ -87,10 +119,14 @@ public abstract class Container extends ItemImplementation implements Parent {
 	 * 
 	 * @return The sum of the value of this container and the value of all the
 	 *         direct or indirect items which are not purses in this container.
-	 *         | let | totalValue = 0 | itemEnumeration = getItems() | in | for
-	 *         each item in itemEnumeration: | if ( ! (item instanceof Purse) )
-	 *         then | totalValue += item.getValue | result == ( totalValue +
-	 *         getValue() )
+	 *         | let 
+	 *         | 	totalValue = 0 
+	 *         | 	itemEnumeration = getItems() 
+	 *         | in 
+	 *         | 	for each item in itemEnumeration: 
+	 *         | 		if ( ! (item instanceof Purse) )  then 
+	 *         | 			totalValue += item.getValue 
+	 *         | result == ( totalValue + getValue() )
 	 * 
 	 */
 	public int getTotalValue() {
@@ -111,11 +147,12 @@ public abstract class Container extends ItemImplementation implements Parent {
 	/**
 	 * Add the given item to the content of this container
 	 * 
-	 * @param item
-	 *            The item to add
-	 * @post If this item could be added to the container, the content of this
-	 *       container contains the given item | if( canAddItem(item) ) then |
-	 *       new.contains(item)
+	 * @param  item
+	 *         The item to add
+	 * @post   If this item could be added to the container, the content of this
+	 *         container contains the given item 
+	 *         | if( canAddItem(item) ) then 
+	 *         |      new.contains(item)
 	 * @throws IllegalAddItemException(this, item)
 	 *         If the item can't be added to this container
 	 *         | !canAddItem(item)
@@ -134,13 +171,12 @@ public abstract class Container extends ItemImplementation implements Parent {
 	/**
 	 * Checks whether the given item can be added to this container.
 	 * 
-	 * @param item
-	 *            The item to check
+	 * @param  item
+	 *         The item to check
 	 * @return True if and only if the sum of the total weight of this container
 	 *         and the weight of the given item is less than or equal to the
-	 *         capacity of this container. | result == (
-	 *         getTotalWeight().add(item.getWeight()).compareTo(getCapacity())
-	 *         <= 0 )
+	 *         capacity of this container. 
+	 *         | result == (getTotalWeight().add(item.getWeight()).compareTo(getCapacity()) <= 0 )
 	 */
 	public boolean canAddItemToContainer(Item item) {
 		return getTotalWeight().add(item.getWeight()).compareTo(getCapacity()) <= 0;
@@ -150,8 +186,8 @@ public abstract class Container extends ItemImplementation implements Parent {
 	 * Checks whether the given item can be added to this container and the
 	 * holder of this container.
 	 * 
-	 * @param item
-	 *            The item to check.
+	 * @param  item
+	 *         The item to check.
 	 * @return False if this container is terminated.
 	 *         | if(isTerminated())
 	 *         |    result == false
@@ -161,12 +197,11 @@ public abstract class Container extends ItemImplementation implements Parent {
 	 *         Otherwise false if the given item is an item implementation and
 	 *         the item has a parent or the item is terminated.
 	 *         | if(item instanceof ItemImplementation
-	 *              && ( ((ItemImplementation)item).getParent() != null || isTerminated()) ) then
-	 *         |    result == false
+	 *         |    && ( ((ItemImplementation)item).getParent() != null || isTerminated()) ) then
+	 *         |    	result == false
 	 *         Otherwise true if and only if the item can be added to this container and
-	 *         if there is a holder, the holder is able to carry the item. |
-	 *         result == ( (!hasHolder() || getHolder().canAddItem(item)) &&
-	 *         canAddItemToContainer(item) ) TODO proper maken
+	 *         if there is a holder, the holder is able to carry the item. 
+	 *         | result == ( (!hasHolder() || getHolder().canAddItem(item)) &&  canAddItemToContainer(item) )
 	 */
 	@Override
 	public boolean canAddItem(Item item) {
@@ -188,9 +223,9 @@ public abstract class Container extends ItemImplementation implements Parent {
 	 *            The item to check for
 	 * @return True if and only if the id of the given item exists as a key and
 	 *         if list stored under the key of the given item in the content of
-	 *         this container, contains the given item | result ==
-	 *         content.containsKey(item.getId()) || |
-	 *         content.get(item.getId()).contains(item)
+	 *         this container, contains the given item 
+	 *         | result == content.containsKey(item.getId()) || 
+	 *         | 		    content.get(item.getId()).contains(item)
 	 * @throws IllegalArgumentException [must]
 	 *         If the given item is not effective
 	 *         | item == null
@@ -209,10 +244,11 @@ public abstract class Container extends ItemImplementation implements Parent {
 	/**
 	 * Remove the given item from the content of this container
 	 * 
-	 * @param item
-	 *            The item to remove from the content of this container
-	 * @post The content of this container doesn't contain the given item
-	 *       anymore | !containsDirectItem(item)
+	 * @param  item
+	 *         The item to remove from the content of this container
+	 * @post   The content of this container doesn't contain the given item
+	 *         anymore 
+	 *         | !containsDirectItem(item)
 	 * @post   If the item is an item implementation, the items parent is not effective.
 	 *         | if(item instanceof ItemImplementation) then
 	 *         |    item.getParent() == null
@@ -239,9 +275,10 @@ public abstract class Container extends ItemImplementation implements Parent {
 	/**
 	 * Returns the direct items of this container.
 	 * 
-	 * @return A list of all the direct items in the content. | for each list in
-	 *         content.values(): | for each item in list: |
-	 *         result.contains(item)
+	 * @return A list of all the direct items in the content. 
+	 * 		   | for each list in content.values(): 
+	 *         | 	for each item in list: 
+	 *         |         result.contains(item)
 	 */
 	public ArrayList<Item> getDirectItems() {
 		ArrayList<Item> retValue = new ArrayList<Item>();
@@ -255,8 +292,8 @@ public abstract class Container extends ItemImplementation implements Parent {
 	 * Returns a Enumeration of type Item.
 	 * 
 	 * 
-	 * @return The resulting directory enumerator will effective. | result !=
-	 *         null
+	 * @return The resulting directory enumerator will effective. 
+	 * 		   | result != null
 	 * @return All the items in this enumeration are direct or indirect items of
 	 *         this container.
 	 */
@@ -270,9 +307,10 @@ public abstract class Container extends ItemImplementation implements Parent {
 			 * Instantiates the items and the current index.
 			 * 
 			 * @post Items is a list containing all the direct or indirect items
-			 *       of this container. | items ==
-			 *       generateItemList(getDirectItems())
-			 * @post The current index is equal to -1. | curIndex == -1
+			 *       of this container. 
+			 *       | items == generateItemList(getDirectItems())
+			 * @post The current index is equal to -1. 
+			 * 		 | curIndex == -1
 			 */
 			{
 				items = generateItemList(getDirectItems());
@@ -283,13 +321,14 @@ public abstract class Container extends ItemImplementation implements Parent {
 			 * Generates a list of all the the items and their direct or
 			 * indirect sub items.
 			 * 
-			 * @param items
-			 *            The list of items to explore.
+			 * @param  items
+			 *         The list of items to explore.
 			 * @return A list of all the the items and their direct or indirect
-			 *         sub items | | for each item in items: | if (item
-			 *         instanceof Container) then | result.containsAll(
-			 *         generateItemList( ((Container)item).getDirectItems() ) )
-			 *         | result.contains( item )
+			 *         sub items 
+			 *         | for each item in items: 
+			 *         | 	if (item instanceof Container) then 
+			 *         | 		result.containsAll(generateItemList( ((Container)item).getDirectItems() ) )
+			 *         | 	result.contains( item )
 			 */
 			private ArrayList<Item> generateItemList(ArrayList<Item> items) {
 				ArrayList<Item> retList = new ArrayList<Item>();
@@ -306,8 +345,8 @@ public abstract class Container extends ItemImplementation implements Parent {
 			 * Checks whether this iterator has more elements.
 			 * 
 			 * @return True if and only if the current index is strictly less
-			 *         than the total number of items in the list minus one. |
-			 *         result == ( items.size() - 1 > curIndex )
+			 *         than the total number of items in the list minus one. 
+			 *         | result == ( items.size() - 1 > curIndex )
 			 */
 			@Override
 			public boolean hasMoreElements() {
