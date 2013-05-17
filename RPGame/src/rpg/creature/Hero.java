@@ -13,6 +13,7 @@ import be.kuleuven.cs.som.annotate.Raw;
 import rpg.item.Armor;
 import rpg.item.Item;
 import rpg.item.Purse;
+import rpg.item.Weapon;
 import rpg.item.Weight;
 import rpg.item.WeightUnit;
 
@@ -71,7 +72,7 @@ public class Hero extends Creature {
 				}
 		
 		Anchor body = new Anchor(this, "body");
-		new Armor(3, new Weight(0, WeightUnit.KG), body, 0, protection, protection);
+		body.addItem(new Armor(3, new Weight(0, WeightUnit.KG), 0, protection, protection));
 		addAnchor(body);
 		
 		// plus one to make sure the capacity is big enough in case of loss of precision
@@ -192,6 +193,36 @@ public class Hero extends Creature {
 			return new Weight(numerals[strength - 11], WeightUnit.KG);
 		}
 		return getCapacity(strength-10).multiply(4);
+	}
+	/**
+	 * Calculates the total strength of this hero
+	 * 
+	 * @return The sum of the strength of this hero and the damage of the weapons in his hands.
+	 *         | let
+	 *         |    retStrength = getStrength()
+	 *         |    leftHandItem = getAnchor("leftHand").getItem()
+	 *         |    rightHandItem = getAnchor("rightHand").getItem()
+	 *         | in
+	 *         |    if(leftHandItem instanceof Weapon)
+	 *         |       retStrength += ((Weapon)leftHandItem).getDamage()
+	 *         |    if(rightHandItem instanceof Weapon)
+	 *         |       retStrength += ((Weapon)rightHandItem).getDamage()
+	 *         |    result == retStrength
+	 */
+	public double getTotalStrength()
+	{
+		double retStrength = getStrength();
+		
+		Item leftHandItem = getAnchor("leftHand").getItem();
+		if(leftHandItem instanceof Weapon)
+			retStrength += ((Weapon)leftHandItem).getDamage();
+		
+		Item rightHandItem = getAnchor("rightHand").getItem();
+
+		if(rightHandItem instanceof Weapon)
+			retStrength += ((Weapon)rightHandItem).getDamage();
+		
+		return retStrength;
 	}
 
 }

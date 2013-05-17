@@ -66,6 +66,7 @@ public abstract class Creature{
 	 * @effect This creature is initialized with 0 as its strength and the given name and maximum hitpoints.
 	 *         | this(0, name, maximumHitpoints)
 	 */
+	@Raw
 	public Creature(String name, int maximumHitpoints)
 	{
 		this(0, name, maximumHitpoints);
@@ -84,6 +85,7 @@ public abstract class Creature{
 	public ArrayList<Anchor> getAnchors() {
 		return new ArrayList<Anchor>(this.anchors);
 	}
+	
 	/**
 	 * Returns the number of anchors of this creature.
 	 */
@@ -109,6 +111,7 @@ public abstract class Creature{
 	
 	
 	private static int strengthPrecision = 2;
+	
 	/**
 	 * Sets the precision of the strength to the given number for each creature.
 	 * 
@@ -140,7 +143,7 @@ public abstract class Creature{
 	private static double getAveragestrength() {
 		return averageStrength;
 	}
-	//protected AnchorPoint body;
+	
 	private double strength;
 	/**
 	 * Returns the strength of this creature where the precision is equal to the strength precision.
@@ -194,11 +197,7 @@ public abstract class Creature{
 	{
 		setStrength(getStrength()/divisor);
 	}
-	//TODO getTotalStrength() maken
-	public double getTotalStrength()
-	{
-		return 0.0;
-	}
+	//TODO getTotalStrength
 	
 	public abstract Weight getCapacity();
 	
