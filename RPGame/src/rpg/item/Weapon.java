@@ -16,32 +16,40 @@ import be.kuleuven.cs.som.annotate.Model;
 public class Weapon extends ItemImplementation {
 
 	/**
-	 * Initializes this weapon with the given weight, parent and value.
+	 * Initializes this weapon with the given weight, parent, damage and value.
 	 * @param  weight
 	 * 		   The weight of this weapon
 	 * @param  value
 	 *         The value of this weapon.
+	 * @param  damage
+	 *         The damage of this weapon.
 	 * @effect A new container is initialized with 
 	 * 		   the generated id and the given weight, parent and value
 	 * 		   | super(generateId(), weight, parent, value)
 	 * @effect The id is shifted.
 	 *         | shiftId()
+	 * @effect The damage of this weapon is set to the given damage.
+	 *         | setDamage(damage)
 	 */
-	public Weapon(Weight weight, int value) {
+	public Weapon(Weight weight, int damage, int value) {
 		super(generateId(), weight, value);
+		setDamage(damage);
 		shiftId();
 	}
 	
 	/**
-	 * Initializes this weapon with the given weight.
+	 * Initializes this weapon with the given weight and damage.
+	 * 
 	 * @param  weight
 	 * 		   The weight of this weapon
-	 * @effect A new weapon is initialized with the given weight and 1 as its value.
-	 *         | this(weight, 1)
+	 * @param  damage
+	 *         The damage of this weapon.
+	 * @effect A new weapon is initialized with the given weight and damage and 1 as its value.
+	 *         | this(weight, damage, 1)
 	 */
-	public Weapon(Weight weight)
+	public Weapon(Weight weight, int damage)
 	{
-		this(weight, 1);
+		this(weight, damage, 1);
 	}
 	private static long lastId = 0;
 	

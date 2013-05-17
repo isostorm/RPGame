@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
+import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Model;
 import be.kuleuven.cs.som.annotate.Raw;
 
@@ -28,13 +29,13 @@ public class Hero extends Creature {
 	 * protection and a variable amount of objects.
 	 * 
 	 * @param name
-	 *        The name of this monster.
+	 *        The name of this hero.
 	 * @param maximumHitpoints
-	 *        The maximum hitpoints of this monster.
+	 *        The maximum hitpoints of this hero.
 	 * @param protection
-	 *        The protection factor of this monster.
-	 * @param objects
-	 *        The objects this monster carries.
+	 *        The protection factor of this hero.
+	 * @param items
+	 *        The items this hero carries.
 	 *        
 
 	 * @post   Each anchor of this monster contains one of the given objects.
@@ -49,12 +50,12 @@ public class Hero extends Creature {
 	 *         name and maximumHitpoints.
 	 *         | super(name, maximumhitpoints)
 	 * @effect   The strength of this monster is set to a strength capable of carrying all the given objects.
-	 *         | setStrength( getTotalWeight().getNumeral()/9 + 1 )
+	 *         | setStrength( getTotalWeight().getNumeral()/9 + 1 ) TODO commentaar
 	 */
 	@Raw
 	public Hero(String name, int maximumHitpoints, int protection, Item ... items) {
 		super(name, maximumHitpoints);
-
+		setStrength(getAveragestrength());
 		Armor armor = new Armor(2, new Weight(30, WeightUnit.KG), 500, 30, 40);
 		new Anchor(this, "body", armor);
 		Purse purse = new Purse(new Weight(5, WeightUnit.G), new Weight(550, WeightUnit.G), new Random().nextInt(101));
@@ -74,15 +75,55 @@ public class Hero extends Creature {
 		Anchor body = new Anchor(this, "body");
 		body.addItem(new Armor(3, new Weight(0, WeightUnit.KG), 0, protection, protection));
 		addAnchor(body);
-		
-		// plus one to make sure the capacity is big enough in case of loss of precision
-		setStrength(getTotalWeight().getNumeral()/9 + 1); 
 	}
-
+	private static int standardProtection = 10;
+	
+	/**
+	 * Checks whether the given standard protection is a valid standard protection.
+	 * 
+	 * @param standardProtection
+	 *        The standard protection to check.
+	 * @return True if and only if the given standard protection is positive.
+	 *         | result == ( standardProtection >= 0 )
+	 */
+	@Raw // TODO raw?
+	public static boolean isValidStandardProtection(int standardProtection)
+	{
+		return standardProtection >= 0;
+	}
+	
+	/**
+	 * Sets the standard protection of all heros.
+	 * @param standardProtection
+	 *        The standard protection to set.
+	 * @post  The standard protection of the new hero is equal to the given standard protection.
+	 *        | getStandardProtection() == standardProtection
+	 */
+	@Raw // TODO raw?
+	public static void setStandardProtection(int standardProtection)
+	{
+		Hero.standardProtection = standardProtection;
+	}
+	
+	/**
+	 * Returns the standard protection of all heros.
+	 */
+	@Basic
+	public static int getStandardProtection()
+	{
+		return Hero.standardProtection;
+	}
+	
+	/**
+	 * Returns the protection of this hero.
+	 * 
+	 * @return The sum of the standard protection and the protection of the enclosing creature.
+	 *         | result == ( getStandardProtection() + super.getProtection() )
+	 */
 	@Override
 	public int getProtection() {
-		// TODO Auto-generated method stub
-		return 0;
+		return getStandardProtection() + super.getProtection();
+		
 	}
 	
 	private static final ArrayList<Character> allowedCharacters = new ArrayList<Character>();
@@ -194,10 +235,12 @@ public class Hero extends Creature {
 		}
 		return getCapacity(strength-10).multiply(4);
 	}
+	
 	/**
 	 * Calculates the total strength of this hero
 	 * 
-	 * @return The sum of the strength of this hero and the damage of the weapons in his hands.
+	 * @return The sum of the strength of this hero
+	 *         and the damage of the weapons in his hands.
 	 *         | let
 	 *         |    retStrength = getStrength()
 	 *         |    leftHandItem = getAnchor("leftHand").getItem()
@@ -209,9 +252,9 @@ public class Hero extends Creature {
 	 *         |       retStrength += ((Weapon)rightHandItem).getDamage()
 	 *         |    result == retStrength
 	 */
-	public double getTotalStrength()
+	public int getTotalStrength()
 	{
-		double retStrength = getStrength();
+		int retStrength = getStrength();
 		
 		Item leftHandItem = getAnchor("leftHand").getItem();
 		if(leftHandItem instanceof Weapon)
@@ -223,6 +266,39 @@ public class Hero extends Creature {
 			retStrength += ((Weapon)rightHandItem).getDamage();
 		
 		return retStrength;
+	}
+	
+	/**
+	 * TODO
+	 */
+	public void hit(Creature other)
+	{
+		if(! (other instanceof Monster) )
+			return;
+		int randomNumber = new Random().nextInt(21);
+		if(randomNumber >= other.getProtection())
+		{
+			int damage = (int)(getTotalStrength()-10)/2;
+			if(damage > 0)
+			{
+				boolean otherIsDead = other.weaken(damage);
+				if(otherIsDead)
+				{
+					heal();
+				}
+			}
+		}
+	}
+	/**
+	 * TODO
+	 */
+	public void heal()
+	{
+		int healAmount = (int)(Math.random()*(getMaximumHitpoints()-getHitpoints()) + 0.5);
+		int nextHP = healAmount + getHitpoints();
+		if(!isPrime(nextHP))
+			nextHP = nearestLargerPrime(nextHP);
+		setHitpoints(nextHP);
 	}
 
 }

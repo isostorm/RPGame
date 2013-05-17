@@ -10,7 +10,7 @@ import rpg.exception.IllegalNameException;
 import rpg.item.*;
 /**
  * A class of creatures involving a name, hitpoints,
- * strength, protection, capacity anda list of anchorpoints.
+ * strength, protection, capacity and a list of anchorpoints.
  * 
  * @invar Each creature has a valid maximum number of hitpoints.
  *       | hasValidMaximumHitpoints()
@@ -29,16 +29,13 @@ import rpg.item.*;
 public abstract class Creature{
 	
 	/**
-	 * Initializes a new creature with the given strength, name, maximum hitpoints and the list of anchors.
+	 * Initializes a new creature with the given name and maximum hitpoints and
+	 * sets the hitpoints of this creature to the maximum hitpoints.
 	 * 
-	 * @param  strength
-	 *         The strength of this creature.
 	 * @param  name
 	 *         The name of this creature.
 	 * @param  maximumHitpoints
 	 *         The maximum hitpoints of this creature.
-	 * @effect The strength of this creature is set to the given strength.
-	 *         | setStrength(strength)
 	 * @effect The name of this creature is set to the given name.
 	 *         | setName(name)
 	 * @effect The number of hitpoints of this creature is set to the given maximum hitpoints.
@@ -48,28 +45,11 @@ public abstract class Creature{
 	 *        
 	 */
 	@Raw
-	public Creature(double strength, String name, int maximumHitpoints) {
-		setStrength(strength);
+	public Creature(String name, int maximumHitpoints) {
 		setName(name);
 		setMaximumHitpoints(maximumHitpoints);
 		setHitpoints(maximumHitpoints);
 		this.anchors = new ArrayList<Anchor>();
-	}
-	
-	/**
-	 * Initializes a new creature with the given name and maximum hitpoints.
-	 * 
-	 * @param  name
-	 *         The name of this creature.
-	 * @param  maximumHitpoints
-	 *         The maximum hitpoints of this creature.
-	 * @effect This creature is initialized with 0 as its strength and the given name and maximum hitpoints.
-	 *         | this(0, name, maximumHitpoints)
-	 */
-	@Raw
-	public Creature(String name, int maximumHitpoints)
-	{
-		this(0, name, maximumHitpoints);
 	}
 	
 	/**
@@ -140,7 +120,7 @@ public abstract class Creature{
 	/**
 	 * Returns the average strength of a creature.
 	 */
-	private static double getAveragestrength() {
+	protected static double getAveragestrength() {
 		return averageStrength;
 	}
 	
@@ -197,7 +177,6 @@ public abstract class Creature{
 	{
 		setStrength(getStrength()/divisor);
 	}
-	//TODO getTotalStrength
 	
 	public abstract Weight getCapacity();
 	
@@ -231,7 +210,24 @@ public abstract class Creature{
 		return retWeight;
 	}
 	
-	public abstract int getProtection();
+	/**
+	 * Returns the protection factor of this creature.
+	 * 
+	 * @return The result is greater than or equal to the protection of the armor of this creature.
+	 *         | if(getAnchor("body").getItem() instanceof Armor) then
+	 * 	       |    result >= ((Armor)getAnchor("body").getItem()).getProtection()
+	 *         Otherwise the protection of this creature is greater than or equal to 0.
+	 * 	       | else then
+	 * 	       |    result >= 0
+	 */
+	public int getProtection()
+	{
+		if(getAnchor("body").getItem() instanceof Armor)
+			return ((Armor)getAnchor("body").getItem()).getProtection();
+		else
+			return 0;
+			
+	}
 	
 	private String name;
 	
@@ -338,6 +334,42 @@ public abstract class Creature{
 	{
 		return canHaveAsHitpoints(getHitpoints());
 	}
+	/**
+	 * Hits the given creature.
+	 */
+	public abstract void hit(Creature other);
+	
+	private ArrayList<Item> treasure;
+	/**
+	 * TODO
+	 */
+	public ArrayList<Item> getTreasure()
+	{
+		return treasure;
+	}
+	/**
+	 * TODO
+	 * @param damage
+	 * @return
+	 */
+	public boolean weaken(int damage)
+	{
+		int newHitpoints = getHitpoints() - damage;
+		if(newHitpoints <= 0)
+		{
+			// aparte methode?
+			for(Anchor anchor: getAnchors())
+				treasure.add(anchor.getItem());
+			terminate();
+			return true;
+		}
+		else if (!isPrime(newHitpoints))
+			setHitpoints(nearestLargerPrime(newHitpoints));
+		else
+			setHitpoints(newHitpoints);
+		
+		return false;
+	}
 	private int maximumHitpoints;
 	/**
 	 * Sets the maximum number of hitpoints this creature can have.
@@ -401,7 +433,8 @@ public abstract class Creature{
 	 * @see    p.128 formal specification of for loops
 	 */
 	@Raw
-	private static boolean isPrime(int number)
+	protected
+	static boolean isPrime(int number)
 	{
 		for(int i = 2; i < number; i++)
 			if(number%i == 0)
@@ -414,14 +447,14 @@ public abstract class Creature{
 	 * @return
 	 */
 	@Raw
-	private int nearestLargerPrime(int number)
+	protected int nearestLargerPrime(int number)
 	{
 		int result = number+1;
 		while(!isPrime(result)) result++;
 		return result;
 	}
 	
-	private final ArrayList<Anchor> anchors; // TODO initialize in constructor
+	private final ArrayList<Anchor> anchors;
 	
 	/**
 	 * Returns the first occurence of an anchor with the given name.
@@ -543,7 +576,12 @@ public abstract class Creature{
 	
 	/**
 	 * Terminate this creature and its anchors.
-	 * TODO commentaar?
+	 * 
+	 * @post All the anchors of this creature are terminated.
+	 *       | for each I in 0..getNbAnchors():
+	 *       |    getAnchorAt(I).isTerminated()
+	 * @post This creature is terminated.
+	 *       | isTerminated()
 	 */
 	public void terminate()
 	{
@@ -551,4 +589,6 @@ public abstract class Creature{
 			anchor.terminate();
 		isTerminated = true;
 	}
+	
+
 }

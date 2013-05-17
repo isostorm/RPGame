@@ -1,11 +1,14 @@
 package rpg.creature;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import be.kuleuven.cs.som.annotate.Raw;
 
 import rpg.item.Armor;
+import rpg.item.Container;
 import rpg.item.Item;
+import rpg.item.Weapon;
 import rpg.item.Weight;
 import rpg.item.WeightUnit;
 
@@ -24,7 +27,8 @@ public class Monster extends Creature {
 	 * @param objects
 	 *        The objects this monster carries.
 	 *        
-
+	 * @pre    The given damage must be a valid damage for a weapon.
+	 *         | Weapon.isValidDamage(damage)
 	 * @post   Each anchor of this monster contains one of the given objects.
 	 *         | for each object in objects:
 	 *         |    for some anchor in getAnchors():
@@ -37,22 +41,31 @@ public class Monster extends Creature {
 	 *         name and maximumHitpoints.
 	 *         | super(name, maximumhitpoints)
 	 * @effect   The strength of this monster is set to a strength capable of carrying all the given objects.
-	 *         | setStrength( getTotalWeight().getNumeral()/9 + 1 )
+	 *         | setStrength( getTotalWeight().getNumeral()/9 + 1 ) TODO commentaar fixen
 	 */
 	@Raw
-	public Monster(String name, int maximumHitpoints, int protection, Item ... items) {
+	public Monster(String name, int maximumHitpoints, int damage, int protection, Item ... items) {
 		super(name, maximumHitpoints);
-		
-		for(Item obj: items)
-			addAnchor(new Anchor(this, obj));
-		
-		Anchor body = new Anchor(this, "body");
-		new Armor(3, new Weight(0, WeightUnit.KG), body, 0, protection, protection);
-		addAnchor(body);
+		Weight retWeight = new Weight(0, WeightUnit.KG);
+		for(Item item: items)
+		{
+			if(item instanceof Container)
+				retWeight.add( ((Container)item).getTotalWeight() );
+			retWeight.add(item.getWeight());
+		}
 		
 		// plus one to make sure the capacity is big enough in case of loss of precision
-		setStrength(getTotalWeight().getNumeral()/9 + 1); 
+		setStrength(retWeight.getNumeral()/9 + 1); 
+		
+		for(Item item: items)
+			addAnchor(new Anchor(this, item));
+		
+		skin = new Armor(3, new Weight(0, WeightUnit.KG), 0, protection, protection);
+		this.damage = new Weapon(new Weight(0, WeightUnit.KG), damage);
 	}
+	
+	private final Armor skin;
+	private final Weapon damage;
 	
 	private static final ArrayList<Character> allowedCharacters = new ArrayList<Character>();
 	
@@ -91,12 +104,6 @@ public class Monster extends Creature {
 			return false;
 		return true;
 	}
-	
-	@Override
-	public int getProtection() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 	/**
 	 * Returns the capacity of this monster.
@@ -109,5 +116,46 @@ public class Monster extends Creature {
 		Weight capacity = new Weight(9, WeightUnit.KG);
 		return capacity.multiply(getStrength());
 	}
-
+	
+	/**
+	 * TODO
+	 */
+	@Override
+	public int getProtection()
+	{
+		return skin.getProtection();
+	}
+	/**
+	 * TODO
+	 * 
+	 * @return
+	 */
+	public int getDamage()
+	{
+		return damage.getDamage();
+	}
+	/**
+	 * TODO
+	 */
+	public void hit(Creature other)
+	{
+		int randomNumber = new Random().nextInt(101);
+		int number = (randomNumber >= getHitpoints()) ? getHitpoints() : randomNumber;
+		if(number >= other.getProtection())
+		{
+			int damage = getDamage() + (int)(getStrength()-5)/3;
+			if(damage > 0)
+			{
+				boolean otherIsDead = other.weaken(damage);
+				if(otherIsDead)
+				{
+					collect(other.getTreasure());
+				}
+			}
+		}
+	}
+	/**
+	 * TODO
+	 */
+	private void collect();
 }
