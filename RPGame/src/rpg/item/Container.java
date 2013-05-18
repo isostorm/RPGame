@@ -108,9 +108,9 @@ public abstract class Container extends ItemImplementation implements Parent {
 		Enumeration<Item> itemEnumeration = getItems();
 		while (itemEnumeration.hasMoreElements()) {
 			Item item = itemEnumeration.nextElement();
-			resultWeight.add(item.getWeight());
+			resultWeight = resultWeight.add(item.getWeight());
 		}
-		resultWeight.add(getWeight());
+		resultWeight = resultWeight.add(getWeight());
 		return resultWeight;
 	}
 

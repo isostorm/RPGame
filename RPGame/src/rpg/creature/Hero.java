@@ -5,6 +5,7 @@ package rpg.creature;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.Random;
 
 import be.kuleuven.cs.som.annotate.Basic;
@@ -12,7 +13,9 @@ import be.kuleuven.cs.som.annotate.Model;
 import be.kuleuven.cs.som.annotate.Raw;
 
 import rpg.item.Armor;
+import rpg.item.BackPack;
 import rpg.item.Item;
+import rpg.item.ItemImplementation;
 import rpg.item.Purse;
 import rpg.item.Weapon;
 import rpg.item.Weight;
@@ -266,6 +269,32 @@ public class Hero extends Creature {
 			retStrength += ((Weapon)rightHandItem).getDamage();
 		
 		return retStrength;
+	}
+	
+	/**
+	 * TODO
+	 */
+	protected void makeTreasure()
+	{
+		for(Anchor anchor: getAnchors())
+		{
+			Item anchorItem = anchor.getItem();
+			if(anchor.getItem() instanceof BackPack)
+			{
+				Enumeration<Item> enumeration = ((BackPack)anchorItem).getItems();
+				while(enumeration.hasMoreElements())
+				{
+					Item item = enumeration.nextElement();
+					if(item instanceof Armor || item instanceof Weapon)
+						((ItemImplementation)item).terminate();
+				}
+			}
+			else if (anchorItem instanceof Armor || anchorItem instanceof Weapon)
+			{
+					((ItemImplementation)anchorItem).terminate();
+			}
+		}
+		super.makeTreasure();
 	}
 	
 	/**

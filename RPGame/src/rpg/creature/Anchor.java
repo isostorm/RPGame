@@ -193,6 +193,29 @@ public class Anchor implements Parent {
 	}
 	
 	/**
+	 * TODO
+	 * @param replacement
+	 * @throws IllegalAddItemException
+	 * @throws IllegalArgumentException
+	 */
+	public void swap(Item replacement) throws IllegalAddItemException, IllegalArgumentException
+	{
+		if(replacement == null)
+			throw new IllegalArgumentException();
+		Item oldItem = getItem();
+		try
+		{
+		removeItem();
+		addItem(replacement);
+		}
+		catch(IllegalAddItemException e)
+		{
+			addItem(oldItem);
+			throw new IllegalAddItemException(e.getParent(), e.getItem());
+		}
+	}
+	
+	/**
 	 * Sets the given item as this anchors item.
 	 * 
 	 * @param item

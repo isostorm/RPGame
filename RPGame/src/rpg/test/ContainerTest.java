@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import rpg.item.Container;
+import rpg.item.*;
 
 /**
  * @author Frederic
@@ -24,13 +24,15 @@ public class ContainerTest {
 	public static void setUpBeforeClass() throws Exception {
 	}
 
-	Container backpack1, backpack2, backpack3;
+	BackPack backpack1, backpack2, backpack3;
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-		backpack1 = new BackPack(new Weight(1)
+		backpack1 = new BackPack(new Weight(500, WeightUnit.G), new Weight(100, WeightUnit.KG));
+		backpack2 = new BackPack(new Weight(500, WeightUnit.G), new Weight(100, WeightUnit.KG));
+		backpack3 = new BackPack(new Weight(500, WeightUnit.G), new Weight(100, WeightUnit.KG));
 	}
 
 	/**

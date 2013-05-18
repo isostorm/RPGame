@@ -5,7 +5,19 @@ package rpg.test;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+import java.util.Enumeration;
+
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import rpg.item.BackPack;
+import rpg.item.Dukat;
+import rpg.item.Item;
+import rpg.item.Weapon;
+import rpg.item.Weight;
+import rpg.item.WeightUnit;
 
 /**
  * @author Mathias
@@ -13,6 +25,24 @@ import org.junit.Test;
  */
 public class BackPackTest {
 
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
+	}
+
+	BackPack backpack1, backpack2, backpack3;
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@Before
+	public void setUp() throws Exception {
+		backpack1 = new BackPack(new Weight(500, WeightUnit.G), new Weight(100, WeightUnit.KG));
+		backpack2 = new BackPack(new Weight(500, WeightUnit.G), new Weight(100, WeightUnit.KG));
+		backpack3 = new BackPack(new Weight(500, WeightUnit.G), new Weight(100, WeightUnit.KG));
+	}
+	
 	/**
 	 * Test method for {@link rpg.item.BackPack#BackPack(rpg.item.Weight, rpg.item.BackPack, java.lang.Character, rpg.item.Weight)}.
 	 */
@@ -50,9 +80,39 @@ public class BackPackTest {
 	 */
 	@Test
 	public void testGetTotalWeight() {
-		fail("Not yet implemented");
+		Weapon weapon1 = new Weapon(new Weight(800, WeightUnit.G), 20);
+		backpack2.addItem(weapon1);
+		backpack1.addItem(backpack2);
+		System.out.println(backpack1.getTotalWeight());
+		assertTrue(backpack1.getTotalWeight().
+				compareTo(backpack1.getWeight().
+						add(backpack2.getWeight()).
+						add(weapon1.getWeight())) == 0);
 	}
 
+	@Test
+	public void testGetItems()
+	{
+		Weapon weapon1 = new Weapon(new Weight(800, WeightUnit.G), 20);
+		backpack2.addItem(backpack3);
+		backpack3.addItem(weapon1);
+		Dukat dukat1, dukat2;
+		dukat1 = new Dukat();
+		dukat2 = new Dukat();
+		backpack2.addItem(dukat1);
+		backpack3.addItem(dukat2);
+		backpack1.addItem(backpack2);
+		Enumeration<Item> enumeration = backpack1.getItems();
+		ArrayList<Item> allItems = new ArrayList<Item>();
+		
+		while(enumeration.hasMoreElements())
+			allItems.add(enumeration.nextElement());
+		
+		assertTrue(allItems.contains(weapon1));
+		assertTrue(allItems.contains(backpack2));
+		assertTrue(allItems.contains(dukat1));
+		assertTrue(allItems.contains(dukat2));
+	}
 	/**
 	 * Test method for {@link rpg.item.Container#getTotalValue()}.
 	 */

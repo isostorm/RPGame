@@ -50,6 +50,7 @@ public abstract class Creature{
 		setMaximumHitpoints(maximumHitpoints);
 		setHitpoints(maximumHitpoints);
 		this.anchors = new ArrayList<Anchor>();
+		treasure =  new ArrayList<Item>();
 	}
 	
 	/**
@@ -347,6 +348,23 @@ public abstract class Creature{
 	{
 		return treasure;
 	}
+	
+	/**
+	 * TODO
+	 */
+	public void destroyTreasure()
+	{
+		treasure.clear();
+	}
+	/**
+	 * TODO
+	 */
+	protected void makeTreasure()
+	{
+		for(Anchor anchor: getAnchors())
+			treasure.add(anchor.getItem());
+	}
+	
 	/**
 	 * TODO
 	 * @param damage
@@ -357,9 +375,8 @@ public abstract class Creature{
 		int newHitpoints = getHitpoints() - damage;
 		if(newHitpoints <= 0)
 		{
-			// aparte methode?
-			for(Anchor anchor: getAnchors())
-				treasure.add(anchor.getItem());
+			makeTreasure();
+			
 			terminate();
 			return true;
 		}
@@ -369,6 +386,23 @@ public abstract class Creature{
 			setHitpoints(newHitpoints);
 		
 		return false;
+	}
+	
+	/**
+	 * TODO
+	 * @param other
+	 * @param itemsToCollect
+	 */
+	protected void collect(Creature other, ArrayList<Item> itemsToCollect)
+	{
+		for(Item item: other.getTreasure())
+			if(itemsToCollect.contains(item))
+				for(Anchor anchor: getAnchors())
+					if(anchor.canAddItem(item))
+					{
+						anchor.addItem(item);
+						break;
+					}
 	}
 	private int maximumHitpoints;
 	/**
