@@ -334,7 +334,7 @@ public class Hero extends Creature {
 	 * 
 	 * 
 	 */
-	public void heal()
+	private void heal()
 	{
 		int healAmount = (int)(Math.random()*(getMaximumHitpoints()-getHitpoints()) + 0.5);
 		int nextHP = healAmount + getHitpoints();

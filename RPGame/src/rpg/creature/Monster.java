@@ -3,11 +3,15 @@ package rpg.creature;
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.sun.org.apache.bcel.internal.generic.SWAP;
+
 import be.kuleuven.cs.som.annotate.Raw;
 
 import rpg.item.Armor;
 import rpg.item.Container;
+import rpg.item.Dukat;
 import rpg.item.Item;
+import rpg.item.Purse;
 import rpg.item.Weapon;
 import rpg.item.Weight;
 import rpg.item.WeightUnit;
@@ -118,7 +122,7 @@ public class Monster extends Creature {
 	}
 	
 	/**
-	 * TODO
+	 * Returns the protection of the skin of this monster. TODO @Basic?
 	 */
 	@Override
 	public int getProtection()
@@ -135,7 +139,9 @@ public class Monster extends Creature {
 		return damage.getDamage();
 	}
 	/**
-	 * TODO
+	 * Attempts a hit on another creature.
+	 * 
+	 * 
 	 */
 	public void hit(Creature other)
 	{
@@ -149,13 +155,56 @@ public class Monster extends Creature {
 				boolean otherIsDead = other.weaken(damage);
 				if(otherIsDead)
 				{
-					collect(other.getTreasure());
+					collect(other);
 				}
 			}
 		}
 	}
 	/**
-	 * TODO
+	 * Randomly collects items from the other creature with a higher
+	 * chance of retrieving dukats and purses.
+	 * 
+	 * @param  other
+	 * 		   The creature to collect the treasure from
+	 * @effect Each item in the treasure list is collected by this monster
+	 *         if and only if the generated random number is smaller than 0.5 if the
+	 *         item is a purse or a dukat, otherwise the random number must be smaller than 0.3.
+	 *         The item is swapped with an existing item in an anchor if another generated random
+	 *         number is less than or equal to 0.2 and there is atleast one anchor.
+	 *         Otherwise the item is collected and added to an existing anchor if there 
+	 *         is an anchor with no item.
+	 *         | let
+	 *         |    toCollect = new ArrayList<Item>()
+	 *         | in
+	 *         |    for each item in other.getTreasure():
+	 *         |       let
+	 *         |          chance = 0.3
+	 *         |       in
+	 *         |          if( item instanceof Dukat || item instanceof Purse) then
+	 *         |             chance = 0.5
+	 *         |          if( Math.random() <= chance ) then
+	 *         |             if(math.random() <= 0.2 && getNbAnchors() > 0) then
+	 *         |                getAnchorAt(new Random().nextInt(getNbAnchors())).swap(item)
+	 *         |             else then
+	 *         |                toCollect.add(item)
+	 *         |    collect(other, toCollect)
 	 */
-	private void collect();
+	private void collect(Creature other)
+	{
+		ArrayList<Item> toCollect = new ArrayList<Item>();
+		for(Item item: other.getTreasure())
+		{
+			double chance = 0.3;
+			if(item instanceof Dukat || item instanceof Purse)
+				chance = 0.5;
+			if(Math.random() <= chance) // monster will take the item
+			{
+				if(Math.random() <= 0.2 && getNbAnchors() > 0) // monster will swap it with an item in an anchor point.
+					getAnchorAt(new Random().nextInt(getNbAnchors())).swap(item);
+				else
+					toCollect.add(item);
+			}
+		}
+		collect(other, toCollect);
+	}
 }

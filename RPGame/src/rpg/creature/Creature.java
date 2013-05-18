@@ -288,7 +288,8 @@ public abstract class Creature{
 	}
 	
 	/**
-	 * TODO misschien niet protected
+	 * Sets the hitpoints to the given amount of hitpoints.
+	 * 
 	 * @param hitpoints
 	 *        The new number of hitpoints of this creature.
 	 * @pre  The creature can have the given number of hitpoints as its hitpoints.
@@ -348,12 +349,34 @@ public abstract class Creature{
 	/**
 	 * Empty the treasure of this creature
 	 * 
-	 * @post The treasure of this creature doesn't contain any items anymore
-	 * 		 | getTreasure() is empty TODO
+	 * @post The number of treasures in this creature is equal to 0.
+	 * 		 | getNbTreasures() == 0
 	 */
 	public void destroyTreasure()
 	{
 		treasure.clear();
+	}
+	
+	/**
+	 * Check whether the treasure contains the given item.
+	 * 
+	 * @param  item
+	 *         The item to check.
+	 * @return True if and only if the treasure contains the given item.
+	 *         | treasure.contains(item)
+	 */
+	public boolean treasureContains(Item item)
+	{
+		return treasure.contains(item);
+	}
+	
+	/**
+	 * Returns the number of items in the treasure of this creature.
+	 */
+	@Basic
+	public int getNbTreasures()
+	{
+		return treasure.size();
 	}
 	
 	/**
@@ -362,7 +385,7 @@ public abstract class Creature{
 	 * @post The treasure of this creature contains some items 
 	 * 		 that this creature carries in his anchors
 	 * 		 | for some anchor in getAncors():
-	 * 		 | 		getTreasure().contains(anchor.getItem()) TODO
+	 * 		 | 		treasureContains(anchor.getItem())
 	 */
 	protected void makeTreasure()
 	{
@@ -372,7 +395,7 @@ public abstract class Creature{
 	
 	/**
 	 * Weaken this creature with the given amount of hitpoints
-	 * TODO Keer checken
+	 * 
 	 * @param  damage
 	 * 		   The amount of hitpoints to subtract
 	 * @post   If the subtraction of the hitpoints of this monster and the 
@@ -394,7 +417,6 @@ public abstract class Creature{
 		if(newHitpoints <= 0)
 		{
 			makeTreasure();
-			
 			terminate();
 			return true;
 		}
@@ -408,7 +430,7 @@ public abstract class Creature{
 	
 	/**
 	 * Collect the given items from a death creature
-	 * TODO pre isDood()?
+	 * 
 	 * @param other
 	 * 		  The creature to collect the treasure from
 	 * @param itemsToCollect
@@ -426,7 +448,6 @@ public abstract class Creature{
 				for(Anchor anchor: getAnchors())
 					if(anchor.canAddItem(item))
 					{
-						// TODO dubbele check?
 						anchor.addItem(item);
 						break;
 					}
