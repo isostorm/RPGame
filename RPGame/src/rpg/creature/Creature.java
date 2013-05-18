@@ -2,10 +2,7 @@ package rpg.creature;
 
 import java.util.ArrayList;
 
-import be.kuleuven.cs.som.annotate.Basic;
-import be.kuleuven.cs.som.annotate.Immutable;
-import be.kuleuven.cs.som.annotate.Model;
-import be.kuleuven.cs.som.annotate.Raw;
+import be.kuleuven.cs.som.annotate.*;
 import rpg.exception.IllegalNameException;
 import rpg.item.*;
 /**
@@ -25,6 +22,8 @@ import rpg.item.*;
  *       | getStrength()*Math.pow(10,getStrengthPrecision())
  * @invar Each creature has proper anchors associated with it.
  *       | hasProperAnchors()
+ *       
+ * @author Mathias, Frederic
  */
 public abstract class Creature{
 	
@@ -221,15 +220,8 @@ public abstract class Creature{
 	 * 	       | else then
 	 * 	       |    result >= 0
 	 */
-	public int getProtection()
-	{
-		if(getAnchor("body").getItem() instanceof Armor)
-			return ((Armor)getAnchor("body").getItem()).getProtection();
-		else
-			return 0;
-			
-	}
-	
+	public abstract int getProtection();
+
 	private String name;
 	
 	/**
@@ -287,6 +279,7 @@ public abstract class Creature{
 	}
 	
 	private int hitpoints;
+	
 	/**
 	 * Return the number of hitpoints of this creature.
 	 */
@@ -341,8 +334,11 @@ public abstract class Creature{
 	public abstract void hit(Creature other);
 	
 	private ArrayList<Item> treasure;
+	
 	/**
-	 * TODO
+	 * Return the treasure of this creature
+	 * The treasure contains the items of this creature 
+	 * that can be taken by other creatures
 	 */
 	public ArrayList<Item> getTreasure()
 	{
@@ -350,14 +346,23 @@ public abstract class Creature{
 	}
 	
 	/**
-	 * TODO
+	 * Empty the treasure of this creature
+	 * 
+	 * @post The treasure of this creature doesn't contain any items anymore
+	 * 		 | getTreasure() is empty TODO
 	 */
 	public void destroyTreasure()
 	{
 		treasure.clear();
 	}
+	
 	/**
-	 * TODO
+	 * Create the treasure of a creature when he dies
+	 * 
+	 * @post The treasure of this creature contains some items 
+	 * 		 that this creature carries in his anchors
+	 * 		 | for some anchor in getAncors():
+	 * 		 | 		getTreasure().contains(anchor.getItem()) TODO
 	 */
 	protected void makeTreasure()
 	{
@@ -366,9 +371,22 @@ public abstract class Creature{
 	}
 	
 	/**
-	 * TODO
-	 * @param damage
-	 * @return
+	 * Weaken this creature with the given amount of hitpoints
+	 * TODO Keer checken
+	 * @param  damage
+	 * 		   The amount of hitpoints to subtract
+	 * @post   If the subtraction of the hitpoints of this monster and the 
+	 * 		   given damage is strictly positive, the hitpoints of this creature equal this subtraction
+	 * 		   | if ( (getHitpoints() - damage) > 0 ) then
+	 * 		   | 		getHitpoints() == (getHitpoints() - damage)
+	 * @post   The hitpoints of this creature are again a prime number
+	 * 		   | isPrime(getHitpoints()) == true
+	 * @effect If the subtraction of the hitpoints of this monster and the 
+	 * 		   given damage is negative, this creature is terminated and its treasure is made
+	 * 		   | if ( (getHitpoints() - damage) <= 0 ) then
+	 * 		   | 		makeTreasure() && terminate()
+	 * @return True if and only if the hitpoints of this creature are negative
+	 * 		   | result == ( (getHitpoints() - damage) <= 0 )
 	 */
 	public boolean weaken(int damage)
 	{
@@ -389,9 +407,17 @@ public abstract class Creature{
 	}
 	
 	/**
-	 * TODO
+	 * Collect the given items from a death creature
+	 * TODO pre isDood()?
 	 * @param other
+	 * 		  The creature to collect the treasure from
 	 * @param itemsToCollect
+	 * 		  The specific items to collect from this creature
+	 * @post  The items that are both in the list of items to collect and in the treasure of the other 
+	 * 		  creature, are added to a free anchor of this creature.
+	 * 		  | for each item in intersect (itemsToColect && other.getTreasure):
+	 * 		  | 	for each anchor in getAnchors():
+	 *		  |			anchor.addItem(item)
 	 */
 	protected void collect(Creature other, ArrayList<Item> itemsToCollect)
 	{
@@ -400,6 +426,7 @@ public abstract class Creature{
 				for(Anchor anchor: getAnchors())
 					if(anchor.canAddItem(item))
 					{
+						// TODO dubbele check?
 						anchor.addItem(item);
 						break;
 					}
@@ -410,12 +437,12 @@ public abstract class Creature{
 	 * 
 	 * @param maxHitpoints
 	 *        The maximum number of hitpoints this creature can have.
-	 * @pre The given maximum number of hitpoints, maxHitpoints must 
-	 *      be a valid maximum number of hitpoints.
-	 *      | isValidMaximumHitpoints(maxHitpoints) == true
-	 * @post The maximum number of hitpoints of this creature has,
-	 *       equals the given maximum number of hitpoints, maxHitpoints.
-	 *       | getMaximumHitpoints() == maxHitpoints
+	 * @pre   The given maximum number of hitpoints, maxHitpoints must 
+	 *        be a valid maximum number of hitpoints.
+	 *        | isValidMaximumHitpoints(maxHitpoints) == true
+	 * @post  The maximum number of hitpoints of this creature has,
+	 *        equals the given maximum number of hitpoints, maxHitpoints.
+	 *        | getMaximumHitpoints() == maxHitpoints
 	 */
 	@Raw
 	private void setMaximumHitpoints(int maxHitpoints)
@@ -476,9 +503,12 @@ public abstract class Creature{
 		return true;
 	}
 	/**
-	 * TODO commentaar
-	 * @param number
-	 * @return
+	 * Return the nearest prime number that is larger than this number 
+     *
+	 * @param   number
+	 * 		    The number to get get the nearest larger prime of
+	 * @return	The result is a prime number and greater than the given number
+	 * 			| isPrime(result) && result > number
 	 */
 	@Raw
 	protected int nearestLargerPrime(int number)

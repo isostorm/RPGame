@@ -1,6 +1,3 @@
-/**
- * 
- */
 package rpg.creature;
 
 import java.util.ArrayList;
@@ -22,7 +19,9 @@ import rpg.item.Weight;
 import rpg.item.WeightUnit;
 
 /**
- * @author Frederic
+ * A hero is a special type of creature
+ * 
+ * @author Frederic, Mathias
  *
  */
 public class Hero extends Creature {
@@ -40,7 +39,6 @@ public class Hero extends Creature {
 	 * @param items
 	 *        The items this hero carries.
 	 *        
-
 	 * @post   Each anchor of this monster contains one of the given objects.
 	 *         | for each object in objects:
 	 *         |    for some anchor in getAnchors():
@@ -120,13 +118,20 @@ public class Hero extends Creature {
 	/**
 	 * Returns the protection of this hero.
 	 * 
-	 * @return The sum of the standard protection and the protection of the enclosing creature.
-	 *         | result == ( getStandardProtection() + super.getProtection() )
+	 * @return The sum of the standard protection and the protection of the eventual armor.
+	 *         | if(getAnchor("body").getItem() instanceof Armor) then
+			   | 	result == getStandardProtection() + ((Armor)getAnchor("body").getItem()).getProtection()
+			   | else
+			   |	result == getStandardProtection()
 	 */
 	@Override
 	public int getProtection() {
-		return getStandardProtection() + super.getProtection();
+			
+		if(getAnchor("body").getItem() instanceof Armor)
+			return getStandardProtection() + ((Armor)getAnchor("body").getItem()).getProtection();
 		
+		return getStandardProtection();
+	
 	}
 	
 	private static final ArrayList<Character> allowedCharacters = new ArrayList<Character>();
@@ -272,7 +277,13 @@ public class Hero extends Creature {
 	}
 	
 	/**
-	 * TODO
+	 * Create the treasure of this creature
+	 * TODO formeel
+	 * @post   Each weapon or armor this hero carries direct or 
+	 * 		   indirect in his achors is terminated
+	 * 
+	 * @effect The treasure for the enclosing creature is made
+	 * 		   | super.makeTreasure()
 	 */
 	protected void makeTreasure()
 	{
@@ -319,7 +330,9 @@ public class Hero extends Creature {
 		}
 	}
 	/**
-	 * TODO
+	 * Heal this hero again by increasing his healthpoints
+	 * 
+	 * 
 	 */
 	public void heal()
 	{
