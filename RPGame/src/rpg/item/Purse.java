@@ -149,5 +149,18 @@ public class Purse extends Container{
 		else 
 			super.addItem(dukat);
 	}
+	/**
+	 * Sets the capacity of this purse to the given capacity.
+	 * 
+	 * @param  capacity
+	 *         The capacity of this purse
+	 * @effect Sets the capacity of the enclosing container to the given capacity.
+	 *         | super.setCapacity(capacity)
+	 */
+	@Override
+	public void setCapacity(Weight capacity)
+	{
+		super.setCapacity(capacity);
+	}
 	
 }

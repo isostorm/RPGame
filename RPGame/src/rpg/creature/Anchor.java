@@ -35,6 +35,8 @@ public class Anchor implements Parent {
 	 * 		   | new.getHolder() == holder
 	 * @post   The name of this new anchor equals the given name
 	 * 		   | new.getName() == name
+	 * @post   The given holder contains this anchor.
+	 *         | holder.hasAsAnchor(this)
 	 * @effect The given item is added to this anchor.
 	 *         | addItem(item)
 	 */
@@ -53,13 +55,20 @@ public class Anchor implements Parent {
 	 *        The holder of this new anchor
 	 * @param name
 	 *        The name of this new anchor
-	 * @effect This new anchor is initialized with the given holder as its holder,
-	 *         the given name as its name and null as its item
-	 *         | this(holder, name, null)
+	 * @pre    The given holder must be effective.
+	 *         | holder != null
+	 * @post   The holder of this new anchor equals the given holder
+	 * 		   | new.getHolder() == holder
+	 * @post   The name of this new anchor equals the given name
+	 * 		   | new.getName() == name
+	 * @post   The given holder contains this anchor.
+	 *         | holder.hasAsAnchor(this)
 	 */
 	@Raw
 	public Anchor(Creature holder, String name) {
-		this(holder, name, null);
+		this.holder = holder;
+		this.name = name;
+		holder.addAnchor(this);
 	}
 	
 	/**

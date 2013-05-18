@@ -120,7 +120,7 @@ public abstract class Creature{
 	/**
 	 * Returns the average strength of a creature.
 	 */
-	protected static double getAveragestrength() {
+	protected static double getAverageStrength() {
 		return averageStrength;
 	}
 	
@@ -191,7 +191,7 @@ public abstract class Creature{
 	 *         |       if( anchor.getItem() instanceof Container ) then
 	 *         |          retWeight.add( ((Container)object).getTotalWeight() )
 	 *         |       else if (object instanceof Item) then
-	 *         |          retWeight.add( ((Container)object).getWeight() )
+	 *         |          retWeight.add( ((Container)object).getWeight() ) TODO commentaar fix
 	 *         |    result == retWeight
 	 * @return The weight unit of the resulting weight is KG.
 	 *         | result.getUnit() == WeightUnit.KG
@@ -201,23 +201,47 @@ public abstract class Creature{
 		Weight retWeight = new Weight(0, WeightUnit.KG);
 		for(Anchor anchor : getAnchors())
 		{
-			Object object = anchor.getItem();
-			if(object instanceof Container)
-				retWeight.add( ((Container)object).getTotalWeight() );
-			else if (object instanceof Item)
-				retWeight.add( ((Container)object).getWeight() );
+			Item item = anchor.getItem();
+			if(item instanceof Container)
+				retWeight.add( ((Container)item).getTotalWeight() );
+			else
+				retWeight.add( item.getWeight() );
 		}
 		return retWeight;
 	}
 	
 	/**
+	 * Returns the total value of all the items this creature carries in its anchors.
+	 * 
+	 * @return The sum of all the total values of the items in the anchors of this creature.
+	 *         | let
+	 *         |    totalValue = 0
+	 *         | in
+	 *         |    for each anchor in getAnchors():
+	 *         |       if (anchor.getItem() instanceof BackPack)
+	 *         |          totalValue += ((BackPack)anchor.getItem()).getTotalValue()
+	 *         |       else
+	 *         |          totalValue += += item.getValue()
+	 *         |    result == totalValue
+	 */
+	public int getTotalValue()
+	{
+		int result = 0;
+		for(Anchor anchor: getAnchors())
+		{
+			Item item = anchor.getItem();
+			if (item instanceof BackPack)
+				result += ((BackPack)item).getTotalValue();
+			else
+				result += item.getValue();
+		}
+		return result;
+	}
+	
+	/**
 	 * Returns the protection factor of this creature.
 	 * 
-	 * @return The result is greater than or equal to the protection of the armor of this creature.
-	 *         | if(getAnchor("body").getItem() instanceof Armor) then
-	 * 	       |    result >= ((Armor)getAnchor("body").getItem()).getProtection()
-	 *         Otherwise the protection of this creature is greater than or equal to 0.
-	 * 	       | else then
+	 * @return The result is positive.
 	 * 	       |    result >= 0
 	 */
 	public abstract int getProtection();
@@ -399,15 +423,19 @@ public abstract class Creature{
 	 * @param  damage
 	 * 		   The amount of hitpoints to subtract
 	 * @post   If the subtraction of the hitpoints of this monster and the 
-	 * 		   given damage is strictly positive, the hitpoints of this creature equal this subtraction
-	 * 		   | if ( (getHitpoints() - damage) > 0 ) then
+	 * 		   given damage is strictly positive and a prime number, the hitpoints of this creature equal this subtraction
+	 * 		   | if ( (getHitpoints() - damage) > 0 && isPrime((getHitpoints() - damage)) ) then
 	 * 		   | 		getHitpoints() == (getHitpoints() - damage)
-	 * @post   The hitpoints of this creature are again a prime number
-	 * 		   | isPrime(getHitpoints()) == true
+	 *         otherwise if the subtraction of the hitpoints of this monster and the 
+	 * 		   given damage is positive and not a prime number, the number of hitpoints of this monster is equal to
+	 *         the nearest larger prime of the result of the subtraction.
+	 *         | else if ( (getHitpoints() - damage) > 0 && !isPrime(getHitpoints() - damage)) then
+	 * 		   |    getHitPoints() == nearestLargerPrime( getHitpoints() - damage )
 	 * @effect If the subtraction of the hitpoints of this monster and the 
 	 * 		   given damage is negative, this creature is terminated and its treasure is made
 	 * 		   | if ( (getHitpoints() - damage) <= 0 ) then
-	 * 		   | 		makeTreasure() && terminate()
+	 * 		   | 		makeTreasure()
+	 *         |        terminate()
 	 * @return True if and only if the hitpoints of this creature are negative
 	 * 		   | result == ( (getHitpoints() - damage) <= 0 )
 	 */
@@ -437,9 +465,10 @@ public abstract class Creature{
 	 * 		  The specific items to collect from this creature
 	 * @post  The items that are both in the list of items to collect and in the treasure of the other 
 	 * 		  creature, are added to a free anchor of this creature.
-	 * 		  | for each item in intersect (itemsToColect && other.getTreasure):
+	 * 		  | for each item in intersect (itemsToCollect && other.getTreasure()):
 	 * 		  | 	for each anchor in getAnchors():
-	 *		  |			anchor.addItem(item)
+	 *        |        if(anchor.canAddItem(item)) then
+	 *		  |	          anchor.addItem(item)
 	 */
 	protected void collect(Creature other, ArrayList<Item> itemsToCollect)
 	{
@@ -452,6 +481,7 @@ public abstract class Creature{
 						break;
 					}
 	}
+	
 	private int maximumHitpoints;
 	/**
 	 * Sets the maximum number of hitpoints this creature can have.
@@ -466,7 +496,7 @@ public abstract class Creature{
 	 *        | getMaximumHitpoints() == maxHitpoints
 	 */
 	@Raw
-	private void setMaximumHitpoints(int maxHitpoints)
+	public void setMaximumHitpoints(int maxHitpoints)
 	{
 		this.maximumHitpoints =  maxHitpoints;
 	}

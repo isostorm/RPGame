@@ -22,7 +22,6 @@ import rpg.item.WeightUnit;
  * A hero is a special type of creature
  * 
  * @author Frederic, Mathias
- *
  */
 public class Hero extends Creature {
 
@@ -34,32 +33,41 @@ public class Hero extends Creature {
 	 *        The name of this hero.
 	 * @param maximumHitpoints
 	 *        The maximum hitpoints of this hero.
-	 * @param protection
-	 *        The protection factor of this hero.
-	 * @param items
-	 *        The items this hero carries.
-	 *        
-	 * @post   Each anchor of this monster contains one of the given objects.
-	 *         | for each object in objects:
+	 * @param  items
+	 *         The items this hero carries.
+	 * @post   Some anchors contain one of the given items.
+	 *         | for some anchor in getAnchors():
+	 *         |    for some item in items:
+	 *         |       anchor.containsDirectItem(item)
+	 * @post   This creature is initialized with 5 anchors called body, belt, leftHand, rightHand and back
+	 *         | for each name in {"body", "belt", "leftHand", "rightHand", "back"}:
 	 *         |    for some anchor in getAnchors():
-	 *         |       anchor.getItem() == object
-	 * @post   The monster is initialized with an anchor called "body" that contains an armor
-	 *         which functions as its skin with 0KG as its weight, 3 as its id, the given protection
-	 *         as its protection and maximum protection.
-	 *         | new.getAnchor("body") == Armor(3, new Weight(0, WeightUnit.KG), body, 0, protection, protection)
-	 * @effect This monster is initialized as a new creature with the given 
+	 *         |       anchor.getName().equals(name)
+	 * @post   This hero has an anchor called "body" that contains an armor
+	 *         with 0KG as its weight, 2 as its id, the given protection
+	 *         as its protection and 40 as its maximum protection.
+	 *         | new.getAnchor("body") == new Armor(2, new Weight(30, WeightUnit.KG), 500, 30, 40)
+	 * @post   This has an anchor called "belt" that contains a purse with 5G as its weight, 550G
+	 *         as its capacity, a randomly generated number of dukats between 0 and 101 as
+	 *         its number of dukats.
+	 *         | new.getAnchor("body") == new Purse(new Weight(5, WeightUnit.G),
+	 *                                              new Weight(550, WeightUnit.G),
+	 *                                              new Random().nextInt(101))
+	 * @effect This hero is initialized as a new creature with the given 
 	 *         name and maximumHitpoints.
 	 *         | super(name, maximumhitpoints)
-	 * @effect   The strength of this monster is set to a strength capable of carrying all the given objects.
-	 *         | setStrength( getTotalWeight().getNumeral()/9 + 1 ) TODO commentaar
+	 * @effect   The strength of this hero is set to the average strength.
+	 *         | setStrength(getAverageStrength())
 	 */
 	@Raw
-	public Hero(String name, int maximumHitpoints, int protection, Item ... items) {
+	public Hero(String name, int maximumHitpoints, Item ... items) {
 		super(name, maximumHitpoints);
-		setStrength(getAveragestrength());
+		setStrength(getAverageStrength());
 		Armor armor = new Armor(2, new Weight(30, WeightUnit.KG), 500, 30, 40);
 		new Anchor(this, "body", armor);
-		Purse purse = new Purse(new Weight(5, WeightUnit.G), new Weight(550, WeightUnit.G), new Random().nextInt(101));
+		Purse purse = new Purse(new Weight(5, WeightUnit.G),
+				                new Weight(550, WeightUnit.G),
+				                new Random().nextInt(101));
 		new Anchor(this, "belt", purse);
 		new Anchor(this, "leftHand");
 		new Anchor(this, "rightHand");
@@ -72,11 +80,8 @@ public class Hero extends Creature {
 					anchor.addItem(item);
 					break;
 				}
-		
-		Anchor body = new Anchor(this, "body");
-		body.addItem(new Armor(3, new Weight(0, WeightUnit.KG), 0, protection, protection));
-		addAnchor(body);
 	}
+	
 	private static int standardProtection = 10;
 	
 	/**
@@ -87,7 +92,7 @@ public class Hero extends Creature {
 	 * @return True if and only if the given standard protection is positive.
 	 *         | result == ( standardProtection >= 0 )
 	 */
-	@Raw // TODO raw?
+	@Raw
 	public static boolean isValidStandardProtection(int standardProtection)
 	{
 		return standardProtection >= 0;
@@ -95,12 +100,13 @@ public class Hero extends Creature {
 	
 	/**
 	 * Sets the standard protection of all heros.
+	 * 
 	 * @param standardProtection
 	 *        The standard protection to set.
 	 * @post  The standard protection of the new hero is equal to the given standard protection.
 	 *        | getStandardProtection() == standardProtection
 	 */
-	@Raw // TODO raw?
+	@Raw 
 	public static void setStandardProtection(int standardProtection)
 	{
 		Hero.standardProtection = standardProtection;
@@ -118,11 +124,12 @@ public class Hero extends Creature {
 	/**
 	 * Returns the protection of this hero.
 	 * 
-	 * @return The sum of the standard protection and the protection of the eventual armor.
+	 * @return The sum of the standard protection and the protection of the armor if
+	 *         this hero has an armor equipped.
 	 *         | if(getAnchor("body").getItem() instanceof Armor) then
-			   | 	result == getStandardProtection() + ((Armor)getAnchor("body").getItem()).getProtection()
-			   | else
-			   |	result == getStandardProtection()
+	 *         |    result == getStandardProtection() + ((Armor)getAnchor("body").getItem()).getProtection()
+	 *         | else
+	 *         |    result == getStandardProtection()
 	 */
 	@Override
 	public int getProtection() {
@@ -277,11 +284,20 @@ public class Hero extends Creature {
 	}
 	
 	/**
-	 * Create the treasure of this creature
-	 * TODO formeel
-	 * @post   Each weapon or armor this hero carries direct or 
-	 * 		   indirect in his achors is terminated
+	 * Destroy all the direct or indirect weapons and armors of this hero and make the treasure.
 	 * 
+	 * @effect Each weapon or armor this hero carries direct or 
+	 * 		   indirect in his anchors is terminated
+	 *         |   for each anchor in getAnchors():
+	 *         |      let
+	 *         |         anchorItem = anchor.getItem()
+	 *         |      in
+	 *         |         if(anchor.getItem() instanceof BackPack) then
+	 *         |            for each item in ((BackPack)anchorItem).getItems()
+	 *         |               if (item instanceof Armor || item instanceof Weapon) then
+	 *         |                  item.terminate()
+	 *         |         else if (anchorItem instanceof Armor || anchorItem instanceof Weapon) then
+	 *         |            anchorItem.terminate()
 	 * @effect The treasure for the enclosing creature is made
 	 * 		   | super.makeTreasure()
 	 */
@@ -290,7 +306,7 @@ public class Hero extends Creature {
 		for(Anchor anchor: getAnchors())
 		{
 			Item anchorItem = anchor.getItem();
-			if(anchor.getItem() instanceof BackPack)
+			if(anchorItem instanceof BackPack)
 			{
 				Enumeration<Item> enumeration = ((BackPack)anchorItem).getItems();
 				while(enumeration.hasMoreElements())
@@ -301,9 +317,7 @@ public class Hero extends Creature {
 				}
 			}
 			else if (anchorItem instanceof Armor || anchorItem instanceof Weapon)
-			{
 					((ItemImplementation)anchorItem).terminate();
-			}
 		}
 		super.makeTreasure();
 	}
@@ -330,9 +344,11 @@ public class Hero extends Creature {
 		}
 	}
 	/**
-	 * Heal this hero again by increasing his healthpoints
+	 * Heal this hero.
 	 * 
-	 * 
+	 * @effect The health of this hero is set to a random percentage multiplied
+	 *         with the difference between the maximum number of hitpoints of this
+	 *         hero and the current number of hitpoints this hero has.
 	 */
 	private void heal()
 	{

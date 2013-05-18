@@ -3,49 +3,59 @@ package rpg.creature;
 import java.util.ArrayList;
 import java.util.Random;
 
-import com.sun.org.apache.bcel.internal.generic.SWAP;
-
+import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Immutable;
 import be.kuleuven.cs.som.annotate.Raw;
 
-import rpg.item.Armor;
 import rpg.item.Container;
 import rpg.item.Dukat;
 import rpg.item.Item;
 import rpg.item.Purse;
-import rpg.item.Weapon;
 import rpg.item.Weight;
 import rpg.item.WeightUnit;
-
+/**
+ * A monster is a special type of creature with additionally damage.
+ * 
+ * @author Mathias, Frederic
+ * 
+ * @invar The damage of each monster is a valid weapon damage.
+ *        | Weapon.isValidDamage(damage)
+ * @invar The protection of each monster is positive.
+ *        | getProtection() >= 0
+ */
 public class Monster extends Creature {
 
 	/**
 	 * Initializes a new monster with the given name, maximum hitpoints,
 	 * protection and a variable amount of objects.
 	 * 
-	 * @param name
-	 *        The name of this monster.
-	 * @param maximumHitpoints
-	 *        The maximum hitpoints of this monster.
-	 * @param protection
-	 *        The protection factor of this monster.
-	 * @param objects
-	 *        The objects this monster carries.
-	 *        
+	 * @param  name
+	 *         The name of this monster.
+	 * @param  maximumHitpoints
+	 *         The maximum hitpoints of this monster.
+	 * @param  damage
+	 *         The natural damage of this monster.
+	 * @param  protection
+	 *         The protection factor of this monster.
+	 * @param  items
+	 *         The items this monster carries.
 	 * @pre    The given damage must be a valid damage for a weapon.
 	 *         | Weapon.isValidDamage(damage)
+	 * @pre    The given protection must be positive.
+	 *         | getProtection() >= 0
 	 * @post   Each anchor of this monster contains one of the given objects.
-	 *         | for each object in objects:
+	 *         | for each item in items:
 	 *         |    for some anchor in getAnchors():
-	 *         |       anchor.getItem() == object
-	 * @post   The monster is initialized with an anchor called "body" that contains an armor
-	 *         which functions as its skin with 0KG as its weight, 3 as its id, the given protection
-	 *         as its protection and maximum protection.
-	 *         | new.getAnchor("body") == Armor(3, new Weight(0, WeightUnit.KG), body, 0, protection, protection)
+	 *         |       anchor.containsDirectItem(item)
+	 * @post   The protection of this monster is equal to the given protection.
+	 *         | getProtection() == protection
+	 * @post   The damage of this monster is equal to the given damage.
+	 *         | getDamage() == damage
 	 * @effect This monster is initialized as a new creature with the given 
 	 *         name and maximumHitpoints.
 	 *         | super(name, maximumhitpoints)
 	 * @effect   The strength of this monster is set to a strength capable of carrying all the given objects.
-	 *         | setStrength( getTotalWeight().getNumeral()/9 + 1 ) TODO commentaar fixen
+	 *         | setStrength( getTotalWeight().getNumeral()/9 + 1 )
 	 */
 	@Raw
 	public Monster(String name, int maximumHitpoints, int damage, int protection, Item ... items) {
@@ -64,12 +74,12 @@ public class Monster extends Creature {
 		for(Item item: items)
 			addAnchor(new Anchor(this, item));
 		
-		skin = new Armor(3, new Weight(0, WeightUnit.KG), 0, protection, protection);
-		this.damage = new Weapon(new Weight(0, WeightUnit.KG), damage);
+		this.protection = protection;
+		this.damage = damage;
 	}
 	
-	private final Armor skin;
-	private final Weapon damage;
+	private final int protection;
+	private final int damage;
 	
 	private static final ArrayList<Character> allowedCharacters = new ArrayList<Character>();
 	
@@ -122,21 +132,20 @@ public class Monster extends Creature {
 	}
 	
 	/**
-	 * Returns the protection of the skin of this monster. TODO @Basic?
+	 * Returns the protection of of this monster.
 	 */
-	@Override
+	@Basic @Override @Immutable
 	public int getProtection()
 	{
-		return skin.getProtection();
+		return this.protection;
 	}
 	/**
-	 * TODO
-	 * 
-	 * @return
+	 * Returns the damage of this monster.
 	 */
+	@Basic @Immutable
 	public int getDamage()
 	{
-		return damage.getDamage();
+		return damage;
 	}
 	/**
 	 * Attempts a hit on another creature.
