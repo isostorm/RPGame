@@ -5,20 +5,15 @@ package rpg.test;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import rpg.creature.Anchor;
 import rpg.creature.Creature;
 import rpg.creature.Hero;
 import rpg.creature.Monster;
-import rpg.item.Armor;
 import rpg.item.Dukat;
-import rpg.item.Item;
-import rpg.item.Purse;
 import rpg.item.Weapon;
 import rpg.item.Weight;
 import rpg.item.WeightUnit;

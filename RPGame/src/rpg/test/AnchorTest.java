@@ -6,14 +6,12 @@ package rpg.test;
 import static org.junit.Assert.*;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import rpg.creature.Anchor;
 import rpg.creature.Hero;
 import rpg.exception.IllegalAddItemException;
 import rpg.item.Dukat;
-import rpg.item.Item;
 import rpg.item.Weapon;
 import rpg.item.Weight;
 import rpg.item.WeightUnit;
@@ -105,7 +103,6 @@ public class AnchorTest {
 	 */
 	@Test
 	public void testSwap() {
-		Item prevItem = a1.getItem();
 		a1.swap(weapon1);
 		assertEquals(weapon1, a1.getItem());
 		a1.swap(weapon2);

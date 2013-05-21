@@ -5,7 +5,6 @@ import static org.junit.Assert.*;
 import rpg.item.*;
 import rpg.creature.*;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
