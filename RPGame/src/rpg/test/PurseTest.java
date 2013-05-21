@@ -40,6 +40,7 @@ public class PurseTest {
 			dukats.nextElement();
 		}
 		assertEquals(10, i);
+		assertEquals(10, purse1.getValue());
 	}
 
 	@Test

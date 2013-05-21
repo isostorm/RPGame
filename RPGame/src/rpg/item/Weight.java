@@ -3,14 +3,14 @@ package rpg.item;
 import be.kuleuven.cs.som.annotate.*;
 import rpg.item.WeightUnit;
 
-//TODO totaal
+
 /**
  * A class of weights involving a numeral and a weight unit.
- * @invar The numeral of each weight must be a valid numeral.
- *        | isValidNumeral(getNumeral())
- * @invar The unit of each weight must be a valid unit.
- *        | isValidUnit(getUnit())
- * @author Frederic
+ * @invar  The numeral of each weight must be a valid numeral.
+ *         | isValidNumeral(getNumeral())
+ * @invar  The unit of each weight must be a valid unit.
+ *         | isValidUnit(getUnit())
+ * @author Mathias, Frederic
  *
  */
 public class Weight implements Comparable<Weight> {
@@ -104,6 +104,7 @@ public class Weight implements Comparable<Weight> {
 	/**
 	 * Return the numeral of this weight.
 	 */
+	@Basic @Raw
 	public double getNumeral() {
 		return numeral;
 	}
@@ -111,6 +112,7 @@ public class Weight implements Comparable<Weight> {
 	/**
 	 * Return the weight unit of this weight.
 	 */
+	@Basic @Raw
 	public WeightUnit getUnit() {
 		return unit;
 	}

@@ -131,7 +131,7 @@ public class Anchor implements Parent {
 	/**
 	 * Returns the holder of this anchor
 	 */
-	@Immutable
+	@Raw @Basic @Immutable
 	public Creature getHolder() {
 		return holder;
 	}
@@ -141,15 +141,17 @@ public class Anchor implements Parent {
 	/**
 	 * Returns the name of this anchor
 	 */
-	@Immutable
+	@Immutable @Basic @Raw
 	public String getName() {
 		return name;
 	}
 	
 	private Item item;
+	
 	/**
 	 * Returns the item this anchor holds.
 	 */
+	@Raw @Basic
 	public Item getItem() {
 		return item;
 	}
@@ -244,7 +246,7 @@ public class Anchor implements Parent {
 	 * @post  The item of this anchor is equal to the given item.
 	 *        | getItem() == item
 	 */
-	@Model
+	@Model @Raw
 	private void setItem(Item item)
 	{
 		this.item = item;
@@ -291,19 +293,19 @@ public class Anchor implements Parent {
 	/**
 	 * Remove the given item from the content of this anchor
 	 * 
-	 * @param item
-	 *        The item to remove from this anchor
-	 * @post The content of this anchor doesn't contain the given item anymore
-	 *       | !containsDirectItem(item)
+	 * @param  item
+	 *         The item to remove from this anchor
+	 * @post   The content of this anchor doesn't contain the given item anymore
+	 *         | !containsDirectItem(item)
 	 * @post   If the item is an item implementation, the items parent is not effective.
 	 *         | if(item instanceof ItemImplementation) then
 	 *         |    item.getParent() == null
 	 * @throws NoSuchItemException [must]
-	 *             This anchor doesn't contain the given item
-	 *             | !containsDirectItem(item)
+	 *         This anchor doesn't contain the given item
+	 *         | !containsDirectItem(item)
 	 * @throws IllegalArgumentException [must]
-	 *             The given item is not effective
-	 *             | item == null
+	 *         The given item is not effective
+	 *         | item == null
 	 */
 	public void removeDirectItem(Item item) throws NoSuchItemException, IllegalArgumentException {
 		if(item == null)

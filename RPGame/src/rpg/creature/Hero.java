@@ -1,7 +1,6 @@
 package rpg.creature;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Random;
 
@@ -51,7 +50,7 @@ public class Hero extends Creature {
 	 *         as its capacity, a randomly generated number of dukats between 0 and 101 as
 	 *         its number of dukats.
 	 *         | new.getAnchor("body") == new Purse(new Weight(5, WeightUnit.G),
-	 *                                              new Weight(550, WeightUnit.G),
+	 *                                              new Weight(5500, WeightUnit.G),
 	 *                                              new Random().nextInt(101))
 	 * @effect This hero is initialized as a new creature with the given 
 	 *         name and maximumHitpoints.
@@ -63,10 +62,10 @@ public class Hero extends Creature {
 	public Hero(String name, int maximumHitpoints, Item ... items) {
 		super(name, maximumHitpoints);
 		setStrength(getAverageStrength());
-		Armor armor = new Armor(2, new Weight(30, WeightUnit.KG), 500, 30, 40);
+		Armor armor = new Armor(2, new Weight(30, WeightUnit.KG), 50, 30, 40);
 		new Anchor(this, "body", armor);
 		Purse purse = new Purse(new Weight(5, WeightUnit.G),
-				                new Weight(550, WeightUnit.G),
+				                new Weight(5500, WeightUnit.G),
 				                new Random().nextInt(101));
 		new Anchor(this, "belt", purse);
 		new Anchor(this, "leftHand");
@@ -153,7 +152,9 @@ public class Hero extends Creature {
 	{
 		allowedCharacters.add(character);
 	}
+	
 	private static boolean allowApostrophes = true;
+	
 	/**
 	 * Sets whether or not apostrophes are allowed in a heros name.
 	 * 
@@ -164,6 +165,7 @@ public class Hero extends Creature {
 	{
 		Hero.allowApostrophes = allowApostrophes;
 	}
+	
 	/**
 	 * Checks whether this hero can have the given name as its name.
 	 * @return False if the given name is not effective.
@@ -182,7 +184,7 @@ public class Hero extends Creature {
 	 *         | if(allowApostrophes && name.replaceAll("[^']", "").length() > 2) then
 	 *         |    result == false
 	 */
-	@Override
+	@Override @Raw
 	public boolean canHaveAsName(String name) {
 		if(!super.canHaveAsName(name))
 			return false;
@@ -320,7 +322,23 @@ public class Hero extends Creature {
 	}
 	
 	/**
-	 * TODO
+	 * Hits the given other creature.
+	 * 
+	 * @effect If the other creature is a monster,
+	 *         a random number is generated between 0 and 20
+	 *         | if((other instanceof Monster) ) then
+	 *         |    let
+	 *         |       randomNumber = new Random().nextInt(21)
+	 *         |    in
+	 *         If the random number(between 0 and 20) is more than or equal
+	 *         to the protection of the other creature and the total strength minus 10,
+	 *         divided by two is more than 0 and the result of weakening the other creature
+	 *         with a damage equal to the total strength minus 10, divided by two is true then
+	 *         this hero is healed.
+	 *         |       if(randomNumber >= other.getProtection())
+	 *         |          && ((getTotalStrength()-10)/2 > 0)
+	 *         |          && (other.weaken((getTotalStrength()-10)/2 > 0)) then
+	 *         |                heal()
 	 */
 	public void hit(Creature other)
 	{
@@ -357,7 +375,15 @@ public class Hero extends Creature {
 	 * 
 	 * @effect The health of this hero is set to a random percentage multiplied
 	 *         with the difference between the maximum number of hitpoints of this
-	 *         hero and the current number of hitpoints this hero has.
+	 *         hero and the current number of hitpoints this hero has if that number is a prime,
+	 *         otherwise the nearest larger prime of this number is used.
+	 *         | let
+	 *         |    healAmount = (Math.random()*(getMaximumHitpoints()-getHitpoints()) + 0.5)
+	 *         |    nextHP = healAmount + getHitPoints()
+	 *         | in
+	 *         |    if(!isPrime(nextHP)) then
+	 *         |       nextHP = nearestLargerPrime(nextHP)
+	 *         |    setHitpoints(nextHP)
 	 */
 	private void heal()
 	{

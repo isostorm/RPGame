@@ -1,10 +1,12 @@
 package rpg.item;
 
+import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Model;
+import be.kuleuven.cs.som.annotate.Raw;
 
 /**
  * A Weapon is a special type of ItemImplementation involving additionally a damage
- * @author Frederic
+ * @author Mathias, Frederic
  *
  * @invar The maximum damage for all weapons is a valid maximum damage.
  *        | hasValidMaxDamage()
@@ -31,6 +33,7 @@ public class Weapon extends ItemImplementation {
 	 * @effect The damage of this weapon is set to the given damage.
 	 *         | setDamage(damage)
 	 */
+	@Raw
 	public Weapon(Weight weight, int damage, int value) {
 		super(generateId(), weight, value);
 		setDamage(damage);
@@ -47,6 +50,7 @@ public class Weapon extends ItemImplementation {
 	 * @effect A new weapon is initialized with the given weight and damage and 1 as its value.
 	 *         | this(weight, damage, 1)
 	 */
+	@Raw
 	public Weapon(Weight weight, int damage)
 	{
 		this(weight, damage, 1);
@@ -56,7 +60,7 @@ public class Weapon extends ItemImplementation {
 	/**
 	 * Returns the last id.
 	 */
-	@Model
+	@Model @Basic
 	private static long getLastId()
 	{
 		return lastId;
@@ -86,7 +90,7 @@ public class Weapon extends ItemImplementation {
 	 * @post The last id is equal to the id of this weapon.
 	 *       | getLastId() == getId()
 	 */
-	@Model
+	@Model @Raw
 	private void shiftId()
 	{
 		lastId = getId();
@@ -97,6 +101,7 @@ public class Weapon extends ItemImplementation {
 	/**
 	 * Returns the maximum damage of all weapons.
 	 */
+	@Basic
 	public static int getMaxDamage()
 	{
 		return maxDamage;
@@ -137,6 +142,7 @@ public class Weapon extends ItemImplementation {
 	 * @return True if and only if the maximum damage is a valid maximum damage.
 	 *         | result == isValidMaxDamage( getMaxDamage() )
 	 */
+	@Raw
 	public boolean hasValidMaxDamage()
 	{
 		return isValidMaxDamage(getMaxDamage());
@@ -147,6 +153,7 @@ public class Weapon extends ItemImplementation {
 	/**
 	 * Returns the damage of this weapon.
 	 */
+	@Basic @Raw
 	public int getDamage()
 	{
 		return damage;
@@ -161,6 +168,7 @@ public class Weapon extends ItemImplementation {
 	 * @post  The damage of this weapon is equal to the given damage.
 	 *        | getDamage() == damage
 	 */
+	@Raw
 	public void setDamage(int damage)
 	{
 		this.damage = damage;
@@ -189,6 +197,7 @@ public class Weapon extends ItemImplementation {
 	  * @return True if and only if the damage of this weapon is a valid damage.
 	  *         | result == isValidDamage(getDamage())
 	  */
+	 @Raw
 	 public boolean hasValidDamage()
 	 {
 		return isValidDamage(getDamage()); 
@@ -212,6 +221,7 @@ public class Weapon extends ItemImplementation {
 	 /**
 	  * Returns the damage value factor of all weapons.
 	  */
+	 @Basic
 	 public static double getDamageValueFactor()
 	 {
 		 return damageValueFactor;
@@ -235,6 +245,7 @@ public class Weapon extends ItemImplementation {
 	 /**
 	  * Returns whether or not to use a formula when calculating the value of weapons.
 	  */
+	 @Basic
 	 public static boolean getUseFormula()
 	 {
 		 return Weapon.useFormula;
@@ -262,7 +273,7 @@ public class Weapon extends ItemImplementation {
 	  * @return True if and only if the given value is between 1 and 200
 	  *         | result == ( (value >= 1) && (value <= 200) )
 	  */
-	 @Override
+	 @Override @Raw
 	 public boolean canHaveAsValue(int value)
 	 {
 		 return (value >= 1 && value <= 200);
@@ -274,7 +285,7 @@ public class Weapon extends ItemImplementation {
 	 * @return True if and only if this weapon can have its value as its value.
 	 *         | result == canHaveAsValue( getValue() )
 	 */
-	 @Override
+	 @Override @Raw
 	 public boolean hasValidValue()
 	 {
 		return canHaveAsValue(getValue());

@@ -7,8 +7,11 @@ import be.kuleuven.cs.som.annotate.*;
  * A class, involving an id, a weight, a backpack, a parent
  * and a value
  * 
+ * @invar Each item implementation has a proper parent.
+ *        | hasProperParent()
+ *        
  * @author Mathias, Frederic
- *
+ * 
  */
 public abstract class ItemImplementation implements Item{
 	/**
@@ -56,22 +59,6 @@ public abstract class ItemImplementation implements Item{
 		this.weight = weight;
 	}
 	
-	/**
-	 * Initialize this new item with the given id and weight
-	 * 
-	 * @param  id
-	 * 		   The id for this item
-	 * @param  weight
-	 * 		   The weight of this item
-	 * @effect Initialize this item implementation with the given weight
-	 * 		   and 0 as its id
-	 *         | this(0, weight, backpack, 0)
-	 */
-	/*protected ItemImplementation(long id, Weight weight)
-	{
-		this(id, weight, 0);
-	}*/
-	
 	private int value;
 	
 	/**
@@ -84,6 +71,7 @@ public abstract class ItemImplementation implements Item{
 	 * @post  The new value of this item equals the given value
 	 * 		  | new.getValue() == value	
 	 */
+	@Raw
 	protected void setValue(int value){
 		this.value = value;
 	}
@@ -91,7 +79,7 @@ public abstract class ItemImplementation implements Item{
 	/**
 	 * @see Interface Item
 	 */
-	@Override
+	@Override @Basic @Raw
 	public int getValue() {
 		return value;
 	}
@@ -101,7 +89,7 @@ public abstract class ItemImplementation implements Item{
 	  * 
 	  * @see interface Item
 	  */
-	@Override
+	@Override @Raw
 	 public boolean canHaveAsValue(int value)
 	 {
 		 return(value>=0);
@@ -112,7 +100,7 @@ public abstract class ItemImplementation implements Item{
 	 * 
 	 * @see interface Item
 	 */
-	@Override
+	@Override @Raw
 	public boolean hasValidValue()
 	{
 		return canHaveAsValue(getValue());
@@ -123,7 +111,7 @@ public abstract class ItemImplementation implements Item{
 	/**
 	 * @see Interface Item
 	 */
-	@Override @Basic @Immutable
+	@Override @Basic @Immutable @Raw
 	public Weight getWeight() {
 		return weight;
 	}
@@ -133,7 +121,7 @@ public abstract class ItemImplementation implements Item{
 	/**
 	 * @see Interface Item
 	 */
-	@Override @Basic @Immutable
+	@Override @Basic @Immutable @Raw
 	public long getId() {
 		return id;
 	}
@@ -148,6 +136,7 @@ public abstract class ItemImplementation implements Item{
 	 *       | if(canHaveAsId(id)) then
 	 *       |		getId() == id
 	 */
+	@Raw
 	protected void setId(long id)
 	{
 		if(canHaveAsId(id))
@@ -157,7 +146,7 @@ public abstract class ItemImplementation implements Item{
 	/**
 	 * @see Interface Item
 	 */
-	@Override
+	@Override @Raw
 	public boolean canHaveAsId(long id)
 	{
 		return id >= 0;
@@ -166,7 +155,7 @@ public abstract class ItemImplementation implements Item{
 	/**
 	 * @see Interface Item
 	 */
-	@Override
+	@Override @Raw
 	public boolean hasValidId()
 	{
 		return canHaveAsId(getId());
@@ -182,6 +171,7 @@ public abstract class ItemImplementation implements Item{
 	 * @post  The parent of this item equals the given parent
 	 * 		  | new.getParent() == parent
 	 */
+	@Raw
 	public void setParent(Parent parent){
 		this.parent = parent;
 	}
@@ -189,7 +179,7 @@ public abstract class ItemImplementation implements Item{
 	/**
 	 * Return the parent of this item
 	 */
-	@Basic
+	@Basic @Raw
 	public Parent getParent(){
 		return parent;
 	}
@@ -199,9 +189,23 @@ public abstract class ItemImplementation implements Item{
 	 * @return True if and only if the parent of this item implementation is effective.
 	 *         | result == getParent() != null
 	 */
+	@Raw
 	public boolean hasParent()
 	{
 		return getParent() != null;
+	}
+	
+	/**
+	 * Check whether this item implementation has a proper parent.
+	 * 
+	 * @return True if and only if this item implementation has a parent and the parent of this item
+	 *         implementation contains this direct item.
+	 *         | result == hasParent() && getParent().containsDirectItem(this)
+	 */
+	@Raw
+	public boolean hasProperParent()
+	{
+		return hasParent() && getParent().containsDirectItem(this);
 	}
 	
 	/**
@@ -210,6 +214,7 @@ public abstract class ItemImplementation implements Item{
 	 * @return True if and only if the holder of this item implementation is effective.
 	 *         | result == getHolder() != null
 	 */
+	@Raw
 	public boolean hasHolder()
 	{
 		return getHolder() != null;
@@ -232,6 +237,7 @@ public abstract class ItemImplementation implements Item{
 	/**
 	 * Check whether this item implementation is terminated.
 	 */
+	
 	@Basic @Raw
 	public boolean isTerminated()
 	{
@@ -261,7 +267,8 @@ public abstract class ItemImplementation implements Item{
 	 *         | result == (parent == null) || parent.canAddItem(this)
 	 * @see  p.439
 	 */
-	public boolean canHaveAsParent(Parent parent)
+	@Raw
+	public boolean canHaveAsParent(@Raw Parent parent)
 	{
 		return (parent == null) || parent.canAddItem(this);
 	}

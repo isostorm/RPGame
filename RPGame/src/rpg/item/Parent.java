@@ -1,4 +1,5 @@
 package rpg.item;
+import be.kuleuven.cs.som.annotate.Raw;
 import rpg.creature.Creature;
 import rpg.exception.NoSuchItemException;
 /**
@@ -33,7 +34,8 @@ public interface Parent {
 	 *         |    result == false
 	 *         
 	 */
-	public boolean canAddItem(Item item);
+	@Raw
+	public boolean canAddItem(@Raw Item item);
 	
 	/**
 	 * Check whether this parent contains the given item
@@ -44,7 +46,8 @@ public interface Parent {
 	 *         If the given item is not effective
 	 *         | item == null
 	 */
-	public boolean containsDirectItem(Item item);
+	@Raw
+	public boolean containsDirectItem(@Raw Item item);
 	
 	/**
 	 * Remove the given item from the content of this parent

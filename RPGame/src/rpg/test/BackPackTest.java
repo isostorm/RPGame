@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import rpg.exception.IllegalAddItemException;
@@ -25,9 +26,16 @@ import rpg.item.WeightUnit;
  *
  */
 public class BackPackTest {
-
+	static BackPack firstBackPack, secondBackPack;
 	BackPack backpack1, backpack2, backpack3;
-
+	@BeforeClass
+	public static void setUpBeforeClass()
+	{
+		firstBackPack = new BackPack(new Weight(500, WeightUnit.G),
+				new Weight(100, WeightUnit.KG), 20);
+		secondBackPack = new BackPack(new Weight(500, WeightUnit.G),
+				new Weight(100, WeightUnit.KG), 20);
+	}
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -43,9 +51,8 @@ public class BackPackTest {
 	 */
 	@Test
 	public void testGenerateId() {
-		System.out.println(backpack1.getId());
-		assertEquals(1, backpack1.getId());
-		
+		assertEquals(2, firstBackPack.getId());
+		assertEquals(4, secondBackPack.getId());
 	}
 	
 	/**
@@ -65,7 +72,6 @@ public class BackPackTest {
 		Weapon weapon1 = new Weapon(new Weight(800, WeightUnit.G), 20);
 		backpack2.addItem(weapon1);
 		backpack1.addItem(backpack2);
-		System.out.println(backpack1.getTotalWeight());
 		assertTrue(backpack1.getTotalWeight().
 				compareTo(backpack1.getWeight().
 						add(backpack2.getWeight()).

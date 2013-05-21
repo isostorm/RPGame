@@ -3,7 +3,7 @@ package rpg.item;
 import be.kuleuven.cs.som.annotate.Raw;
 import be.kuleuven.cs.som.annotate.Value;
 
-//TODO totaal
+
 @Value
 public enum WeightUnit {
 	KG, G, POUND;
@@ -12,9 +12,7 @@ public enum WeightUnit {
 	 * Initializes this weight unit.
 	 */
 	@Raw
-	private WeightUnit(){
-		
-	}
+	private WeightUnit(){}
 	
 	/**
 	 * Return the value of one 1 unit of this weight unit 

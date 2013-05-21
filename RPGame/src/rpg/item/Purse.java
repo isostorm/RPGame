@@ -4,12 +4,15 @@ import java.util.Enumeration;
 
 import rpg.exception.IllegalAddItemException;
 
+import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Model;
+import be.kuleuven.cs.som.annotate.Raw;
 
 
 /**
  * A class of purses.
  * a purse is a container that only contains dukats
+ * 
  * @author Mathias, Frederic
  * 
  * @invar The capacity of this purse is a valid capacity.
@@ -33,6 +36,7 @@ public class Purse extends Container{
 	 * @post   The purse contains the given number of dukats
 	 * 		   | 
 	 */
+	@Raw
 	public Purse(Weight weight, Weight capacity, int amountOfDukats) {
 		super(generateId(), weight, capacity);
 		addDukats(amountOfDukats);
@@ -48,6 +52,7 @@ public class Purse extends Container{
 	 * 		   and capacity and 0 as its amount of dukats
 	 * 		   | this(weight, capacity, 0)
 	 */
+	@Raw
 	public Purse(Weight weight, Weight capacity) {
 		this(weight, capacity, 0);
 	}
@@ -76,7 +81,7 @@ public class Purse extends Container{
 	 * @Post The new last id is equal to the id.
 	 *       | new.getLastId() == getId()
 	 */
-	@Model
+	@Model @Raw
 	private void shiftFibonacciNumbers() {
 		secondLastId = lastId;
 		lastId = getId();
@@ -86,7 +91,7 @@ public class Purse extends Container{
 	/**
 	 * Returns the second last id.
 	 */
-	@Model
+	@Model @Basic
 	private static long getSecondLastId()
 	{
 		return secondLastId;
@@ -96,7 +101,7 @@ public class Purse extends Container{
 	/**
 	 * Returns the last id.
 	 */
-	@Model
+	@Model @Basic
 	private static long getLastId()
 	{
 		return lastId;
@@ -137,7 +142,7 @@ public class Purse extends Container{
 	 *         |    else then
 	 *         |       result == false;
 	 */
-	@Override
+	@Override @Raw
 	public boolean canHaveAsId(long id)
 	{
 		if(!super.canHaveAsId(id))
@@ -176,7 +181,7 @@ public class Purse extends Container{
 	 * @effect Sets the capacity of the enclosing container to the given capacity.
 	 *         | super.setCapacity(capacity)
 	 */
-	@Override
+	@Override @Raw
 	public void setCapacity(Weight capacity)
 	{
 		super.setCapacity(capacity);
@@ -208,5 +213,15 @@ public class Purse extends Container{
 			other.removeDirectItem(dukat);
 			this.addDukat(dukat);
 		}
+	}
+	/**
+	 * Returns the value of this purse which is equal to the total value of this purse.
+	 * @return The total value of this purse.
+	 *         | result == getTotalValue()
+	 */
+	@Override
+	public int getValue()
+	{
+		return getTotalValue();
 	}
 }

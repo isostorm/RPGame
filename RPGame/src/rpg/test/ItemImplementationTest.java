@@ -20,22 +20,13 @@ public class ItemImplementationTest {
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		backpack1 = new BackPack(new Weight(5, WeightUnit.G), new Weight(100, WeightUnit.KG), 10);
-		backpack2 = new BackPack(new Weight(5, WeightUnit.G), new Weight(0, WeightUnit.KG), 20);
-	}
-
-	/**
-	 * @throws java.lang.Exception
-	 */
 	@Before
 	public void setUp() throws Exception {
-		
-		
+		backpack1 = new BackPack(new Weight(5, WeightUnit.G), new Weight(100, WeightUnit.KG), 10);
+		backpack2 = new BackPack(new Weight(5, WeightUnit.G), new Weight(0, WeightUnit.KG), 20);
 		item1 = new Weapon(new Weight(500, WeightUnit.G), 50);
 		backpack1.addItem(item1);
-		//holder = new Hero("Hero", 50, backpack);
+		holder = new Hero("Hero", 50, backpack1);
 		item2 = new Armor(5, new Weight(50, WeightUnit.KG), 40, 50, 60);
 	}
 
@@ -107,8 +98,9 @@ public class ItemImplementationTest {
 	 */
 	@Test
 	public void testGetHolder() {
-		assertEquals(item2.getHolder(), null);
-		assertEquals(item1.getHolder(), holder);
+		assertEquals(null, item2.getHolder());
+		assertEquals(holder, item1.getHolder());
+		assertEquals(holder, backpack1.getHolder());
 	}
 
 	/**
@@ -117,11 +109,11 @@ public class ItemImplementationTest {
 	@Test
 	public void testTerminate() {
 		Parent parent = item1.getParent();
-		System.out.println(item1.getParent());
 		item1.terminate();
 		
 		assertTrue(item1.isTerminated());
 		assertFalse(parent.containsDirectItem(item1));
+		assertTrue(parent != item1.getParent());
 		
 	}
 

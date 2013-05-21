@@ -9,7 +9,8 @@ import be.kuleuven.cs.som.annotate.Raw;
  * An exception class which signals an illegal name in creatures when 
  * trying to set the name.
  *    Each illegal name exception involves the illegal name and the creature.
- * @author Frederic Huysentruyt, Mathias benoït TODO author op deze manier?
+ *    
+ * @author Frederic Huysentruyt, Mathias benoït
  * @see p.218 exception class example
  */
 public class IllegalNameException extends RuntimeException {

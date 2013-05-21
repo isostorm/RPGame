@@ -22,8 +22,6 @@ public class ArmorTest {
 	@Before
 	public void setUp() throws Exception {
 		armor1 = new Armor(3, new Weight(50, WeightUnit.G), 500, 50, 60);
-		
-		
 	}
 
 	/**
@@ -73,5 +71,11 @@ public class ArmorTest {
 		assertFalse(armor1.canHaveAsProtection(armor1.getMaxProtection()+1));
 	}
 
+	public void testGetValue()
+	{
+		assertEquals((int)((double)armor1.getMaxValue() *
+				((double)armor1.getProtection()/(double)armor1.getMaxProtection())),
+				armor1.getValue());
+	}
 
 }

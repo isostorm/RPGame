@@ -32,11 +32,12 @@ public class BackPack extends Container{
 	/**
 	 * A variable storing the total number of created backpacks.
 	 */
-	private static int nbOfBackPacks = 0;
+	private static int nbOfBackPacks = 1;
+	
 	/**
 	 * Returns the number of backpacks that have been created.
 	 */
-	@Model
+	@Model @Raw
 	private static int getNbOfBackPacks()
 	{
 		return nbOfBackPacks;
@@ -45,24 +46,28 @@ public class BackPack extends Container{
 	/**
 	 * Generates the id for the n-th backpack.
 	 * 
-	 * @return Return the sum of all binominal coefficients between 1 and the total number of backpacks.
+	 * @return Return the sum of all binominal coefficients between 1
+	 *         and the total number of backpacks.
 	 *         | let
-	 *         |    returnValue = 1
+	 *         |    previousBin = 1
+	 *         |    retValue = previousBin
 	 *         | in
 	 *         |    for each I in 1..getNbOfBackPacks():
-	 *         |       returnValue *= (getNbOfBackPacks()-I)/(I+1)
-	 * 		   |    result == returnValue
+	 *         |       previousBin *= (getNbOfBackPacks()-I-1)/(I)
+	 *         |       retValue += previousBin
+	 * 		   |    result == retValue
 	 */
 	@Model
 	private static long generateId(){
-		long bin = 1; // 0 nCr n = 1
-		long result = 1;
-		for(int i = 1; i <= getNbOfBackPacks(); i++){
-			bin = (getNbOfBackPacks()-i)/(i+1)*bin;
-			result += (bin);
+		double previousBin = 1;
+		int result = (int)previousBin;
+		for(int i = 1; i <= getNbOfBackPacks(); i++)
+		{
+			double k = i-1;
+			previousBin *= (getNbOfBackPacks()-k)/(k+1);
+			result += (int)previousBin;
 		}
-			
-		return result;
+		return (int)result;
 	}
 	
 	/**
@@ -84,7 +89,7 @@ public class BackPack extends Container{
 	 *         to 500 and greater than or equal to 0.
 	 *         | result == ( (value <= 500) && (value >= 0) )
 	 */
-	@Override
+	@Override @Raw
 	public boolean canHaveAsValue(int value)
 	{
 		return value <= 500 && value >= 0;
@@ -98,6 +103,7 @@ public class BackPack extends Container{
 	 * @effect The value of the enclosing container is set to the given value
 	 * 		   | super.setValue(value)
 	 */
+	@Raw
 	public void setValue(int value){
 		super.setValue(value);
 	}

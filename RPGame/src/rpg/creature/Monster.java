@@ -108,7 +108,7 @@ public class Monster extends Creature {
 	 *         | if(!name.matches("[A-Z][A-Za-z ']*")) then
 	 *         |    result == false
 	 */
-	@Override
+	@Override @Raw
 	public boolean canHaveAsName(String name) {
 		if(!super.canHaveAsName(name))
 			return false;
@@ -134,7 +134,7 @@ public class Monster extends Creature {
 	/**
 	 * Returns the protection of of this monster.
 	 */
-	@Basic @Override @Immutable
+	@Basic @Raw @Override @Immutable
 	public int getProtection()
 	{
 		return this.protection;
@@ -142,15 +142,33 @@ public class Monster extends Creature {
 	/**
 	 * Returns the damage of this monster.
 	 */
-	@Basic @Immutable
+	@Basic @Immutable @Raw
 	public int getDamage()
 	{
 		return damage;
 	}
 	/**
 	 * Attempts a hit on another creature.
-	 * 
-	 * 
+	 * @effect If the other creature is not this creature,
+	 *         a random number is generated between 0 and 100 and if
+	 *         this random number is greater than the hitpoints of this
+	 *         creature, number is equal to the hitpoints of this creature,
+	 *         otherwise number is equal to the previous random number.
+	 *         | if( other != this ) then
+	 *         |    let
+	 *         |       randomNumber = new Random().nextInt(101)
+	 *         |       number = (randomNumber >= getHitpoints()) ? getHitpoints() : randomNumber
+	 *         |    in
+	 *         If number is more than or equal
+	 *         to the protection of the other creature and the sum of total strength minus 5,
+	 *         divided by 3 and the damage of this creature is more than 0
+	 *         and the result of weakening the other creature
+	 *         with a damage equal to the total strength minus 5, divided by 3 is true then
+	 *         this monster will collect random items from the other dead creature.
+	 *         |       if(randomNumber >= other.getProtection())
+	 *         |          && ((getStrength()-5)/3 > 0)
+	 *         |          && (other.weaken((getStrength()-5)/3) then
+	 *         |                collect(other)
 	 */
 	public void hit(Creature other)
 	{
@@ -211,7 +229,13 @@ public class Monster extends Creature {
 			if(Math.random() <= chance) // monster will take the item
 			{
 				if(Math.random() <= 0.2 && getNbAnchors() > 0) // monster will swap it with an item in an anchor point.
-					getAnchorAt(new Random().nextInt(getNbAnchors())).swap(item);
+				{
+					try
+					{
+						getAnchorAt(new Random().nextInt(getNbAnchors())).swap(item);
+					}
+					catch(Exception e) {}
+				}
 				else
 					toCollect.add(item);
 			}

@@ -2,6 +2,7 @@ package rpg.item;
 
 import java.util.*;
 
+import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Raw;
 
 import rpg.exception.IllegalAddItemException;
@@ -17,6 +18,8 @@ import rpg.exception.NoSuchItemException;
  * 		  | hasValidCapacity()
  * @invar The content list is effective.
  *        | content != null
+ * @invar Each container has registered valid items.
+ *        | hasProperDirectItems()
  * 
  * @see p.417 invariant for private variable
  */
@@ -35,6 +38,7 @@ public abstract class Container extends ItemImplementation implements Parent {
 	 * @effect The capacity of this container is set to the given capacity 
 	 * 		   | setCapacity(capacity)
 	 */
+	@Raw
 	protected Container(long id, Weight weight, Weight capacity, int value) {
 		super(id, weight, value);
 		setCapacity(capacity);
@@ -54,6 +58,7 @@ public abstract class Container extends ItemImplementation implements Parent {
 	 * @effect The capacity of this container is set to the given capacity 
 	 * 		   | setCapacity(capacity)
 	 */
+	@Raw
 	public Container(long id, Weight weight, Weight capacity) {
 		this(id, weight, capacity, 0);
     }
@@ -63,6 +68,7 @@ public abstract class Container extends ItemImplementation implements Parent {
 	/**
 	 * Return the capacity of this container
 	 */
+	@Basic @Raw
 	public Weight getCapacity() {
 		return capacity;
 	}
@@ -78,6 +84,7 @@ public abstract class Container extends ItemImplementation implements Parent {
 	 * 		   This container can't have the given capacity as its capacity
 	 * 		   | !canHaveAsCapacity(capacity)
 	 */
+	@Raw
 	protected void setCapacity(Weight capacity) throws IllegalArgumentException {
 		if(!canHaveAsCapacity(capacity))
 			throw new IllegalArgumentException();
@@ -92,6 +99,7 @@ public abstract class Container extends ItemImplementation implements Parent {
 	 * @return True if and only if the given capacity is effective.
 	 *         | result == ( capacity != null )
 	 */
+	@Raw
 	public boolean canHaveAsCapacity(Weight capacity)
 	{
 		return capacity != null;
@@ -103,6 +111,7 @@ public abstract class Container extends ItemImplementation implements Parent {
 	 * @return True if this purse can have its capacity as its capacity.
 	 *         | result == canHaveAsCapacity(getCapacity())
 	 */
+	@Raw
 	public boolean hasValidCapacity()
 	{
 		return canHaveAsCapacity(getCapacity());
@@ -145,7 +154,10 @@ public abstract class Container extends ItemImplementation implements Parent {
 	 *         | 	for each item in itemEnumeration: 
 	 *         | 		if ( ! (item instanceof Purse) )  then 
 	 *         | 			totalValue += item.getValue 
-	 *         | result == ( totalValue + getValue() )
+	 *         | if(! (this instanceof Purse)) then
+	 *         |    result == ( totalValue + getValue() )
+	 *         | else then
+	 *         |    result == totalValue
 	 * 
 	 */
 	public int getTotalValue() {
@@ -157,7 +169,8 @@ public abstract class Container extends ItemImplementation implements Parent {
 											// inside a purse is counted twice
 				totalValue += item.getValue();
 		}
-		totalValue += getValue();
+		if(! (this instanceof Purse))
+				totalValue += getValue();
 		return totalValue;
 	}
 
@@ -203,7 +216,8 @@ public abstract class Container extends ItemImplementation implements Parent {
 	 *         capacity of this container. 
 	 *         | result == (getTotalWeight().add(item.getWeight()).compareTo(getCapacity()) <= 0 )
 	 */
-	public boolean canAddItemToContainer(Item item) {
+	@Raw
+	public boolean canAddItemToContainer(@Raw Item item) {
 		return getTotalWeight().add(item.getWeight()).compareTo(getCapacity()) <= 0;
 	}
 
@@ -232,8 +246,8 @@ public abstract class Container extends ItemImplementation implements Parent {
 	 *         if there is a holder, the holder is able to carry the item. 
 	 *         | result == ( (!hasHolder() || getHolder().canAddItem(item)) &&  canAddItemToContainer(item) )
 	 */
-	@Override
-	public boolean canAddItem(Item item) {
+	@Raw @Override
+	public boolean canAddItem(@Raw Item item) {
 		if(isTerminated())
 			return false;
 		if(item == null)
@@ -245,8 +259,25 @@ public abstract class Container extends ItemImplementation implements Parent {
 			return false;
 		return (!hasHolder() || getHolder().canAddItem(item))
 				&& canAddItemToContainer(item);
-		
-			
+	}
+	
+	/**
+	 * Check whether this container has proper direct items.
+	 * 
+	 * @return True if and only if all the items in this container have proper parents
+	 *         and their parents are equal to this.
+	 *         | for each item in getDirectItems():
+	 *         |    result == ( (!item instanceof ItemImplementation)
+	 *         |                || ((item).hasProperParent() && (item).getParent())
+	 */
+	public boolean hasProperDirectItems()
+	{
+		for(Item item: getDirectItems())
+			if(item instanceof ItemImplementation)
+				if( ! ((ItemImplementation)item).hasProperParent() ||
+						((ItemImplementation)item).getParent() != this)
+					return false;
+		return true;
 	}
 
 	/**
@@ -420,26 +451,25 @@ public abstract class Container extends ItemImplementation implements Parent {
 	}
 	
 	/**
-	 * TODO
 	 * Check whether this item is equal to the given item or is a direct
 	 * or indirect parent of the given item.
+	 * 
 	 * @param  item
 	 * 		   The item to check
 	 * @return True if the given item is equal to this item or
-	 *         if the given item is effective and this item equals or is
+	 *         if the given item is effective and this item equals or is a container and is
 	 *         the direct or indirect parent of the parent of the given
 	 *         item;
 	 *         False otherwise.
 	 *         | result == (this == item) || 
-	 *         |            ( item != null && 
-	 *         |              equalsOrIsDirectOrIndirectParentOf(
-	 *         |                        item.getParentDirectory()) )  
+	 *         |            ( item != null && item instanceof Container && 
+	 *         |              (equalsOrIsDirectOrIndirectParentOf(item.getParent()))  )
 	 */
-	@Raw 
-	public boolean equalsOrIsDirectOrIndirectParentOf(Container item) {
+	@Raw
+	public boolean equalsOrIsDirectOrIndirectParentOf(@Raw Container item) {
 		return ((this == item) || 
 			    ( (item != null) && item instanceof Container &&
 			    	  (equalsOrIsDirectOrIndirectParentOf((Container)item.getParent()))
 			    	) );
-	}	
+	}
 }

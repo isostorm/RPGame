@@ -20,7 +20,7 @@ public interface Item {
 	/**
 	 * Return the identification of this item
 	 */
-	@Basic
+	@Basic @Raw
 	public long getId();
 	
 	/**
@@ -30,6 +30,7 @@ public interface Item {
 	 *         | if( id < 0 ) then
 	 *         |    result == false
 	 */
+	@Raw
 	public boolean canHaveAsId(long id);
 	/**
 	 * Checks whether or not this item has a valid id.
@@ -37,6 +38,7 @@ public interface Item {
 	 * @return True if and only if this item has a valid id.
 	 *         | result == canHaveAsId( getId() )
 	 */
+	@Raw
 	public boolean hasValidId();
 	
 	/**
@@ -52,6 +54,7 @@ public interface Item {
 	  *         | if(value < 0) then
 	  *         |	result == false
 	  */
+	@Raw
 	 public boolean canHaveAsValue(int value);
 	/**
 	 * Checks whether this item has a valid value.
@@ -59,6 +62,7 @@ public interface Item {
 	 * @return True if and only if this item can have its value as its value.
 	 *         | result == canHaveAsValue( getValue() )
 	 */
+	@Raw
 	public boolean hasValidValue();
 	
 	/**

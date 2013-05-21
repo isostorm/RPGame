@@ -1,6 +1,5 @@
 package rpg.creature;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import be.kuleuven.cs.som.annotate.*;
@@ -63,6 +62,7 @@ public abstract class Creature{
 	 *         | for each i in 0..(result.size()-1):
 	 *         |    result.get(i).equals(getAnchorAt(i))
 	 */
+	@Basic @Raw
 	public ArrayList<Anchor> getAnchors() {
 		return new ArrayList<Anchor>(this.anchors);
 	}
@@ -80,9 +80,9 @@ public abstract class Creature{
 	 * 
 	 * @param index
 	 *        The index of the anchor to return.
-	 * @pre The given index must be positive and must be less than
-	 *      the number of anchors of this creature.
-	 *      | index >= 0 && index < getNbAnchors()
+	 * @pre   The given index must be positive and must be less than
+	 *        the number of anchors of this creature.
+	 *        | index >= 0 && index < getNbAnchors()
 	 */
 	@Basic @Raw
 	public Anchor getAnchorAt(int index)
@@ -102,6 +102,7 @@ public abstract class Creature{
 	 *        of the given precision.
 	 *        | getStrengthPrecision() == Math.abs( precision )
 	 */
+	@Raw
 	public static void setStrengthPrecision(int precision)
 	{
 		strengthPrecision = Math.abs(precision);
@@ -110,7 +111,7 @@ public abstract class Creature{
 	/**
 	 * Returns the strength precision for each creature.
 	 */
-	@Basic
+	@Basic @Raw
 	public static int getStrengthPrecision()
 	{
 		return strengthPrecision;
@@ -149,6 +150,7 @@ public abstract class Creature{
 	 * @param strength
 	 *        The new strength of this creature.
 	 */
+	@Raw @Basic
 	protected void setStrength(double strength)
 	{
 		this.strength = strength;
@@ -162,6 +164,7 @@ public abstract class Creature{
 	 * @effect The strength is set to the old strength multiplied with the given multiplier.
 	 *         | setStrength(getStrength()*multiplier)
 	 */
+	@Raw
 	public void multiplyStrength(int multiplier)
 	{
 		setStrength(strength*multiplier);
@@ -175,6 +178,7 @@ public abstract class Creature{
 	 * @effect The strength is set to the old strength divided with the given divisor.
 	 *         | setStrength(getStrength()/divisor)
 	 */
+	@Raw
 	public void divideStrength(int divisor)
 	{
 		setStrength(strength/divisor);
@@ -326,10 +330,10 @@ public abstract class Creature{
 	 * 
 	 * @param hitpoints
 	 *        The new number of hitpoints of this creature.
-	 * @pre  The creature can have the given number of hitpoints as its hitpoints.
-	 *       | canHaveAsHitpoints( hitpoints )
-	 * @post The number of hitpoints of this creature is equal to the given number of hitpoints.
-	 *       | getHitpoints() == hitpoints
+	 * @pre   The creature can have the given number of hitpoints as its hitpoints.
+	 *        | canHaveAsHitpoints( hitpoints )
+	 * @post  The number of hitpoints of this creature is equal to the given number of hitpoints.
+	 *        | getHitpoints() == hitpoints
 	 */
 	@Raw
 	protected void setHitpoints(int hitpoints) {
@@ -348,6 +352,7 @@ public abstract class Creature{
 	 *                       && ( hitpoints <= getMaximumHitpoints() )
 	 *                       && ( isPrime(hitpoints) ) )
 	 */
+	@Raw
 	public boolean canHaveAsHitpoints(int hitpoints)
 	{
 		return hitpoints >= 0 && hitpoints <= getMaximumHitpoints() && isPrime(hitpoints);
@@ -359,10 +364,12 @@ public abstract class Creature{
 	 * @return True if and only if this creature can have its hitpoints as its hitpoints.
 	 *         | result == ( canHaveAsHitpoints( getHitpoints() ) )
 	 */
+	@Raw
 	public boolean hasValidHitpoints()
 	{
 		return canHaveAsHitpoints(getHitpoints());
 	}
+	
 	/**
 	 * Hits the given creature.
 	 */
@@ -374,7 +381,8 @@ public abstract class Creature{
 	 * Return the treasure of this creature
 	 * The treasure contains the items of this creature 
 	 * that can be taken by other creatures
-	 */
+	 */ 
+	@Basic @Raw
 	public ArrayList<Item> getTreasure()
 	{
 		return treasure;
@@ -386,6 +394,7 @@ public abstract class Creature{
 	 * @post The number of treasures in this creature is equal to 0.
 	 * 		 | getNbTreasures() == 0
 	 */
+	@Raw
 	void destroyTreasure()
 	{
 		treasure.clear();
@@ -560,8 +569,7 @@ public abstract class Creature{
 	 * @see    p.128 formal specification of for loops
 	 */
 	@Raw
-	protected
-	static boolean isPrime(int number)
+	protected static boolean isPrime(int number)
 	{
 		if(number <= 1)
 			return false;
@@ -608,6 +616,7 @@ public abstract class Creature{
 				return anchor;
 		return null;
 	}
+	
 	/**
 	 * Adds the given anchor to its anchors.
 	 * 
@@ -630,7 +639,8 @@ public abstract class Creature{
 	 *         creature and the weight of the given item is less than or equal to the capacity of this creature.
 	 *         | result == ( getTotalWeight().add(item.getWeight()).compareTo(getCapacity()) <= 0 )
 	 */
-	public boolean canAddItem(Item item)
+	@Raw
+	public boolean canAddItem(@Raw Item item)
 	{
 		return getTotalWeight().add(item.getWeight()).compareTo(getCapacity()) <= 0;
 	}
@@ -644,7 +654,8 @@ public abstract class Creature{
 	 *         if the anchor is equal to this creature.
 	 *         | result == ( ( anchor != null) && ( anchor.getHolder() == this) )
 	 */
-	public boolean canHaveAsAnchor(Anchor anchor)
+	@Raw
+	public boolean canHaveAsAnchor(@Raw Anchor anchor)
 	{
 		return anchor != null && anchor.getHolder() == this;
 	}
@@ -655,6 +666,7 @@ public abstract class Creature{
 	 * @return True if and only if each anchor can have the anchor as an anchor.
 	 *         | result == for each anchor in anchors: canHaveAsAnchor(anchor)
 	 */
+	@Raw
 	public boolean hasProperAnchors()
 	{
 		for(Anchor anchor : anchors)

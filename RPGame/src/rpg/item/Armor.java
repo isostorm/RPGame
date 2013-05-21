@@ -1,5 +1,6 @@
 package rpg.item;
 
+import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Model;
 import be.kuleuven.cs.som.annotate.Raw;
 
@@ -95,7 +96,7 @@ public class Armor extends ItemImplementation{
 	 *        | else
 	 *        |		getId() == 2
 	 */
-	@Override @Model
+	@Override @Model @Raw
 	protected void setId(long id){
 		if(canHaveAsId(id))
 			this.id = id;
@@ -109,6 +110,7 @@ public class Armor extends ItemImplementation{
 	/**
 	 * Return the maximum value of this armor
 	 */
+	@Basic @Raw
 	public int getMaxValue() {
 		return maxValue;
 	}
@@ -133,6 +135,7 @@ public class Armor extends ItemImplementation{
 	  * 		is a valid maximum value.
 	  *         | result == isValidMaxValue(getMaxValue())
 	  */
+	@Raw
 	 public boolean hasValidMaxValue()
 	 {
 		return isValidMaxValue(getMaxValue()); 
@@ -148,7 +151,7 @@ public class Armor extends ItemImplementation{
 	  */
 	 @Override
 	 public int getValue(){
-		return getMaxValue() * (getProtection()/getMaxProtection());
+		return (int)((double)getMaxValue() * ((double)getProtection()/(double)getMaxProtection()));
 		 
 	 }
 	 
@@ -157,78 +160,85 @@ public class Armor extends ItemImplementation{
 	 /**
 	  * Return the maximum protection factor of this armor
 	  */
+	 @Basic @Raw
 	 public int getMaxProtection() {
 			return maxProtection;
 	 }
 	 
 	 /**
-		 * Check whether the given maximum protection is valid
-		 * 
-		 * @param  maxProtection
-		 * 		   The maximum protection to check
-		 * @return True if and only if the given maximum protection is 
-		 * 		   greater than or equal to 1 and less than or equal to 100
-		 * 		   | result == value>=1 && value<=100
-		 */
-		public static boolean isValidMaxProtection(int maxProtection){
-			return maxProtection>=1 && maxProtection<=100;
-		}
-		 
-		/**
-		  * Checks whether the maximum protection of this armor is valid.
-		  * 
-		  * @return True if and only if the maximum protection of this armor 
-		  * 		is a valid maximum protection.
-		  *         | result == isValidMaxProtection(getMaxProtection())
-		  */
-		 public boolean hasValidMaxProtection()
-		 {
-			return isValidMaxProtection(getMaxProtection()); 
-		 }
-		 
-		 private int protection;
-		 
-		 /**
-		 * Return the protection factor of this armor
-		 */
-		public int getProtection() {
-			return protection;
-		}
+	 * Check whether the given maximum protection is valid
+	 * 
+	 * @param  maxProtection
+	 * 		   The maximum protection to check
+	 * @return True if and only if the given maximum protection is 
+	 * 		   greater than or equal to 1 and less than or equal to 100
+	 * 		   | result == value>=1 && value<=100
+	 */
+	 @Raw
+	public static boolean isValidMaxProtection(int maxProtection){
+		return maxProtection>=1 && maxProtection<=100;
+	}
+	 
+	/**
+	  * Checks whether the maximum protection of this armor is valid.
+	  * 
+	  * @return True if and only if the maximum protection of this armor 
+	  * 		is a valid maximum protection.
+	  *         | result == isValidMaxProtection(getMaxProtection())
+	  */
+	 @Raw
+	 public boolean hasValidMaxProtection()
+	 {
+		return isValidMaxProtection(getMaxProtection()); 
+	 }
+	 
+	 private int protection;
+	 
+	 /**
+	 * Return the protection factor of this armor
+	 */
+	 @Raw @Basic
+	public int getProtection() {
+		return protection;
+	}
 
-		/**
-		 * Set the protection factor of this armor to the given protection
-		 * 
-		 * @param protection 
-		 * 		  The protection to set
-		 * @pre	  This armor can have the given protection as its protection
-		 * 		  | canHaveAsProtection(protection)
-		 * @post  The protection factor of this armor equals the given protection
-		 * 		  | new.getProtection() == protection
-		 */
-		public void setProtection(int protection) {
-			this.protection = protection;
-		}
-		
-		/**
-		 * Check whether this armor can have the given protection as its protection
-		 * 
-		 * @param  protection
-		 * 		   The protection to check
-		 * @return True if and only if the given protection is positive
-		 * 		   and less than or equal to the maximum protection
-		 * 		   | result == ( ( protection >= 0) && (protection <= getMaxProtection() ) )
-		 */
-		public boolean canHaveAsProtection(int protection){
-			return protection >= 0 && protection <= getMaxProtection();
-		}
-		
-		/**
-		 * Check whether this armor can has a valid protection
-		 * 
-		 * @return True if and only if this armor can have its protection as its protection
-		 * 		   | result == canHaveAsProtection(getProtection())
-		 */
-		public boolean hasValidProtection(){
-			return canHaveAsProtection(getProtection());
-		}
+	/**
+	 * Set the protection factor of this armor to the given protection
+	 * 
+	 * @param protection 
+	 * 		  The protection to set
+	 * @pre	  This armor can have the given protection as its protection
+	 * 		  | canHaveAsProtection(protection)
+	 * @post  The protection factor of this armor equals the given protection
+	 * 		  | new.getProtection() == protection
+	 */
+	 @Raw
+	public void setProtection(int protection) {
+		this.protection = protection;
+	}
+	
+	/**
+	 * Check whether this armor can have the given protection as its protection
+	 * 
+	 * @param  protection
+	 * 		   The protection to check
+	 * @return True if and only if the given protection is positive
+	 * 		   and less than or equal to the maximum protection
+	 * 		   | result == ( ( protection >= 0) && (protection <= getMaxProtection() ) )
+	 */
+	 @Raw
+	public boolean canHaveAsProtection(int protection){
+		return protection >= 0 && protection <= getMaxProtection();
+	}
+	
+	/**
+	 * Check whether this armor can has a valid protection
+	 * 
+	 * @return True if and only if this armor can have its protection as its protection
+	 * 		   | result == canHaveAsProtection(getProtection())
+	 */
+	 @Raw
+	public boolean hasValidProtection(){
+		return canHaveAsProtection(getProtection());
+	}
 }

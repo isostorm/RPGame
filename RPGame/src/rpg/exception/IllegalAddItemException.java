@@ -5,6 +5,8 @@ import rpg.item.Parent;
 
 /**
  * A class for signaling illegal attempts to add items to a parent.
+ * 
+ * @author Mathias, Frederic
  */
 public class IllegalAddItemException extends RuntimeException {
 	 /**
