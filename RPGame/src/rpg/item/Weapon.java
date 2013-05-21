@@ -24,8 +24,8 @@ public class Weapon extends ItemImplementation {
 	 * @param  damage
 	 *         The damage of this weapon.
 	 * @effect A new container is initialized with 
-	 * 		   the generated id and the given weight, parent and value
-	 * 		   | super(generateId(), weight, parent, value)
+	 * 		   the generated id and the given weight and value
+	 * 		   | super(generateId(), weight, value)
 	 * @effect The id is shifted.
 	 *         | shiftId()
 	 * @effect The damage of this weapon is set to the given damage.
@@ -36,7 +36,7 @@ public class Weapon extends ItemImplementation {
 		setDamage(damage);
 		shiftId();
 	}
-	
+
 	/**
 	 * Initializes this weapon with the given weight and damage.
 	 * 
@@ -137,7 +137,7 @@ public class Weapon extends ItemImplementation {
 	 * @return True if and only if the maximum damage is a valid maximum damage.
 	 *         | result == isValidMaxDamage( getMaxDamage() )
 	 */
-	public static boolean hasValidMaxDamage()
+	public boolean hasValidMaxDamage()
 	{
 		return isValidMaxDamage(getMaxDamage());
 	}
@@ -212,12 +212,12 @@ public class Weapon extends ItemImplementation {
 	 /**
 	  * Returns the damage value factor of all weapons.
 	  */
-	 public double getDamageValueFactor()
+	 public static double getDamageValueFactor()
 	 {
 		 return damageValueFactor;
 	 }
 	 
-	 private static boolean useFormula;
+	 private static boolean useFormula = true;
 	 
 	 /**
 	  * Sets whether or not the value is dependent of the damage.

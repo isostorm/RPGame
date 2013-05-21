@@ -1,82 +1,69 @@
-/**
- * 
- */
 package rpg.test;
 
 import static org.junit.Assert.*;
 
+import java.util.Enumeration;
+
+import rpg.exception.IllegalAddItemException;
+import rpg.item.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import rpg.item.Dukat;
-import rpg.item.Purse;
-import rpg.item.Weight;
-import rpg.item.WeightUnit;
-
-/**
- * @author Frederic
- *
- */
 public class PurseTest {
 
-	/**
-	 * @throws java.lang.Exception
-	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		purse1 = new Purse(null, null, null, null); //TODO niet null null null
-		purse2 = new Purse(null, null, null, null);
-		purse3 = new Purse(null, null, null, null);
-		purse4 = new Purse(null, null, null, null);
 	}
-	static Purse purse1, purse2, purse3, purse4;
-	Purse purseA;
-	/**
-	 * @throws java.lang.Exception
-	 */
+	
+	Purse purse1, purse2;
 	@Before
 	public void setUp() throws Exception {
-		purseA = new Purse(null, null, null, new Weight(1, WeightUnit.KG)); //TODO niet null waarden?
-	}
-	@Test
-	public void testGenerateId()
-	{
-		assertEquals(1, purse1.getId());
-		assertEquals(1, purse2.getId());
-		assertEquals(2, purse3.getId());
-		assertEquals(3, purse4.getId());
-	}
-	/**
-	 * 
-	 */
-	@Test
-	public void testIsValidId()
-	{
-		assertTrue(purse1.canHaveAsId(1));
-		assertTrue(purse1.canHaveAsId(2));
-		assertTrue(purse1.canHaveAsId(3));
-		assertTrue(purse1.canHaveAsId(987));
-	}
-	/**
-	 * Test method for {@link rpg.item.Purse#Purse(rpg.item.Weight, rpg.item.BackPack, rpg.creature.Creature, rpg.item.Weight)}.
-	 */
-	@Test
-	public void testPurse() {
-		fail("Not yet implemented");
+		purse1 = new Purse(new Weight(50, WeightUnit.G), new Weight(1, WeightUnit.KG), 10);
+		purse2 = new Purse(new Weight(50, WeightUnit.G), new Weight(40, WeightUnit.G));
 	}
 
-	/**
-	 * Test method for {@link rpg.item.Purse#addDukat(rpg.item.Dukat)}.
-	 */
+	@Test
+	public void testCanHaveAsId() {
+		assertTrue(purse1.canHaveAsId(10946));
+		assertFalse(purse1.canHaveAsId(33));
+		assertTrue(purse1.canHaveAsId(5));
+	}
+
+
+	@Test
+	public void testPurse() {
+		Enumeration<Item> dukats = purse1.getItems();
+		int i = 0;
+		while(dukats.hasMoreElements()){
+			i++;
+			dukats.nextElement();
+		}
+		assertEquals(10, i);
+	}
+
 	@Test
 	public void testAddDukat() {
-		Dukat dukat1 = new Dukat();
-		Dukat dukat2 = new Dukat();
-		purseA.addDukat(dukat1);
-		assertTrue(purseA.contains(dukat1));
-		assertFalse(purseA.contains(dukat2));
-		//TODO checken of burst ook werkt
+		Dukat dukat = new Dukat();
+		purse1.addDukat(dukat);
+		assertTrue(purse1.containsDirectItem(dukat));
+		purse2.addDukat(dukat);
+		assertTrue(purse2.isTerminated());
+	}
+	
+	@Test(expected=IllegalAddItemException.class)
+	public void testAddPurse_overflow() {
+		purse2.addPurse(purse1);
+	}
+	
+	@Test
+	public void testAddPurse() {
+		purse1.addPurse(purse2);
+		Enumeration<Item> dukats = purse1.getItems();
+		
+		while(dukats.hasMoreElements()){
+			assertTrue(purse1.containsDirectItem(dukats.nextElement()));
+		}
 	}
 
 }

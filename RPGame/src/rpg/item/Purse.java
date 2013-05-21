@@ -1,5 +1,9 @@
 package rpg.item;
 
+import java.util.Enumeration;
+
+import rpg.exception.IllegalAddItemException;
+
 import be.kuleuven.cs.som.annotate.Model;
 
 
@@ -26,13 +30,28 @@ public class Purse extends Container{
 	 *         | addDukats(amountOfDukats)
 	 * @effect The fibonacci numbers are shifted.
 	 *         | shiftFibonacciNumbers()
-	 * @post   The purse contains the given
+	 * @post   The purse contains the given number of dukats
+	 * 		   | 
 	 */
 	public Purse(Weight weight, Weight capacity, int amountOfDukats) {
 		super(generateId(), weight, capacity);
 		addDukats(amountOfDukats);
 		shiftFibonacciNumbers();
 	}
+	
+	/**
+	 * @param  weight
+	 * 		   The weight of this purse
+	 * @param  amountOfDukats
+	 *         The amount of dukats to be added to this purse.
+	 * @effect A new purse is initialized with the given weight 
+	 * 		   and capacity and 0 as its amount of dukats
+	 * 		   | this(weight, capacity, 0)
+	 */
+	public Purse(Weight weight, Weight capacity) {
+		this(weight, capacity, 0);
+	}
+	
 	/**
 	 * Adds the given amount of dukats to this purse.
 	 * 
@@ -163,4 +182,31 @@ public class Purse extends Container{
 		super.setCapacity(capacity);
 	}
 	
+	/**
+	 * Add all the dukats of the given purse to this purse
+	 * 
+	 * @param  other
+	 * 		   The purse to transfer the dukats from
+	 * @post   This purse contains all the dukats of the other purse
+	 * 		   | for each dukat in other.getItems
+	 * 		   | 	this.containsDirectItem(dukat)
+	 * @throws IllegalAddItemException(this, other)
+	 * 		   The sum of the weight of the dukats in this purse and the other purse exceed the capacity of this purse
+	 * 		   | ( getTotalWeight().subtract(getWeight()) )
+	 * 		   | 	.add( (other.getTotalWeight()).subtract(other.getWeight())
+	 * 		   |  .compareTo(getCapacity())>0
+	 */
+	public void addPurse(Purse other){
+		Weight newCapacity = ( getTotalWeight().subtract(getWeight()) ).add( (other.getTotalWeight()).subtract(other.getWeight()) );
+		
+		if(newCapacity.compareTo(getCapacity())>0)
+			throw new IllegalAddItemException(this, other);
+		
+		Enumeration<Item> dukats = other.getItems();
+		while(dukats.hasMoreElements()){
+			Dukat dukat = (Dukat) dukats.nextElement();
+			other.removeDirectItem(dukat);
+			this.addDukat(dukat);
+		}
+	}
 }

@@ -31,7 +31,7 @@ public abstract class ItemImplementation implements Item{
 	 *         | setValue(value)
 	 */
 	@Raw
-	public ItemImplementation(long id, Weight weight, int value){
+	protected ItemImplementation(long id, Weight weight, int value){
 		setId(id);
 		if(weight != null)
 			this.weight = weight;
@@ -47,31 +47,33 @@ public abstract class ItemImplementation implements Item{
 	 * 		   The id for this item
 	 * @param  weight
 	 * 		   The weight of this item
-	 * @effect Initialize this item implementation with the given weight, backpack and holder
-	 * 		   and 0 as its value and its id
-	 *         | this(0, weight, 0)
+	 * @post   The weight of this item implementation equals 
+	 * 		   the given weight
+	 * 		   | new.getWeight() == weight
 	 */
 	@Raw
-	public ItemImplementation(Weight weight){
-		this(0, weight, 0);
+	protected ItemImplementation(Weight weight){
+		this.weight = weight;
 	}
 	
 	/**
-	 * Initialize this new item with the given id, weight, and holder
+	 * Initialize this new item with the given id and weight
 	 * 
 	 * @param  id
 	 * 		   The id for this item
 	 * @param  weight
 	 * 		   The weight of this item
-	 * @effect Initialize this item implementation with the given weight, parent and holder
+	 * @effect Initialize this item implementation with the given weight
 	 * 		   and 0 as its id
 	 *         | this(0, weight, backpack, 0)
 	 */
-	public ItemImplementation(long id, Weight weight)
+	/*protected ItemImplementation(long id, Weight weight)
 	{
 		this(id, weight, 0);
-	}
+	}*/
+	
 	private int value;
+	
 	/**
 	 * Set the value of this item to the given value
 	 * 
@@ -102,8 +104,9 @@ public abstract class ItemImplementation implements Item{
 	@Override
 	 public boolean canHaveAsValue(int value)
 	 {
-		 return(value<0);
+		 return(value>=0);
 	 }
+	
 	/**
 	 * Checks whether this weapon has a valid value.
 	 * 
@@ -157,7 +160,7 @@ public abstract class ItemImplementation implements Item{
 	@Override
 	public boolean canHaveAsId(long id)
 	{
-		return getId() >= 0;
+		return id >= 0;
 	}
 	
 	/**
@@ -236,6 +239,11 @@ public abstract class ItemImplementation implements Item{
 	}
 	/**
 	 * Terminate this item implementation.
+	 * 
+	 * @post If this item implementation has a parent,
+	 * 		 it doesn't contain this item anymore
+	 * 		 | if(hasParent())
+			 |    !getParent().containsDirectItem(this);
 	 */
 	public void terminate()
 	{

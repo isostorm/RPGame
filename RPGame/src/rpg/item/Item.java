@@ -26,8 +26,9 @@ public interface Item {
 	/**
 	 * Checks whether or not this item can have the given id as its id.
 	 * 
-	 * @return True if and only if the given id is positive.
-	 *         | result == (id >= 0)
+	 * @return False if the given id is negative.
+	 *         | if( id < 0 ) then
+	 *         |    result == false
 	 */
 	public boolean canHaveAsId(long id);
 	/**

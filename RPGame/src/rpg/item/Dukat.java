@@ -5,11 +5,8 @@ import be.kuleuven.cs.som.annotate.*;
 public class Dukat implements Item{
 
 	
-	public Dukat(){
-		
-	}
 	/**
-	 * Return the value of this dukat, which is always 0
+	 * Return the id of this dukat, which is always 0
 	 */
 	@Override @Basic @Immutable
 	public long getId() {

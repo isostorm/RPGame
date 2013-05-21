@@ -9,12 +9,13 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
+import rpg.exception.IllegalAddItemException;
 import rpg.item.BackPack;
 import rpg.item.Dukat;
 import rpg.item.Item;
+import rpg.item.Purse;
 import rpg.item.Weapon;
 import rpg.item.Weight;
 import rpg.item.WeightUnit;
@@ -25,58 +26,39 @@ import rpg.item.WeightUnit;
  */
 public class BackPackTest {
 
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
-
 	BackPack backpack1, backpack2, backpack3;
+
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-		backpack1 = new BackPack(new Weight(500, WeightUnit.G), new Weight(100, WeightUnit.KG));
-		backpack2 = new BackPack(new Weight(500, WeightUnit.G), new Weight(100, WeightUnit.KG));
-		backpack3 = new BackPack(new Weight(500, WeightUnit.G), new Weight(100, WeightUnit.KG));
+		backpack1 = new BackPack(new Weight(500, WeightUnit.G), new Weight(100, WeightUnit.KG), 20);
+		backpack2 = new BackPack(new Weight(500, WeightUnit.G), new Weight(100, WeightUnit.KG), 300);
+		backpack3 = new BackPack(new Weight(500, WeightUnit.G), new Weight(100, WeightUnit.KG), 500);
 	}
 	
 	/**
-	 * Test method for {@link rpg.item.BackPack#BackPack(rpg.item.Weight, rpg.item.BackPack, java.lang.Character, rpg.item.Weight)}.
+	 * Test method for {@link rpg.item.BackPack#generateId()}.
 	 */
 	@Test
-	public void testBackPack() {
-		fail("Not yet implemented");
+	public void testGenerateId() {
+		System.out.println(backpack1.getId());
+		assertEquals(1, backpack1.getId());
+		
+	}
+	
+	/**
+	 * Test method for {@link rpg.item.BackPack#canHaveAsValue(int)}.
+	 */
+	@Test
+	public void testCanHaveAsValue() {
+		assertFalse(backpack1.canHaveAsValue(501));
+		assertTrue(backpack1.canHaveAsValue(50));
 	}
 
 	/**
-	 * Test method for {@link rpg.item.Container#Container(long, rpg.item.Weight, rpg.item.BackPack, java.lang.Character, rpg.item.Weight)}.
-	 */
-	@Test
-	public void testContainer() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link rpg.item.Container#getCapacity()}.
-	 */
-	@Test
-	public void testGetCapacity() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link rpg.item.Container#setCapacity(rpg.item.Weight)}.
-	 */
-	@Test
-	public void testSetCapacity() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link rpg.item.Container#getTotalWeight()}.
+	 * Test method for {@link rpg.item.BackPack#getTotalWeight()}.
 	 */
 	@Test
 	public void testGetTotalWeight() {
@@ -90,9 +72,85 @@ public class BackPackTest {
 						add(weapon1.getWeight())) == 0);
 	}
 
+	/**
+	 * Test method for {@link rpg.item.BackPack#getTotalValue()}.
+	 */
 	@Test
-	public void testGetItems()
-	{
+	public void testGetTotalValue() {
+		Weapon weapon1 = new Weapon(new Weight(800, WeightUnit.G), 20);
+		Purse  purse = new Purse(new Weight(50, WeightUnit.G),new Weight(50, WeightUnit.G), 45);
+		backpack2.addItem(weapon1);
+		backpack1.addItem(backpack2);
+		backpack1.addItem(purse);
+		
+		
+		assertEquals(backpack1.getTotalValue(),backpack1.getValue() 
+												+ backpack2.getValue() 
+												+ weapon1.getValue()
+												+purse.getValue());
+	}
+
+	/**
+	 * Test method for {@link rpg.item.BackPack#addItem(rpg.item.Item)}.
+	 */
+	@Test
+	public void testAddItem_LegalCase() {
+		Weapon item = new Weapon(new Weight(800, WeightUnit.G), 20);
+		backpack1.addItem(item);
+		assertTrue(backpack1.containsDirectItem(item));
+	}
+	
+	
+	/**
+	 * Test method for {@link rpg.item.BackPack#addItem(rpg.item.Item)}.
+	 */
+	@Test(expected=IllegalAddItemException.class)
+	public void testAddItem_IllegalCase() {
+		Weapon item = new Weapon(new Weight(800, WeightUnit.KG), 20);
+		backpack1.addItem(item);
+		
+	}
+
+	/**
+	 * Test method for {@link rpg.item.BackPack#containsDirectItem(rpg.item.Item)}.
+	 */
+	@Test
+	public void testContainsDirectItem() {
+		Weapon item = new Weapon(new Weight(800, WeightUnit.G), 20);
+		backpack1.addItem(item);
+		assertTrue(backpack1.containsDirectItem(item));
+		assertFalse(backpack1.containsDirectItem(backpack3));
+	}
+
+	/**
+	 * Test method for {@link rpg.item.BackPack#removeItem(rpg.item.Item)}.
+	 */
+	@Test
+	public void testRemoveItem() {
+		Weapon item = new Weapon(new Weight(800, WeightUnit.G), 20);
+		backpack1.addItem(item);
+		backpack1.removeDirectItem(item);
+		assertFalse(backpack1.containsDirectItem(item));
+	}
+
+	/**
+	 * Test method for {@link rpg.item.BackPack#getDirectItems()}.
+	 */
+	@Test
+	public void testGetDirectItems() {
+		Weapon weapon1 = new Weapon(new Weight(800, WeightUnit.G), 20);
+		backpack2.addItem(weapon1);
+		backpack1.addItem(backpack2);
+		ArrayList<Item> items = backpack1.getDirectItems();
+		assertTrue(items.contains(backpack2));
+		assertFalse(items.contains(weapon1));
+	}
+
+	/**
+	 * Test method for {@link rpg.item.BackPack#getItems()}.
+	 */
+	@Test
+	public void testGetItems() {
 		Weapon weapon1 = new Weapon(new Weight(800, WeightUnit.G), 20);
 		backpack2.addItem(backpack3);
 		backpack3.addItem(weapon1);
@@ -113,220 +171,19 @@ public class BackPackTest {
 		assertTrue(allItems.contains(dukat1));
 		assertTrue(allItems.contains(dukat2));
 	}
+	
 	/**
-	 * Test method for {@link rpg.item.Container#getTotalValue()}.
+	 * Test method for {@link rpg.item.BackPack#equalsOrIsDirectOrIndirectParentOf()}.
 	 */
 	@Test
-	public void testGetTotalValue() {
-		fail("Not yet implemented");
+	public void testEqualsOrIsDirectOrIndirectParentOf() {
+		backpack1.addItem(backpack2);
+		backpack3.addItem(backpack1);
+		assertTrue(backpack1.equalsOrIsDirectOrIndirectParentOf(backpack2));
+		assertTrue(backpack1.equalsOrIsDirectOrIndirectParentOf(backpack1));
+		assertFalse(backpack2.equalsOrIsDirectOrIndirectParentOf(backpack1));
+		assertTrue(backpack3.equalsOrIsDirectOrIndirectParentOf(backpack2));
 	}
 
-	/**
-	 * Test method for {@link rpg.item.Container#addItem(rpg.item.Item)}.
-	 */
-	@Test
-	public void testAddItem() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link rpg.item.Container#contains(rpg.item.Item)}.
-	 */
-	@Test
-	public void testContains() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link rpg.item.Container#removeItem(Item)}.
-	 */
-	@Test
-	public void testRemoveItem() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link rpg.item.Container#getNbItems()}.
-	 */
-	@Test
-	public void testGetNbItems() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link rpg.item.ItemImplementation#ItemImplementation(long, rpg.item.Weight, rpg.item.BackPack, java.lang.Character)}.
-	 */
-	@Test
-	public void testItemImplementation() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link rpg.item.ItemImplementation#setValue(int)}.
-	 */
-	@Test
-	public void testSetValue() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link rpg.item.ItemImplementation#getValue()}.
-	 */
-	@Test
-	public void testGetValue() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link rpg.item.ItemImplementation#getWeight()}.
-	 */
-	@Test
-	public void testGetWeight() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link rpg.item.ItemImplementation#setId(long)}.
-	 */
-	@Test
-	public void testSetId() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link rpg.item.ItemImplementation#getId()}.
-	 */
-	@Test
-	public void testGetId() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link rpg.item.ItemImplementation#setHolder(java.lang.Character)}.
-	 */
-	@Test
-	public void testSetHolder() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link rpg.item.ItemImplementation#getHolder()}.
-	 */
-	@Test
-	public void testGetHolder() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link rpg.item.ItemImplementation#setBackPack(rpg.item.BackPack)}.
-	 */
-	@Test
-	public void testSetBackPack() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link rpg.item.ItemImplementation#getBackPack()}.
-	 */
-	@Test
-	public void testGetBackPack() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link java.lang.Object#Object()}.
-	 */
-	@Test
-	public void testObject() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link java.lang.Object#getClass()}.
-	 */
-	@Test
-	public void testGetClass() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link java.lang.Object#hashCode()}.
-	 */
-	@Test
-	public void testHashCode() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link java.lang.Object#equals(java.lang.Object)}.
-	 */
-	@Test
-	public void testEquals() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link java.lang.Object#clone()}.
-	 */
-	@Test
-	public void testClone() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link java.lang.Object#toString()}.
-	 */
-	@Test
-	public void testToString() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link java.lang.Object#notify()}.
-	 */
-	@Test
-	public void testNotify() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link java.lang.Object#notifyAll()}.
-	 */
-	@Test
-	public void testNotifyAll() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link java.lang.Object#wait(long)}.
-	 */
-	@Test
-	public void testWaitLong() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link java.lang.Object#wait(long, int)}.
-	 */
-	@Test
-	public void testWaitLongInt() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link java.lang.Object#wait()}.
-	 */
-	@Test
-	public void testWait() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link java.lang.Object#finalize()}.
-	 */
-	@Test
-	public void testFinalize() {
-		fail("Not yet implemented");
-	}
 
 }

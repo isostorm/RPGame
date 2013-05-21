@@ -15,15 +15,17 @@ public class BackPack extends Container{
 	 * 		   The weight of this backpack
 	 * @param  capacity
 	 * 		   The capacity of this backpack
+	 * @param  value
+	 *         The value of this backpack
 	 * @effect A new container is initialized with 
-	 * 		   the given a generated id and the given weight and capacity
-	 * 		   | super(generateId(), weight, capacity)
+	 * 		   the given a generated id and the given weight, capacity and value
+	 * 		   | super(generateId(), weight, capacity, value)
 	 * @post   The number of backpacks is increased by one
 	 * 		   | new.getNbOfBackPacks() == old.getNbOfBackPacks() + 1
 	 */
 	@Raw
-	public BackPack(Weight weight, Weight capacity) {
-		super(generateId(), weight, capacity);
+	public BackPack(Weight weight, Weight capacity, int value) {
+		super(generateId(), weight, capacity, value);
 		nbOfBackPacks++;
 	}
 	
@@ -53,9 +55,13 @@ public class BackPack extends Container{
 	 */
 	@Model
 	private static long generateId(){
-		long result = 1; // 0 nCr n = 1
-		for(int i = 1; i <= getNbOfBackPacks(); i++)
-			result *= (getNbOfBackPacks()-i)/(i+1);
+		long bin = 1; // 0 nCr n = 1
+		long result = 1;
+		for(int i = 1; i <= getNbOfBackPacks(); i++){
+			bin = (getNbOfBackPacks()-i)/(i+1)*bin;
+			result += (bin);
+		}
+			
 		return result;
 	}
 	
@@ -78,11 +84,23 @@ public class BackPack extends Container{
 	 *         to 500 and greater than or equal to 0.
 	 *         | result == ( (value <= 500) && (value >= 0) )
 	 */
+	@Override
 	public boolean canHaveAsValue(int value)
 	{
 		return value <= 500 && value >= 0;
 	}
 	
+	/**
+	 * Set the value of this backpack to the given value
+	 * 
+	 * @param  val
+	 * 		   The value to set
+	 * @effect The value of the enclosing container is set to the given value
+	 * 		   | super.setValue(value)
+	 */
+	public void setValue(int value){
+		super.setValue(value);
+	}
 }
 
 	

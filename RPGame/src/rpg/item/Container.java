@@ -2,6 +2,8 @@ package rpg.item;
 
 import java.util.*;
 
+import be.kuleuven.cs.som.annotate.Raw;
+
 import rpg.exception.IllegalAddItemException;
 import rpg.exception.NoSuchItemException;
 
@@ -25,19 +27,36 @@ public abstract class Container extends ItemImplementation implements Parent {
 	 *         The id for this container
 	 * @param  weight
 	 *         The weight of this container
-	 * @param  backpack
-	 *         The enclosing backpack of this container
+	 * @param  value
+	 *         The value of this container
 	 * @effect A new item implementation is initialized with the given id,
-	 *         weight, parent 
-	 *         | super(id, weight, parent)
+	 *         weight and value
+	 *         | super(id, weight, value)
+	 * @effect The capacity of this container is set to the given capacity 
+	 * 		   | setCapacity(capacity)
+	 */
+	protected Container(long id, Weight weight, Weight capacity, int value) {
+		super(id, weight, value);
+		setCapacity(capacity);
+		content = new HashMap<Long, ArrayList<Item>>();
+	}
+	
+	/**
+	 * @param  id
+	 *         The id for this container
+	 * @param  weight
+	 *         The weight of this container
+	 * @param  value
+	 *         The value of this container
+	 * @effect A new container is initialized with the given id,
+	 *         weight, capacity and 0 as its value
+	 *         | super(id, weight, value)
 	 * @effect The capacity of this container is set to the given capacity 
 	 * 		   | setCapacity(capacity)
 	 */
 	public Container(long id, Weight weight, Weight capacity) {
-		super(id, weight);
-		setCapacity(capacity);
-		content = new HashMap<Long, ArrayList<Item>>();
-	}
+		this(id, weight, capacity, 0);
+    }
 
 	private Weight capacity;
 
@@ -149,7 +168,11 @@ public abstract class Container extends ItemImplementation implements Parent {
 	 * 
 	 * @param  item
 	 *         The item to add
-	 * @post   If this item could be added to the container, the content of this
+	 * @post   If the given item is an item implementation, 
+	 * 		   the parent of this item is equal to this anchor
+	 * 		   | if( item instanceof ItemImplementation ) then
+	 *         |     item.getParent() == this
+	 * @post   If this item can be added to the container, the content of this
 	 *         container contains the given item 
 	 *         | if( canAddItem(item) ) then 
 	 *         |      new.contains(item)
@@ -160,6 +183,8 @@ public abstract class Container extends ItemImplementation implements Parent {
 	protected void addItem(Item item) {
 		if(!canAddItem(item))
 			throw new IllegalAddItemException(this, item);
+		if( item instanceof ItemImplementation )
+			((ItemImplementation)item).setParent(this);
 		if (!content.containsKey(item.getId())) {
 			ArrayList<Item> items = new ArrayList<Item>();
 			items.add(item);
@@ -199,6 +224,10 @@ public abstract class Container extends ItemImplementation implements Parent {
 	 *         | if(item instanceof ItemImplementation
 	 *         |    && ( ((ItemImplementation)item).getParent() != null || isTerminated()) ) then
 	 *         |    	result == false
+	 *         Otherwise false if the given item is a container and is and equals this 
+	 *         container or is an direct or indirect parent
+	 *         | if(item instanceof Container && equalsOrIsDirectOrIndirectParentOf((Container)item))
+			   |      return false;
 	 *         Otherwise true if and only if the item can be added to this container and
 	 *         if there is a holder, the holder is able to carry the item. 
 	 *         | result == ( (!hasHolder() || getHolder().canAddItem(item)) &&  canAddItemToContainer(item) )
@@ -212,8 +241,12 @@ public abstract class Container extends ItemImplementation implements Parent {
 		if(item instanceof ItemImplementation
 				&& ( ((ItemImplementation)item).getParent() != null || isTerminated()) )
 			return false;
+		if(item instanceof Container && equalsOrIsDirectOrIndirectParentOf((Container)item))
+			return false;
 		return (!hasHolder() || getHolder().canAddItem(item))
 				&& canAddItemToContainer(item);
+		
+			
 	}
 
 	/**
@@ -385,4 +418,28 @@ public abstract class Container extends ItemImplementation implements Parent {
 		for( Item item: new ArrayList<Item>(getDirectItems()) )
 			removeDirectItem(item);
 	}
+	
+	/**
+	 * TODO
+	 * Check whether this item is equal to the given item or is a direct
+	 * or indirect parent of the given item.
+	 * @param  item
+	 * 		   The item to check
+	 * @return True if the given item is equal to this item or
+	 *         if the given item is effective and this item equals or is
+	 *         the direct or indirect parent of the parent of the given
+	 *         item;
+	 *         False otherwise.
+	 *         | result == (this == item) || 
+	 *         |            ( item != null && 
+	 *         |              equalsOrIsDirectOrIndirectParentOf(
+	 *         |                        item.getParentDirectory()) )  
+	 */
+	@Raw 
+	public boolean equalsOrIsDirectOrIndirectParentOf(Container item) {
+		return ((this == item) || 
+			    ( (item != null) && item instanceof Container &&
+			    	  (equalsOrIsDirectOrIndirectParentOf((Container)item.getParent()))
+			    	) );
+	}	
 }

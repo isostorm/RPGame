@@ -124,6 +124,7 @@ public class Weight implements Comparable<Weight> {
 	 *         | result.getUnit() == getUnit()
 	 * @return The numeral of the resulting weight is the sum of this numeral
 	 *         and the numeral of the other weight converted to this weight unit.
+	 *         | result.getNumeral == other.toUnit(getUnit()).getNumeral() + getNumeral()
 	 * @return If the other weight is not effective this weight is returned.
 	 *         | result == this
 	 */
@@ -132,6 +133,34 @@ public class Weight implements Comparable<Weight> {
 		if(other == null)
 			return this;
 		return new Weight(other.toUnit(getUnit()).getNumeral() + getNumeral(), getUnit());
+	}
+	
+	/**
+	 * Returns the subtraction of this weight and another weight, 
+	 * taking weight units into consideration.
+	 * 
+	 * @param  other
+	 *         The other weight to subtract from this weight.
+	 * @return The resulting weight has this weight unit as its weight unit.
+	 *         | result.getUnit() == getUnit()
+	 * @return If the subtraction of this numeral and the numeral of the other weight converted to 
+	 * 		   this weight unit is positive, the numeral of the resulting weight equals this subtraction.
+	 *         | if(other.toUnit(getUnit()).getNumeral() - getNumeral() > 0) then
+	 *         |      new.getNumeral() == - getNumeral() - other.toUnit(getUnit()).getNumeral()
+	 *         Otherwise the resulting numeral is equal to 0
+	 *         | new.getNumeral() == 0         
+	 * @return If the other weight is not effective this weight is returned.
+	 *         | result == this
+	 */
+	public Weight subtract(Weight other)
+	{
+		if(other == null)
+			return this;
+		double newNumeral = getNumeral() - other.toUnit(getUnit()).getNumeral();
+		if(newNumeral > 0)
+			return new Weight(newNumeral, getUnit());
+		else
+			return new Weight(0, getUnit());
 	}
 	
 	/**

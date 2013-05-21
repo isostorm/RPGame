@@ -153,8 +153,10 @@ public class Anchor implements Parent {
 	 * 
 	 * @param  item
 	 *         The new item to be set
-	 * @post   The parent of this item is equal to this anchor
-	 *         | item.getParent() == this
+	 * @post   If the given item is an item implementation, 
+	 * 		   the parent of this item is equal to this anchor
+	 * 		   | if( item instanceof ItemImplementation ) then
+	 *         |     item.getParent() == this
 	 * @post   The item of this anchor equals the given item.
 	 *         | new.getItem() == item
 	 * @throws IllegalAddItemException
@@ -175,7 +177,7 @@ public class Anchor implements Parent {
 	 * Check whether the given item can be added to this anchor.
 	 * 
 	 * @return False if the given item is ineffective.
-	 *         | if( item == null)
+	 *         | if( item == null) then
 	 *         |    result == false
 	 *         False if the item this anchor contains is effective.
 	 *         | if (getItem() != null) then

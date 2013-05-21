@@ -1,5 +1,6 @@
 package rpg.item;
 
+import be.kuleuven.cs.som.annotate.Model;
 import be.kuleuven.cs.som.annotate.Raw;
 
 /**
@@ -58,25 +59,28 @@ public class Armor extends ItemImplementation{
 		setProtection(protection);
 		setId(id);
 	}
+	 /**
+	  * Checks whether this armor can have the given id as its id
+	  * 
+	  * @param  id
+	  *         The id to check.
+	  * @return False if and only if there is a divisor of the id between 2
+	  *         and the id minus one or if the id is less than or equal to 1.
+	  *         | result == ( for each integer in 2..(id-1): id%integer == 0 )
+	  *         |           || (id <= 1)
+	  * @see    p.128 formal specification of for loops
+	  */
+	 @Raw
+	 public boolean canHaveAsId(long id)
+	 {
+		 if(id <= 1)
+			 return false;
+		 for(int i = 2; i < id; i++)
+			 if(id%i == 0)
+				 return false;
+		 return true;
+	 }
 	
-	/**
-	 * Checks whether this armor can have the given id as its id
-	 * given number is a prime number.
-	 * 
-	 * @param  id
-	 *         The id to check.
-	 * @return False if and only if there is a divisor of the number between 2 and the number minus one.
-	 *         | result == ( for each integer in 2..(number-1):
-	 *         |				number%integer == 0 )
-	 */
-	@Override
-	public boolean canHaveAsId(long id)
-	{
-		for(int i = 2; i < id; i++)
-			if(id%i == 0)
-				return false;
-		return true;
-	}
 	
 	/**
 	 * Set the id of this armor to the given id
@@ -91,8 +95,8 @@ public class Armor extends ItemImplementation{
 	 *        | else
 	 *        |		getId() == 2
 	 */
-	@Override
-	public void setId(long id){
+	@Override @Model
+	protected void setId(long id){
 		if(canHaveAsId(id))
 			this.id = id;
 		else
