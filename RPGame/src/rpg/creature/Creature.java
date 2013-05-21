@@ -1,5 +1,6 @@
 package rpg.creature;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import be.kuleuven.cs.som.annotate.*;
@@ -40,7 +41,7 @@ public abstract class Creature{
 	 * @effect The number of hitpoints of this creature is set to the given maximum hitpoints.
 	 *         | sethitpoints(maximumHitpoints)
 	 * @effect The maximum hitpoints of this creature is set to the given maximum hitpoints.
-	 *         | setMaximumHitpoints(strength)
+	 *         | setMaximumHitpoints(maximumHitpoints)
 	 *        
 	 */
 	@Raw
@@ -120,6 +121,7 @@ public abstract class Creature{
 	/**
 	 * Returns the average strength of a creature.
 	 */
+	@Basic @Raw
 	protected static double getAverageStrength() {
 		return averageStrength;
 	}
@@ -133,9 +135,9 @@ public abstract class Creature{
 	 *         | result == (Math.round(strength*Math.pow(10, getStrengthPrecision()))
 	 *                      /Math.pow(10, getStrengthPrecision()))
 	 */
-	public int getStrength()
+	public double getStrength()
 	{
-		return (int)(Math.round(strength*Math.pow(10, getStrengthPrecision()))
+		return (Math.round(strength*Math.pow(10, getStrengthPrecision()))
 				    /Math.pow(10, getStrengthPrecision()));
 	}
 	
@@ -162,7 +164,7 @@ public abstract class Creature{
 	 */
 	public void multiplyStrength(int multiplier)
 	{
-		setStrength(getStrength()*multiplier);
+		setStrength(strength*multiplier);
 	}
 	
 	/**
@@ -175,7 +177,7 @@ public abstract class Creature{
 	 */
 	public void divideStrength(int divisor)
 	{
-		setStrength(getStrength()/divisor);
+		setStrength(strength/divisor);
 	}
 	
 	public abstract Weight getCapacity();
@@ -188,10 +190,12 @@ public abstract class Creature{
 	 *         |    retWeight = new Weight(0, WeightUnit.KG)
 	 *         | in
 	 *         |    for each anchor in getAnchors():
-	 *         |       if( anchor.getItem() instanceof Container ) then
-	 *         |          retWeight.add( ((Container)object).getTotalWeight() )
-	 *         |       else if (object instanceof Item) then
-	 *         |          retWeight.add( ((Container)object).getWeight() ) TODO commentaar fix
+	 *         |       if(anchor.getItem() != null) then
+	 *         |          if( anchor.getItem() instanceof Container ) then
+	 *         |             retWeight = retWeight.add(
+	 *         |                          ((Container)anchor.getItem()).getTotalWeight() )
+	 *         |          else
+	 *         |             retWeight = retWeight.add( anchor.getItem().getWeight() )
 	 *         |    result == retWeight
 	 * @return The weight unit of the resulting weight is KG.
 	 *         | result.getUnit() == WeightUnit.KG
@@ -202,10 +206,12 @@ public abstract class Creature{
 		for(Anchor anchor : getAnchors())
 		{
 			Item item = anchor.getItem();
+			if(item == null)
+				continue;
 			if(item instanceof Container)
-				retWeight.add( ((Container)item).getTotalWeight() );
+				retWeight = retWeight.add( ((Container)item).getTotalWeight() );
 			else
-				retWeight.add( item.getWeight() );
+				retWeight = retWeight.add( item.getWeight() );
 		}
 		return retWeight;
 	}
@@ -218,10 +224,11 @@ public abstract class Creature{
 	 *         |    totalValue = 0
 	 *         | in
 	 *         |    for each anchor in getAnchors():
-	 *         |       if (anchor.getItem() instanceof BackPack)
-	 *         |          totalValue += ((BackPack)anchor.getItem()).getTotalValue()
-	 *         |       else
-	 *         |          totalValue += += item.getValue()
+	 *         |       if( anchor.getItem() != null) then
+	 *         |          if (anchor.getItem() instanceof BackPack)
+	 *         |             totalValue += ((BackPack)anchor.getItem()).getTotalValue()
+	 *         |          else
+	 *         |             totalValue += += item.getValue()
 	 *         |    result == totalValue
 	 */
 	public int getTotalValue()
@@ -230,6 +237,8 @@ public abstract class Creature{
 		for(Anchor anchor: getAnchors())
 		{
 			Item item = anchor.getItem();
+			if(item == null)
+				continue;
 			if (item instanceof BackPack)
 				result += ((BackPack)item).getTotalValue();
 			else
@@ -259,14 +268,14 @@ public abstract class Creature{
 	
 	/**
 	 * Sets the name of this creature.
-	 * @param name
-	 *        The new name of this creature.
-	 * @post The new name of this creature is equal to the given name.
-	 *       | getName() == name
+	 * @param  name
+	 *         The new name of this creature.
+	 * @post   The new name of this creature is equal to the given name.
+	 *         | getName() == name
 	 * @throws IllegalNameException(name, this) [must]
 	 *         This creature cannot set its name to the given name
 	 *         because the given name is invalid.
-	 *         | ! isValidName(name)
+	 *         | ! canHaveAsName(name)
 	 */
 	@Raw
 	private void setName(String name) throws IllegalNameException
@@ -285,7 +294,7 @@ public abstract class Creature{
 	 *         | result == ( name != null )
 	 */
 	@Raw 
-	protected boolean canHaveAsName(String name)
+	public boolean canHaveAsName(String name)
 	{
 		return name != null;
 	}
@@ -307,6 +316,7 @@ public abstract class Creature{
 	/**
 	 * Return the number of hitpoints of this creature.
 	 */
+	@Basic @Raw
 	public int getHitpoints() {
 		return hitpoints;
 	}
@@ -376,7 +386,7 @@ public abstract class Creature{
 	 * @post The number of treasures in this creature is equal to 0.
 	 * 		 | getNbTreasures() == 0
 	 */
-	public void destroyTreasure()
+	void destroyTreasure()
 	{
 		treasure.clear();
 	}
@@ -457,18 +467,20 @@ public abstract class Creature{
 	}
 	
 	/**
-	 * Collect the given items from a death creature
+	 * Collect the given items from a dead creature
 	 * 
-	 * @param other
-	 * 		  The creature to collect the treasure from
-	 * @param itemsToCollect
-	 * 		  The specific items to collect from this creature
-	 * @post  The items that are both in the list of items to collect and in the treasure of the other 
-	 * 		  creature, are added to a free anchor of this creature.
-	 * 		  | for each item in intersect (itemsToCollect && other.getTreasure()):
-	 * 		  | 	for each anchor in getAnchors():
-	 *        |        if(anchor.canAddItem(item)) then
-	 *		  |	          anchor.addItem(item)
+	 * @param  other
+	 * 		   The creature to collect the treasure from
+	 * @param  itemsToCollect
+	 * 		   The specific items to collect from this creature
+	 * @post   The items that are both in the list of items to collect and in the treasure of the other 
+	 * 		   creature, are added to a free anchor of this creature.
+	 * 		   | for each item in intersect (itemsToCollect && other.getTreasure()):
+	 * 		   | 	for each anchor in getAnchors():
+	 *         |        if(anchor.canAddItem(item)) then
+	 *		   |	          anchor.addItem(item)
+	 * @effect The treasure of the creature to collect from is destroyed.
+	 *         | other.destroyTreasure()
 	 */
 	protected void collect(Creature other, ArrayList<Item> itemsToCollect)
 	{
@@ -480,6 +492,7 @@ public abstract class Creature{
 						anchor.addItem(item);
 						break;
 					}
+		other.destroyTreasure();
 	}
 	
 	private int maximumHitpoints;
@@ -540,14 +553,18 @@ public abstract class Creature{
 	 * Checks whether the given number is a prime number.
 	 * @param  number
 	 *         The number to check.
-	 * @return False if and only if there is a divisor of the number between 2 and the number minus one.
+	 * @return False if and only if there is a divisor of the number between 2
+	 *         and the number minus one or if the number is less than or equal to 1.
 	 *         | result == ( for each integer in 2..(number-1): number%integer == 0 )
+	 *         |           || (number <= 1)
 	 * @see    p.128 formal specification of for loops
 	 */
 	@Raw
 	protected
 	static boolean isPrime(int number)
 	{
+		if(number <= 1)
+			return false;
 		for(int i = 2; i < number; i++)
 			if(number%i == 0)
 				return false;
@@ -670,7 +687,7 @@ public abstract class Creature{
 	 * @param anchor
 	 *        The anchor to check
 	 * @return True if and only if this creature has the given anchor as one of its anchors at some index.
-	 *         | result == for some I in 1..getNbAnchors():
+	 *         | result == for some I in 0..getNbAnchors():
 	 *         |              ( getAnchorAt(I) == anchor )
 	 */
 	public boolean hasAsAnchor(Anchor anchor)

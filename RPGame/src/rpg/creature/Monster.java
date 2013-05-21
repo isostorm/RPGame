@@ -42,7 +42,7 @@ public class Monster extends Creature {
 	 * @pre    The given damage must be a valid damage for a weapon.
 	 *         | Weapon.isValidDamage(damage)
 	 * @pre    The given protection must be positive.
-	 *         | getProtection() >= 0
+	 *         | protection >= 0
 	 * @post   Each anchor of this monster contains one of the given objects.
 	 *         | for each item in items:
 	 *         |    for some anchor in getAnchors():
@@ -72,7 +72,7 @@ public class Monster extends Creature {
 		setStrength(retWeight.getNumeral()/9 + 1); 
 		
 		for(Item item: items)
-			addAnchor(new Anchor(this, item));
+			new Anchor(this, item);
 		
 		this.protection = protection;
 		this.damage = damage;
@@ -109,7 +109,7 @@ public class Monster extends Creature {
 	 *         |    result == false
 	 */
 	@Override
-	protected boolean canHaveAsName(String name) {
+	public boolean canHaveAsName(String name) {
 		if(!super.canHaveAsName(name))
 			return false;
 		for(Character c : allowedCharacters)
@@ -154,6 +154,8 @@ public class Monster extends Creature {
 	 */
 	public void hit(Creature other)
 	{
+		if(other == this)
+			return;
 		int randomNumber = new Random().nextInt(101);
 		int number = (randomNumber >= getHitpoints()) ? getHitpoints() : randomNumber;
 		if(number >= other.getProtection())

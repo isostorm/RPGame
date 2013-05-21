@@ -13,7 +13,7 @@ import be.kuleuven.cs.som.annotate.Raw;
 /**
  * A class of anchors involving a name and item
  * 
- * @author Frederic
+ * @author Mathias, Frederic
  *
  * @invar The holder is an effective creature.
  *        | getHolder() != null
@@ -110,8 +110,14 @@ public class Anchor implements Parent {
 	}
 	
 	/**
-	 * Terminate this anchor.
-	 * TODO commentaar
+	 * Terminates this anchor.
+	 * 
+	 * @effect The item this anchor holds is removed
+	 *         | removeItem()
+	 * @effect   The anchor is removed from the list of anchors its holder holds.
+	 *         | getHolder().removeAnchor(this)
+	 * @post   The anchor is terminated.
+	 *         | isTerminated()
 	 */
 	void terminate()
 	{
@@ -199,15 +205,19 @@ public class Anchor implements Parent {
 			return false;
 		if( item instanceof ItemImplementation && ((ItemImplementation)item).hasParent() )
 			return false;
-		
 		return getHolder().canAddItem(item);
 	}
 	
 	/**
-	 * TODO
+	 * Swaps the item this anchor holds with the given item.
+	 * 
 	 * @param replacement
+	 *        The item to swap with.
 	 * @throws IllegalAddItemException
+	 *         If the replacement is not effective
+	 *         | replacement == null
 	 * @throws IllegalArgumentException
+	 *         If addItem throws an exception
 	 */
 	public void swap(Item replacement) throws IllegalAddItemException, IllegalArgumentException
 	{
@@ -216,8 +226,8 @@ public class Anchor implements Parent {
 		Item oldItem = getItem();
 		try
 		{
-		removeItem();
-		addItem(replacement);
+			removeItem();
+			addItem(replacement);
 		}
 		catch(IllegalAddItemException e)
 		{
@@ -230,7 +240,7 @@ public class Anchor implements Parent {
 	 * Sets the given item as this anchors item.
 	 * 
 	 * @param item
-	 *        The new item of this anchorpoint
+	 *        The new item of this anchor
 	 * @post  The item of this anchor is equal to the given item.
 	 *        | getItem() == item
 	 */

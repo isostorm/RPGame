@@ -175,7 +175,7 @@ public class Hero extends Creature {
 	 *         space after removing all the allowed characters from the name.
 	 *         | for each c in allowedCharacters:
 	 *		   |    name = name.replace(c.toString(), "")
-	 *         | if(!name.matches("[A-Z]([A-Za-z ]|: )*")) then
+	 *         | if(!name.matches("[A-Z]([A-Za-z ']|: )*")) then
 	 *         |    result == false
 	 *         Otherwise false if and only if the given name contains more than
 	 *         2 apostrophes and apostrophes are allowed
@@ -183,12 +183,12 @@ public class Hero extends Creature {
 	 *         |    result == false
 	 */
 	@Override
-	protected boolean canHaveAsName(String name) {
+	public boolean canHaveAsName(String name) {
 		if(!super.canHaveAsName(name))
 			return false;
 		for(Character c : allowedCharacters)
 			name = name.replace(c.toString(), "");
-		if(!name.matches("[A-Z]([A-Za-z ]|: )*"))
+		if(!name.matches("[A-Z]([A-Za-z ']|: )*"))
 			return false;
 		if(allowApostrophes && name.replaceAll("[^']", "").length() > 2)
 			return false;
@@ -267,9 +267,9 @@ public class Hero extends Creature {
 	 *         |       retStrength += ((Weapon)rightHandItem).getDamage()
 	 *         |    result == retStrength
 	 */
-	public int getTotalStrength()
+	public double getTotalStrength()
 	{
-		int retStrength = getStrength();
+		double retStrength = getStrength();
 		
 		Item leftHandItem = getAnchor("leftHand").getItem();
 		if(leftHandItem instanceof Weapon)
@@ -284,42 +284,39 @@ public class Hero extends Creature {
 	}
 	
 	/**
-	 * Destroy all the direct or indirect weapons and armors of this hero and make the treasure.
+	 * Destroy all the direct or indirect weapons and armors in the treasure of
+	 * this hero and destroys the treasure.
 	 * 
 	 * @effect Each weapon or armor this hero carries direct or 
 	 * 		   indirect in his anchors is terminated
-	 *         |   for each anchor in getAnchors():
-	 *         |      let
-	 *         |         anchorItem = anchor.getItem()
-	 *         |      in
-	 *         |         if(anchor.getItem() instanceof BackPack) then
-	 *         |            for each item in ((BackPack)anchorItem).getItems()
-	 *         |               if (item instanceof Armor || item instanceof Weapon) then
-	 *         |                  item.terminate()
-	 *         |         else if (anchorItem instanceof Armor || anchorItem instanceof Weapon) then
-	 *         |            anchorItem.terminate()
-	 * @effect The treasure for the enclosing creature is made
-	 * 		   | super.makeTreasure()
+	 *         |   for each item in getTreasure():
+	 *         |      if(item instanceof BackPack) then
+	 *         |         for each itemBP in ((BackPack)item).getItems()
+	 *         |            if (itemBP instanceof Armor || itemBP instanceof Weapon) then
+	 *         |               itemBP.terminate()
+	 *         |      else if (item instanceof Armor || item instanceof Weapon) then
+	 *         |         item.terminate()
+	 *         |   super.destroyTreasure()
 	 */
-	protected void makeTreasure()
+	@Override
+	void destroyTreasure()
 	{
-		for(Anchor anchor: getAnchors())
+		for(Item item: getTreasure())
 		{
-			Item anchorItem = anchor.getItem();
-			if(anchorItem instanceof BackPack)
+			if(item instanceof BackPack)
 			{
-				Enumeration<Item> enumeration = ((BackPack)anchorItem).getItems();
+				Enumeration<Item> enumeration = ((BackPack)item).getItems();
 				while(enumeration.hasMoreElements())
 				{
-					Item item = enumeration.nextElement();
-					if(item instanceof Armor || item instanceof Weapon)
-						((ItemImplementation)item).terminate();
+					Item itemBP = enumeration.nextElement();
+					if(itemBP instanceof Armor || itemBP instanceof Weapon)
+						((ItemImplementation)itemBP).terminate();
 				}
 			}
-			else if (anchorItem instanceof Armor || anchorItem instanceof Weapon)
-					((ItemImplementation)anchorItem).terminate();
+			else if (item instanceof Armor || item instanceof Weapon)
+					((ItemImplementation)item).terminate();
 		}
-		super.makeTreasure();
+		super.destroyTreasure();
 	}
 	
 	/**
@@ -342,6 +339,18 @@ public class Hero extends Creature {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Collect the given items from a dead creature
+	 * 
+	 * @effect The enclosing creature collects the items from the dead creature.
+	 *         | super.collect(other, itemsToCollect)
+	 */
+	@Override
+	public void collect(Creature other, ArrayList<Item> itemsToCollect)
+	{
+		super.collect(other, itemsToCollect);
 	}
 	/**
 	 * Heal this hero.
